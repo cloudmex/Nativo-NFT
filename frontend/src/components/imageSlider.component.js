@@ -22,7 +22,8 @@ export default function ImageSlider() {
         {sliderData.map((item, key) => {
           return (
             <img
-              className="object-cover object-center rounded  "
+              className="object-cover object-center rounded h-60"
+              style={{width:"20px"}}
               src={item.img}
               key={key}
               alt={item.alt}

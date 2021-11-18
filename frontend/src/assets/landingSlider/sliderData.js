@@ -1,6 +1,6 @@
-import img1 from "./img/ArteHuichol_Uno.jpg";
-import img2 from "./img/flauta.jpg";
-import img3 from "./img/flor.jpg";
+const img1 =  "https://ipfs.io/ipfs/QmdvpbgsVe5MDXLWKDmok5jARd6Ttz1EFWFv1MG4GLtEu6";
+const img2 = "https://ipfs.io/ipfs/QmaB4s62rfUTAj4VJBRb3EnkCRTP9rMZPGhZfy9ZRbHMLv";
+const img3 = "https://ipfs.io/ipfs/QmeeRkRYTaRFoGXfDMziiMEo3fPrx9SMPbUc1Ei9PywjRX";
 export const sliderData = [
   {
     img: img1,

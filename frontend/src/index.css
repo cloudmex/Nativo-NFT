@@ -113,13 +113,13 @@ button:focus {
 }
 
 body {
-  margin: 0;
+  /* margin: 0; */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 iframe {
@@ -743,6 +743,8 @@ code {
   opacity: 1;
 }
 
+
+
 @media (max-width: 960px) {
   .copy-to-clipboard {
     display: none;
@@ -866,3 +868,58 @@ code {
   display: none;
 }
 }
+*{
+  transition: all 0.25s;
+}
+
+.token{
+  overflow: hidden;
+  border: 1px solid rgb(226, 226, 226);
+  border-radius: 5px ;
+  margin-bottom: 15px;
+
+  /* scale border mb-4 */
+}
+
+
+
+
+
+.token:hover{
+  transform: scale(1.05);
+  position: unset;
+  border-color:  rgb(255, 212, 95);
+}
+
+.token:active{
+  border-color:  rgb(95, 236, 255);
+  transform: scale(1.04);
+}
+
+.imgaa{
+  transform: scale(1);
+  animation-name:zoom; 
+  
+}
+
+
+.token:hover .imgaa{
+  transform: scale(1);
+  animation-duration: 7s;
+  animation-direction: alternate;
+  animation-delay: 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes zoom{
+
+  from{
+    transform: scale(1);
+  }
+
+  to{
+    transform: scale(1.02);
+  }
+}
+
+

@@ -1,5 +1,5 @@
 /.vscode
 
-
+node_modules
 /blockchain/contract/target
 /blockchain/near-contract-standards-3.2.0/target

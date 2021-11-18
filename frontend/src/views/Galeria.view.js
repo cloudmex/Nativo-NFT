@@ -17,7 +17,7 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 6,
+    tokensPerPageNear: 12,
   });
 
   async function getPage(pag) {
@@ -157,21 +157,22 @@ function LightEcommerceA() {
               //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
               return (
-                <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
-                 {tokenData.image &&
+                <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                 {tokenData.image ?
                   <a href={"/detail/" + token.tokenID}>
-                    <div className="block relative h-48 rounded overflow-hidden">
+                    <div className="token">
+                    <div className="block relative h-48 overflow-hidden">
                       <img
                         alt="ecommerce"
-                        className="object-cover object-center w-full h-full block"
+                        className="imgaa object-cover object-center w-full h-full block"
                         src={`https://ipfs.io/ipfs/${tokenData.image}`}
                       />
                     </div>
                     <div className="mt-4">
-                      <h2 className="text-gray-900 title-font text-lg font-medium">
+                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
                         {tokenData.title}
                       </h2>
-                      <p className="mt-1">
+                      <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
@@ -179,7 +180,13 @@ function LightEcommerceA() {
                               token.price + " " + Landing.currency}
                       </p>
                     </div>
+                    </div>
                   </a>
+                  :
+                  <img 
+                     src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 
+                     className="object-cover object-center w-full h-full block" />
+
                   }
                 </div>
               );

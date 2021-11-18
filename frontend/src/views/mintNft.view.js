@@ -22,6 +22,7 @@ import {
   getNearContract,
   storage_byte_cost,
 } from "../utils/near_interaction";
+import {Reader, uploadFile} from '../utils/fleek';
 
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
@@ -178,7 +179,27 @@ function LightHeroE(props) {
    *
    */
   function imageChange(e) {
-    //si selecciono un archivo, evita que nos de error si el usuario decide cancelar la carga
+    const {file, reader} = Reader(e);
+
+    if (file) {
+      //asignar imagen de preview
+      setmint({ ...mint, file: URL.createObjectURL(e.target.files[0]) });
+
+    //una vez que cargue el arhcivo lo mandamos a ipfs
+      //una vez que cargue el arhcivo lo mandamos a ipfs
+     
+    //una vez que cargue
+    reader.onloadend = function () {
+      //subimos la imagen a ipfs
+      uploadFile(file.name,reader.result).then(({hash}) =>{
+        // console.log(result);
+        console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
+        formik.setFieldValue("image", hash);
+      })
+
+    };
+  }
+   /*  //si selecciono un archivo, evita que nos de error si el usuario decide cancelar la carga
     if (e.target.files[0]) {
       //asignar imagen de preview
       setmint({ ...mint, file: URL.createObjectURL(e.target.files[0]) });
@@ -198,8 +219,9 @@ function LightHeroE(props) {
           formik.setFieldValue("image", result.path);
         });
       };
-    }
+    } */
   }
+
   return (
     <section className="text-gray-600 body-font">
       <form
