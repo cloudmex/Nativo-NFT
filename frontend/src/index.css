@@ -129,6 +129,47 @@ iframe {
   background-color: var(--solid);
 }
 
+.beta{
+  background: #fbbf24;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 12pt;
+  position: relative;
+  overflow: hidden;
+  height: 0px;
+  
+}
+
+.h-auto{
+  height: auto;
+  padding: 3px;
+}
+
+.beta > p {
+  max-width:80%;
+  margin-right: 30px;
+}
+
+.beta > img {
+  position: absolute;
+  right: 20px;
+  max-width: 20px;
+  filter: invert(1);
+  cursor: pointer;
+}
+
+
+.beta > img:hover {
+  transform: scale(1.1);
+}
+
+.beta > img:active {
+  transform: scale(1);
+}
+
+
 .app {
   height: 100vh;
 }

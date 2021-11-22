@@ -11,14 +11,16 @@ import Galeria from "./views/Galeria.view";
 import Detail from "./views/Detail.view";
 import Mint from "./views/mintNft.view";
 import MisNfts from "./views/MisTokens.view";
+import Aution from "./views/auction.view";
 
 import notFound from "./views/notFound.view";
+
 
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
 import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
 const { create } = require("ipfs-http-client");
-
+localStorage.setItem("blockchain", "1");
 //instancia de ipfs
 window.ipfs = create({
   host: "ipfs.infura.io",
@@ -60,6 +62,7 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
             <BlockchainProtectedRoute path="/galeria" component={Galeria} />
+            <BlockchainProtectedRoute path="/aution/:tokenid" component={Aution} />
             <BlockchainProtectedRoute
               path="/detail/:tokenid"
               component={Detail}

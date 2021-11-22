@@ -80,7 +80,7 @@ function LightEcommerceA() {
       
       if (Landing.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-                await syncNets();
+          await syncNets();
           //obtener cuantos tokens tiene el contrato
           let totalSupply = await getContract().methods.totalSupply().call();
           //obtener el numero de tokens a la venta
