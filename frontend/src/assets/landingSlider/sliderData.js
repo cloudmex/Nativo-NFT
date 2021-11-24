@@ -1,6 +1,6 @@
-const img1 =  "https://ipfs.io/ipfs/QmdvpbgsVe5MDXLWKDmok5jARd6Ttz1EFWFv1MG4GLtEu6";
-const img2 = "https://ipfs.io/ipfs/QmaB4s62rfUTAj4VJBRb3EnkCRTP9rMZPGhZfy9ZRbHMLv";
-const img3 = "https://ipfs.io/ipfs/QmeeRkRYTaRFoGXfDMziiMEo3fPrx9SMPbUc1Ei9PywjRX";
+import img1 from "../img/4.png"
+import img2 from "../img/2.png"
+import img3 from "../img/3.png"
 export const sliderData = [
   {
     img: img1,
