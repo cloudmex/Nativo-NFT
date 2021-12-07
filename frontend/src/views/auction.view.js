@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
+import { isNearReady } from "../utils/near_interaction";
+import { nearSignIn } from "../utils/near_interaction";
 import {
   syncNets,
   getSelectedAccount,
@@ -25,38 +27,33 @@ function LightEcommerceB(props) {
   const [modal, setModal] = React.useState({
     show: false,
   });
+  //Esta logeado
+  const [stateLogin, setStateLogin] = useState(false);
+  //Precio minimo subasta
+  const [bidderMin, setStateBidderMin] = useState(0.0);
+  //Puja
+  const [puja, setpuja] = useState(0.0);
   // Tiempo de conclucion de la subasta
   let finalTime = 0;
-  const setFinalTime = (c) => {finalTime = c};
+  const setFinalTime = (c) => { finalTime = c };
   const [Time, setTime] = useState(0);
   // setea una fecha dada y retorna un TimeStamp
-  // resive como parametros numeros enteros
-  const setFecha = (dia, mes, año) => {
-    const fechaActual = new Date();
-    fechaActual.setDate(dia);
-    fechaActual.setMonth(mes-1);
-    fechaActual.setFullYear(año);
-    if(new Date().getTime() < fechaActual.getTime()){
-      setFinalTime(fechaActual.getTime());
-      return fechaActual.getTime();
-    }
-    return false;
-  }
+
 
   const getFecha = () => {
-    if(finalTime > new Date().getTime()){
-      const time = parseInt((finalTime - new Date().getTime()) / 1000);
-      const s = parseInt(time % 60);
-      const m = parseInt((time / 60) % 60);
-      const h = parseInt((time / 3600 ) % 24);
-      const d = parseInt((time / 86400 ));
-      console.log("es esyo");
-      return `d${d} ${h+":"+m+":"+s}`;
+    if (finalTime > 0) {
+      // const time = parseInt((finalTime - new Date().getTime()) / 1000);
+      const s = parseInt(finalTime % 60);
+      const m = parseInt((finalTime / 60) % 60);
+      const h = parseInt((finalTime / 3600) % 24);
+      const d = parseInt((finalTime / 86400));
+      finalTime--;
+      return `${d}d ${h + ":" + m + ":" + s}`;
     }
     return false;
   }
 
-  
+
 
   //es el parametro de tokenid
   const { tokenid } = useParams();
@@ -65,6 +62,7 @@ function LightEcommerceB(props) {
 
   React.useEffect(() => {
     (async () => {
+      setStateLogin(await isNearReady());      
       let totalSupply;
 
       if (localStorage.getItem("blockchain") == "0") {
@@ -91,10 +89,12 @@ function LightEcommerceB(props) {
             jdata: JSON.parse(toks.data),
             owner,
           });
+            console.log(toks.data)
         }
       } else {
         //instanciar contracto
         let contract = await getNearContract();
+        window.cont= contract;
         totalSupply = await contract.nft_total_supply();
         console.log(totalSupply);
 
@@ -102,56 +102,90 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toks = await contract.nft_token({ token_id: tokenid });
-          console.log(toks)
-          console.log({
-            tokenID: toks.token_id,
-            onSale: toks.metadata.on_sale,
-            price: toks.metadata.price,
-            culture:toks.metadata.culture,
-            country:toks.metadata.country,
-            creator:toks.metadata.creator,
-          });
+          let toksnft = await contract.nft_token({ token_id: tokenid });
+          let toks = await contract.get_token({ token_id: tokenid, owner_id: "dev-1636751893359-19496702378959" });
+          if(!toks.on_auction){
+            window.location.href = "/detail/"+tokenid;
+          }
+          if(fromYoctoToNear(toks.highestbidder) == 0){
+            setStateBidderMin((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
+            setpuja((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
+          } else {
+            setStateBidderMin((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+            setpuja((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+            console.log((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+          }
+          
+          // console.log({
+          //   tokenID: toks.token_id,
+          //   onSale: toks.metadata.on_sale,
+          //   price: toks.metadata.price,
+          //   culture:toks.metadata.culture,
+          //   country:toks.metadata.country,
+          //   creator:toks.metadata.creator,
+          // });
 
           setstate({
             ...state,
             tokens: {
-              tokenID: toks.token_id,
-              onSale: toks.metadata.on_sale,
-              price: fromYoctoToNear(toks.metadata.price),
-              culture:toks.metadata.culture,
-              country:toks.metadata.country,
-              creator:toks.metadata.creator,
+              tokenID: toksnft.token_id,
+              onSale: toks.on_sale,
+              price: fromYoctoToNear(toks.price),
+              // culture:toks.culture,
+              // country:toks.country,
+              // creator:toks.metadata.creator,
             },
             jdata: {
-              image: toks.metadata.media,
-              title: toks.metadata.title,
-              description: toks.metadata.description,
-              culture:toks.metadata.culture,
-              country:toks.metadata.country,
-              creator:toks.metadata.creator,
+              image: toks.media,
+              // title: toks.metadata.title,
+              // description: toks.metadata.description,
+              postor: toks.adressbidder,
+              culture: toks.culture,
+              country: toks.country,
+              creator: toks.creator,
+              highestbidder: fromYoctoToNear(toks.highestbidder),
+              lowestbidder: fromYoctoToNear(toks.lowestbidder),
+              expires_at: new Date(toks.expires_at * 1).toString(),
+              starts_at: new Date(toks.starts_at * 1).toLocaleTimeString(),
             },
-            owner: toks.owner_id,
+            owner: toksnft.owner_id,
           });
-          console.log("state",state )
+          const data = await contract.account.connection.provider.block({
+            finality: "final",
+          });
+
+          const dateActual = (data.header.timestamp) / 1000000;
+          finalTime = ((parseInt(toks.expires_at) - dateActual) / 1000);
+          console.log(finalTime);
+          
+          
+
+          const timer = setInterval(() => {
+            const v = getFecha();
+            if (v) {
+              setTime(v);
+            } else {
+              clearInterval(timer);
+              
+            }
+            // console.log(pun().length);   
+          }, 1000);
         }
 
-        
+
       }
     })();
-    setFecha(24,11,2021);
-      const time = setInterval(() => {
-        const v = getFecha();
-        if (v) {
-          getFecha()    
-        }else{
-            clearInterval(time);
-        } 
-        // console.log(pun().length);   
-      }, 1000);
+
+
   }, []);
 
-  async function comprar() {
+  function validatePuja(newPuja){
+    if(newPuja < bidderMin){
+      setpuja(bidderMin)
+    }
+  }
+
+  async function sendOfert() {
     //evitar doble compra
     setstate({ ...state, btnDisabled: true });
     let account, toks;
@@ -201,14 +235,14 @@ function LightEcommerceB(props) {
           return err;
         });
     } else {
-      
-      let amount=parseFloat(state.tokens.price);
-      console.log("amount",amount)
-  
+
+      let amount = puja;//parseFloat(state.tokens.price);
+      console.log("amount", amount)
+
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
-      toks = await contract.comprar_nft(
+      toks = await contract.ofertar_subasta(
         {
           token_id: state.tokens.tokenID,
         },
@@ -235,7 +269,7 @@ function LightEcommerceB(props) {
       setModal({
         show: true,
         title: "exito",
-        message: "token comprado con exito",
+        message: "Oferta realizada",
         loading: false,
         disabled: false,
         change: setModal,
@@ -244,6 +278,7 @@ function LightEcommerceB(props) {
       setstate({ ...state, btnDisabled: false });
     }
   }
+
   return (
     <section className="text-gray-600 body-font overflow-hidden">
       <div className="container px-5 py-24 mx-auto">
@@ -268,35 +303,19 @@ function LightEcommerceB(props) {
                 {state?.tokens.tokenID}
               </span>
             </div>
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">Tiempo restante</span>
-              <span className="ml-auto text-gray-900">
-                <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.tokens.onSale
-                      ? "text-green-100 bg-green-500"
-                      : "text-red-100 bg-red-500"
-                  } rounded-full`}
-                >
-                  {state?.tokens.onSale ? "Disponible" : "No disponible"}
-                </span>
-              </span>
-            </div>
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Cultura</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.culture
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.culture
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
-                  {state?.jdata.culture  }
+                  {state?.jdata.culture}
                 </span>
               </span>
             </div>
@@ -307,13 +326,12 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">País de origen</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.country
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.country
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
-                  {state?.jdata.country  }
+                  {state?.jdata.country}
                 </span>
               </span>
             </div>
@@ -328,7 +346,7 @@ function LightEcommerceB(props) {
             </div>
 
             <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Creador</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
@@ -336,24 +354,85 @@ function LightEcommerceB(props) {
               </span>
             </div>
 
-
-            
-            <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
-            <div className="flex">
-              <span className="title-font font-medium text-2xl text-gray-900">
-                $ {state?.tokens.price}
-                {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Postor</span>
+              <span className="ml-auto text-gray-900 text-xs self-center">
+                {state?.jdata.postor}
               </span>
-              <button
-                className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                disabled={state?.btnDisabled}
-                onClick={async () => {
-                  comprar();
-                }}
-              >
-                Comprar
-              </button>
             </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Precio inicial</span>
+              <span className="ml-auto text-gray-900">
+
+                {state?.jdata.lowestbidder} Near
+
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Ultima puja</span>
+              <span className="ml-auto text-gray-900">
+
+                {state?.jdata.highestbidder} Near
+
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Tiempo restante</span>
+              <span className="ml-auto text-gray-900">
+
+                {Time}
+
+              </span>
+            </div>
+
+            <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
+            {stateLogin ? 
+                          <div className="puja">
+                            {/* <span className=""> */}
+                            <input type="number" 
+                              min={bidderMin} 
+                              value={puja}
+                              step="0.1"
+                              className="title-font font-medium text-2xl text-gray-900" 
+                              onChange={e=>{
+                                setpuja(e.target.value);
+                                validatePuja(e.target.value);
+                              }}
+                              />
+                            <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
+                            {/* </span> */}
+                            <button
+                              className={`flex text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                              disabled={state?.btnDisabled}
+                              onClick={async () => {
+                                sendOfert();
+                              }}
+                            >
+                              Puja
+                            </button>
+                          </div>
+                          : 
+                          <button
+                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                          disabled={state?.btnDisabled}
+                          onClick={async () => {
+                            nearSignIn(window.location.href);
+                          }}
+                          >
+                            Iniciar Sesión para Ofertar
+                          </button>
+              }
           </div>
         </div>
       </div>
