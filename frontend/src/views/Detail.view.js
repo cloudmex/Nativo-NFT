@@ -7,6 +7,7 @@ import {
   getContract,
   fromWEItoEth,
   fromETHtoWei,
+  
 } from "../utils/blockchain_interaction";
 import { currencys } from "../utils/constraint";
 import {
@@ -14,6 +15,7 @@ import {
   fromYoctoToNear,
   getNearAccount,
   getNearContract,
+  nearSignIn
 } from "../utils/near_interaction";
 
 import Modal from "../components/modal.component";
@@ -21,6 +23,8 @@ import Modal from "../components/modal.component";
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
   const [state, setstate] = useState();
+  const [btn, setbtn] = useState(true);
+  const [stateLogin, setStateLogin] = useState(false);
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -71,6 +75,12 @@ function LightEcommerceB(props) {
         } else {
           let toks = await contract.nft_token({ token_id: tokenid });
           console.log(toks)
+
+          if(toks.on_auction){
+            window.location.href = "/auction/"+tokenid;
+          }
+          setbtn(!toks.on_sale);
+
           console.log({
             tokenID: toks.token_id,
             onSale: toks.metadata.on_sale,
@@ -297,19 +307,38 @@ function LightEcommerceB(props) {
             
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
-              <span className="title-font font-medium text-2xl text-gray-900">
-                $ {state?.tokens.price}
-                {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
+            <span className="title-font font-medium text-2xl text-gray-900">
+                {
+                  btn ?
+                  ""
+                  :
+                  "$ "+state?.tokens.price+" "+currencys[parseInt(localStorage.getItem("blockchain"))]
+                }
               </span>
-              <button
-                className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                disabled={state?.btnDisabled}
-                onClick={async () => {
-                  comprar();
-                }}
-              >
-                Comprar
-              </button>
+              {stateLogin ? 
+                      btn ? 
+                        ""
+                      :
+                            <button
+                            className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                            disabled={btn}
+                            onClick={async () => {
+                              comprar();
+                            }}
+                            >
+                              Comprar
+                            </button>
+                          :            
+                          <button
+                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                          disabled={state?.tokens.onSale}
+                          onClick={async () => {
+                            nearSignIn(window.location.href);
+                          }}
+                          >
+                            Iniciar Sesión para Comprar
+                          </button>
+              }
             </div>
           </div>
         </div>
