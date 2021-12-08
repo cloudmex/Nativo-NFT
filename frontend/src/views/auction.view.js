@@ -37,6 +37,10 @@ function LightEcommerceB(props) {
   let finalTime = 0;
   const setFinalTime = (c) => { finalTime = c };
   const [Time, setTime] = useState(0);
+  const [hilow, setHilow] = useState({
+    highestbidder: "",
+    lowestbidder: "",
+  });
   // setea una fecha dada y retorna un TimeStamp
 
 
@@ -104,6 +108,11 @@ function LightEcommerceB(props) {
         } else {
           let toksnft = await contract.nft_token({ token_id: tokenid });
           let toks = await contract.get_token({ token_id: tokenid, owner_id: "dev-1636751893359-19496702378959" });
+
+          if(!toks.on_auction){
+            window.location.href = "/detail/"+tokenid;
+          }
+
           if(fromYoctoToNear(toks.highestbidder) == 0){
             setStateBidderMin((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
             setpuja((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
@@ -122,7 +131,7 @@ function LightEcommerceB(props) {
           //   creator:toks.metadata.creator,
           // });
 
-          setstate({
+          setstate(state => ({
             ...state,
             tokens: {
               tokenID: toksnft.token_id,
@@ -134,19 +143,26 @@ function LightEcommerceB(props) {
             },
             jdata: {
               image: toks.media,
-              // title: toks.metadata.title,
-              // description: toks.metadata.description,
+              title: toks.title,
+              description: toks.description,
               postor: toks.adressbidder,
               culture: toks.culture,
               country: toks.country,
               creator: toks.creator,
-              highestbidder: fromYoctoToNear(toks.highestbidder),
-              lowestbidder: fromYoctoToNear(toks.lowestbidder),
+              // highestbidder: fromYoctoToNear(toks.highestbidder),
+              // lowestbidder: fromYoctoToNear(toks.lowestbidder),
               expires_at: new Date(toks.expires_at * 1).toString(),
               starts_at: new Date(toks.starts_at * 1).toLocaleTimeString(),
             },
             owner: toksnft.owner_id,
-          });
+          }));
+
+          setHilow(s => ({
+            ...s,
+            highestbidder: fromYoctoToNear(toks.highestbidder),
+            lowestbidder: fromYoctoToNear(toks.lowestbidder),
+          }));
+
           const data = await contract.account.connection.provider.block({
             finality: "final",
           });
@@ -366,7 +382,7 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">Precio inicial</span>
               <span className="ml-auto text-gray-900">
 
-                {state?.jdata.lowestbidder} Near
+                {hilow?.lowestbidder} Near
 
               </span>
             </div>
@@ -377,7 +393,7 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">Ultima puja</span>
               <span className="ml-auto text-gray-900">
 
-                {state?.jdata.highestbidder} Near
+                {hilow?.highestbidder} Near
 
               </span>
             </div>
