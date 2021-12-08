@@ -218,7 +218,7 @@ function LightEcommerceB(props) {
   return (
     <>
     <Helmet>
-    <title>{props.title}</title>
+    <title>{`${state?.jdata.title}`}</title>
     <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
     <meta property="og:type" content="article" />
     <meta property="og:title" content={`${state?.jdata.title}`} />
