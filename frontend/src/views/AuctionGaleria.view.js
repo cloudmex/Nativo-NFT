@@ -18,7 +18,7 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("auctionpage")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 15,
-    tokensPerPageNear: 30,
+    tokensPerPageNear: 2,
   });
   async function getPage(pag) {
     let toks;
@@ -117,10 +117,7 @@ function LightEcommerceA() {
         console.log("Page",Landing.page,"PerNEar",Landing.tokensPerPageNear)
         
         //obtener tokens a la venta
-        toks = await contract.obtener_pagina_v3_auction({
-          from_index: 1,
-          limit: Landing.tokensPerPageNear,
-        });
+        toks = await contract.obtener_pagina_v4_on_auction();
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
         let onAuctionToks = await contract.get_on_auction_toksV2();
@@ -155,8 +152,8 @@ function LightEcommerceA() {
          
         setLanding({
           ...Landing,
-          tokens: toks,
-          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear)+1,
+          tokens: toks.slice(Landing.page*Landing.tokensPerPageNear,(Landing.page+1)*Landing.tokensPerPageNear),
+          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear),
         });
       }
     })();
