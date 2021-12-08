@@ -217,14 +217,6 @@ function LightEcommerceB(props) {
   }
   return (
     <>
-    <Helmet>
-    <title>{`${state?.jdata.title}`}</title>
-    <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={`${state?.jdata.title}`} />
-    <meta property="og:description" content={`${state?.jdata.description}`} />
-    <meta property="og:image" content={`https://ipfs.io/ipfs/${state?.jdata.image}`} />
-    </Helmet>
     <section className="text-gray-600 body-font overflow-hidden">
       <div className="container px-5 py-24 mx-auto">
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
