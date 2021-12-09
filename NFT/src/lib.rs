@@ -709,7 +709,7 @@ impl Contract {
         self.n_token_on_sale
         //recorrer
     }
-    pub fn get_id_onsale(&self,tokens:u64) ->  Vec<u64> {
+    pub fn get_ids_onsale(&self,tokens:u64) ->  Vec<u64> {
          //declarar arreglo de ids
         let mut vectIDs = vec![];
         //recorrer el arreglo total 
@@ -740,6 +740,36 @@ impl Contract {
         //[0,45,68,90]
         vectIDs
     }
+    pub fn get_ids_onauction(&self,tokens:u64) ->  Vec<u64> {
+        //declarar arreglo de ids
+       let mut vectIDs = vec![];
+       //recorrer el arreglo total 
+       let mut _tokfound =0;
+       let totoal =  self.get_on_total_toks();
+       log!(" {}" ,&totoal);
+       vectIDs.push(0);  
+       for x in 0..totoal { 
+           
+           if  x>= totoal.clone() {   
+               break;
+           }
+               let mut token =self.get_token(x.to_string().clone());
+           
+               if token.on_auction{
+                  _tokfound+=1;
+                  if _tokfound== tokens {   
+                   log!("token #30 {}" ,&token.token_id);
+                   vectIDs.push( token.token_id.parse::<u64>().unwrap() );  
+                   _tokfound=0;  
+                   }
+              }
+           
+           
+           if( _tokfound == tokens ){break; }           
+       }
+           
+       vectIDs
+   }
     pub fn get_on_auction_toks(&self) -> u64 {
         self.n_token_on_auction
     }
@@ -816,226 +846,6 @@ impl Contract {
     }
     
  
-    pub fn obtener_pagina_v3(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
-        // no estoy segyri de como convierte  de U128 a u128
-      /*   let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
-        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let inicioPag = start_index as usize * limit; */
-
-        let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        //let mut counter: usize = from_index;
-        log!("  from  -> : {},to -> {}",&from_index,&limit);
-        let mut _tokfound =from_index;  //0
-        let totoal =  self.get_on_total_toks();
-                log!(" {}" ,&totoal);
-            for x in from_index..limit { 
-                
-                if  x>= totoal.clone() {
-                    break;
-                }
-                    let mut token =self.get_token(x.to_string().clone());
-                /*     log!("  x -> : {},token {}",&x,&token.token_id );
-                  */   log!("  token -> : {:?}",token.token_id.clone() );
-                 
-                    if token.on_sale{
-                        
-                    vectMEta.push(token  );
-                    _tokfound+=1;
-                    
-                }
-                if x== limit {
-                    break;
-                }
-                
-                //if( x == limit ){break; }           
-            }
-            if vectMEta.len()< 12 && limit < totoal {
-                let  newfrom =limit; //12
-                let  newlimit = limit+30; //24
-               
-                for y in newfrom..newlimit { 
-                 let mut token =self.get_token(y.to_string().clone());
-                 log!("  2da vuetla token -> : {:?}",&y );
-                     if token.on_sale{
-                         
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        
-                    }
-                     if y== newlimit {
-                        break;
-                    }
-
-                }
-            }
-           
-            vectMEta
-         
-    }
-    pub fn obtener_pagina_v3_by_filtros(&self, from_index: u64, limit: u64,culture: String,country:String) -> Vec<Meta>  {
-    
-        //Creamos un vector vacio
-        let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        //let mut counter: usize = from_index;
-        log!("  from  -> : {},to -> {},cul ->{},coun ->{} ",&from_index,&limit,&culture,&country);
-        let mut _tokfound =from_index;  //0
-        let mut reg =0;
-        //obtenemos el total de tokens existente
-        let totoal =  self.get_on_total_toks();
-                log!(" {}" ,&totoal);
-             //   hacemos un ciclo desde el indice hasta un limite
-            for x in from_index..limit { 
-                //si el ciclo va llega al ultimo token disponible sale de este
-                if  x>= totoal.clone() {
-                    break;
-                }
-                //obtener el token
-                    let mut token =self.get_token(x.to_string().clone());
-                
-                 //si el token esta a lavente agregar al vect
-                 //si los filtros country y culture estan en null
-                    if token.on_sale.clone() && culture =="null" && country =="null" {
-                            
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }
-                 //si    country es diferente de null y culture esta en null
-                    else if token.on_sale.clone()  && culture !="null" && country =="null"  {
-                        if token.culture == culture{
-                            vectMEta.push(token  );
-                            _tokfound+=1;
-                            reg+=1;
-                        }    
-                        
-                        
-                    }
-                    //si  country es null y culture es diferente de null
-                    else if token.on_sale.clone()  && culture =="null" && country !="null"  {
-                        if token.country == country{
-                            vectMEta.push(token  );
-                            _tokfound+=1;
-                            reg+=1;
-                        }    
-                        
-                        
-                    }
-                    //si los filtros country es diferente de null y culture esta en null
-                    else if token.on_sale.clone()  && culture !="null" && country !="null" {
-                            
-                        if token.culture == culture && token.country == country {
-                            vectMEta.push(token  );
-                            _tokfound+=1;
-                            reg+=1;
-                        }  
-                        
-                    }
-                //si el ciclo es igual al limite sale de este
-                if x== limit {
-                    break;
-                }
-                
-                //if( x == limit ){break; }           
-            }
-               /*  if vectMEta.len()< 12 && limit < totoal {
-                    let  newfrom =limit; //12
-                    let  newlimit = limit+30; //24
-                
-                    for y in newfrom..newlimit { 
-                    let mut token =self.get_token(y.to_string().clone());
-                    log!("  2da vuetla token -> : {:?}",&y );
-                        if token.on_sale{
-                            
-                            vectMEta.push(token  );
-                            _tokfound+=1;
-                            
-                        }
-                        if y== newlimit {
-                            break;
-                        }
-
-                    }
-                } */
-           
-            log!("  registros  -> : {} ",&reg);
-            vectMEta
-         
-    }
-    pub fn obtener_pagina_v3_auction(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
-        let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        //let mut counter: usize = from_index;
-       // log!("  from  -> : {},to -> {}",&from_index,&limit);
-        let mut _tokfound =from_index;  //0
-        let totoal =  self.get_on_total_toks()-1;
-                log!(" {}" ,&totoal);
-            for x in from_index..limit { 
-                if x== limit {
-                    break;
-                }
-                if  x>= totoal.clone() {
-                    break;
-                }
-                    let mut token =self.get_token(x.to_string().clone());
-                 
-                    if token.on_auction{
-                        
-                    vectMEta.push(token  );
-                    _tokfound+=1;
-                    
-                }
-               
-                
-               
-            }
-            if vectMEta.len()< 12 && limit < totoal {
-                let  newfrom =limit; //12
-                let  newlimit = limit+30; //24
-               
-                for y in newfrom..newlimit { 
-                 let mut token =self.get_token(y.to_string().clone());
-              //   log!("  2da vuetla token -> : {:?}",&y );
-                     if token.on_auction{
-                         
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        
-                    }
-                     if y== newlimit {
-                        break;
-                    }
-
-                }
-            }
-           
-            vectMEta
-         
-    }
-
-    pub fn obtener_pagina_v4_on_auction(&self) -> Vec<Meta>  {
-      
-        let mut vectMEta = vec![];
-      
-       
-        let totoal =  self.get_on_total_toks();
-        log!("  brakes here  -> : {}",&totoal );
-            for x in 0..totoal { 
-           
-                if x == totoal { break; } 
-              
-                 let mut token =self.get_token(x.to_string().clone());
-            /*    
-                log!("  token -> : {:?}",token.token_id.clone() );
-             */    
-                if token.on_auction{
-                        vectMEta.push(token  );
-                }
-           }
-            vectMEta
-         
-    }
 
     pub fn obtener_pagina_v3_by_owner(&self,account: ValidAccountId) -> Vec<Meta>  {
         let mut vectMEta = vec![];
@@ -1058,41 +868,7 @@ impl Contract {
             vectMEta
          
     }
-    pub fn obtener_pagina_v4(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
-      
-        let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");  //0 //30 -> 30:45
-        //let mut counter: usize = from_index;                //46 //30 -> 30:89                      
-        log!("  from  -> : {},to -> {}",&from_index,&limit);
-        let mut _tokfound =0;  //0
-        let totoal =  self.get_on_total_toks()-1;
-                log!(" {}" ,&totoal);
-            for x in from_index..totoal { 
-                
-                if  x>= totoal.clone() { //0 ->150   //29-> 150
-                    break;
-                }
-                    let mut token =self.get_token(x.to_string().clone());
-               
-                 
-                    if token.on_sale{
-                        
-                    vectMEta.push(token  );
-                    _tokfound+=1;
-                    
-                     }
-                if _tokfound== limit {  //1 <30  //30-30
-                    break;
-                }
-                
-                          
-            }
-            
-           
-            vectMEta
-         
-    }
-    
+  
     pub fn obtener_pagina_v5(&self, from_index: u64, limit: u64,culture: String,country:String) -> Vec<Meta>  {
       
         let mut vectMEta = vec![];
@@ -1101,7 +877,7 @@ impl Contract {
         log!("  from  -> : {},to -> {}",&from_index,&limit);
         let mut _tokfound =0;  
         let mut reg =0;
-        let totoal =  self.get_on_total_toks()-1;
+        let totoal =  self.get_on_total_toks();
                 log!(" {}" ,&totoal);
             for x in from_index..totoal { 
                 
@@ -1141,6 +917,73 @@ impl Contract {
                 }
                 //si los filtros country es diferente de null y culture esta en null
                 else if token.on_sale.clone()  && culture !="null" && country !="null" {
+                        
+                    if token.culture == culture && token.country == country {
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        reg+=1;
+                    }  
+                    
+                }
+                if _tokfound== limit {  //1 <30  //30-30
+                    break;
+                }
+                
+                          
+            }
+            
+            log!("  registros  -> : {} ",&reg);
+            vectMEta
+         
+    }
+    pub fn obtener_pagina_v5_auction(&self, from_index: u64, limit: u64,culture: String,country:String) -> Vec<Meta>  {
+      
+        let mut vectMEta = vec![];
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");  //0 //30 -> 30:45
+                      //46 //30 -> 30:89                      
+        
+        let mut _tokfound =0;  
+        let mut reg =0;
+        let totoal =  self.get_on_total_toks();
+                log!(" {}" ,&totoal);
+            for x in from_index..totoal { 
+                
+                if  x>= totoal.clone() { //0 ->150   //29-> 150
+                    break;
+                }
+                    let mut token =self.get_token(x.to_string().clone());
+               
+                 
+                     //si el token esta a lavente agregar al vect
+                 //si los filtros country y culture estan en null
+                 if token.on_auction.clone() && culture =="null" && country =="null" {
+                            
+                    vectMEta.push(token  );
+                    _tokfound+=1;
+                    reg+=1;
+                }
+             //si    country es diferente de null y culture esta en null
+                else if token.on_auction.clone()  && culture !="null" && country =="null"  {
+                    if token.culture == culture{
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        reg+=1;
+                    }    
+                    
+                    
+                }
+                //si  country es null y culture es diferente de null
+                else if token.on_auction.clone()  && culture =="null" && country !="null"  {
+                    if token.country == country{
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        reg+=1;
+                    }    
+                    
+                    
+                }
+                //si los filtros country es diferente de null y culture esta en null
+                else if token.on_auction.clone()  && culture !="null" && country !="null" {
                         
                     if token.culture == culture && token.country == country {
                         vectMEta.push(token  );
