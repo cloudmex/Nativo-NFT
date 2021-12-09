@@ -77,3 +77,34 @@ near call nativodeploy.testnet ofertar_subasta '{"token_id": "10"}' --accountId 
 near view nativodeploy.testnet obtener_pagina_v3 '{"from_index":0,"limit":136}' --accountId nativodeploy.testnet
 
 near view nativodeploy.testnet obtener_pagina_v3_auction '{"from_index":0,"limit":136}' --accountId nativodeploy.testnet
+
+near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativodeploy.testnet
+
+near view nativodeploy.testnet obtener_pagina_v3_by_filtros '{"from_index":0,"limit":30,"culture":"null","country":"null"}' --accountId nativodeploy.testnet
+
+#obtener los id por paginacion para galeria
+near view nativodeploy.testnet get_id_onsale '{"tokens":30}' --accountId nativodeploy.testnet
+
+#Busqueda sin filtros para galeria 
+near view nativodeploy.testnet obtener_pagina_v3_by_filtros '{"from_index":0,"limit":30,"culture":"null","country":"null"}' --accountId nativodeploy.testnet
+#Busqueda con filtro de cultura para galeria 
+near view nativodeploy.testnet obtener_pagina_v3_by_filtros '{"from_index":0,"limit":30,"culture":"carros","country":"null"}' --accountId nativodeploy.testnet
+#Busqueda con filtro de country para galeria 
+near view nativodeploy.testnet obtener_pagina_v3_by_filtros '{"from_index":0,"limit":30,"culture":"null","country":"México"}' --accountId nativodeploy.testnet
+#Busqueda con filtro de culture y country  para galeria 
+near view nativodeploy.testnet obtener_pagina_v3_by_filtros '{"from_index":0,"limit":30,"culture":"carros","country":"México"}' --accountId nativodeploy.testnet
+
+
+near view nativodeploy.testnet obtener_pagina_v4 '{"from_index":0,"limit":30}' --accountId nativodeploy.testnet
+
+near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"carros","country":"México"}' --accountId nativodeploy.testnet
+
+
+#Busqueda sin filtros para galeria 
+near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"null","country":"null"}' --accountId nativodeploy.testnet
+#Busqueda con filtro de cultura para galeria 
+near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"carros","country":"null"}' --accountId nativodeploy.testnet
+#Busqueda con filtro de country para galeria 
+near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"null","country":"México"}' --accountId nativodeploy.testnet
+#Busqueda con filtro de culture y country  para galeria 
+near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"carros","country":"México"}' --accountId nativodeploy.testnet

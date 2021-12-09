@@ -63,7 +63,7 @@ function LightEcommerceA() {
         let contract = await getNearContract();
         console.log("Page",Landing.page)
         //obtener tokens a la venta
-        console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
+       // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
       
         toks = await contract.obtener_pagina_v3({
           from_index: Landing.page*30,
