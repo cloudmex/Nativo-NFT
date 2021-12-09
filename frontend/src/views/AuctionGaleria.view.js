@@ -16,6 +16,7 @@ function LightEcommerceA() {
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
     page: parseInt( window.localStorage.getItem("auctionpage")),
+    pag: window.localStorage.getItem("pagAuction"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 15,
     tokensPerPageNear: 30,
@@ -115,9 +116,18 @@ function LightEcommerceA() {
         let contract = await getNearContract();
         window.contr = contract;
         console.log("Page",Landing.page,"PerNEar",Landing.tokensPerPageNear)
-        
+        let pag = await contract.get_ids_onauction({
+          tokens: Landing.tokensPerPageNear})
+        console.log(pag)
+        window.localStorage.setItem('pagAuction',pag)
+        let pagNumArr = pag
         //obtener tokens a la venta
-        toks = await contract.obtener_pagina_v4_on_auction();
+        toks = await contract.obtener_pagina_v5_auction({
+          from_index: Landing.page,
+          limit: Landing.tokensPerPageNear,
+          culture: "null",
+          country: "null",
+        });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
         let onAuctionToks = await contract.get_on_auction_toksV2();
@@ -152,8 +162,8 @@ function LightEcommerceA() {
          
         setLanding({
           ...Landing,
-          tokens: toks.slice(Landing.page*Landing.tokensPerPageNear,(Landing.page+1)*Landing.tokensPerPageNear),
-          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear),
+          tokens: toks,
+          nPages: pagNumArr.length,
         });
       }
     })();
@@ -217,7 +227,12 @@ function LightEcommerceA() {
                   key={index}
                   onClick={async () => {
                    // await getPage(index);
-                    window.localStorage.setItem("auctionpage",index);
+                   if(index == 0){
+                    window.localStorage.setItem("auctionpage",0)
+                  }
+                  else{
+                    window.localStorage.setItem("auctionpage",parseInt(Landing.pag.split(",")[index])+1);  
+                  }
                     window.location.reload();
                   }}
                 >

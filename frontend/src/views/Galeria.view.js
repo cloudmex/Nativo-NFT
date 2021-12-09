@@ -15,6 +15,7 @@ function LightEcommerceA() {
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
     page: parseInt( window.localStorage.getItem("page")),
+    pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
     tokensPerPageNear: 30,
@@ -64,10 +65,15 @@ function LightEcommerceA() {
         console.log("Page",Landing.page)
         //obtener tokens a la venta
        // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
-      
-        toks = await contract.obtener_pagina_v3({
-          from_index: Landing.page*30,
-          limit: Landing.tokensPerPageNear*(Landing.page+1),
+        let pag = await contract.get_ids_onsale({
+          tokens: Landing.tokensPerPageNear})
+        window.localStorage.setItem('pagSale',pag)
+        let pagNumArr = pag
+        toks = await contract.obtener_pagina_v5({
+          from_index: Landing.page,
+          limit: Landing.tokensPerPageNear,
+          culture: "null",
+          country: "null",
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -94,7 +100,7 @@ function LightEcommerceA() {
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
+          nPages: pagNumArr.length,
         });
       }
     })();
@@ -195,7 +201,12 @@ function LightEcommerceA() {
                   key={index}
                   onClick={async () => {
                   //  await getPage(index);
-                    window.localStorage.setItem("page",index);
+                    if(index == 0){
+                      window.localStorage.setItem("page",0)
+                    }
+                    else{
+                      window.localStorage.setItem("page",parseInt(Landing.pag.split(",")[index])+1);  
+                    }
                     setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
 
                     window.location.reload();
