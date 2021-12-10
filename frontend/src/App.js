@@ -14,6 +14,7 @@ import MisNfts from "./views/MisTokens.view";
 import AuctionGaleria from "./views/AuctionGaleria.view";
 import Auction from "./views/auction.view";
 import SendAuction from "./views/SendAuction.view";
+import Perfil from "./views/Perfil.view";
 
 import notFound from "./views/notFound.view";
 
@@ -63,6 +64,7 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
             <Route path="/galeria" component={Galeria} />
+            <Route path="/perfil" component={Perfil} />
             <Route path="/auctions" component={AuctionGaleria} />
             <Route path="/auction/:tokenid" component={Auction} />
             <BlockchainProtectedRoute path="/sendauction/:tokenid" component={SendAuction} />

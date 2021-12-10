@@ -872,3 +872,50 @@ select{
 .hm-modal:last-child{
   background: red;
 }
+.buscar{
+  border: 2px solid rgb(182, 182, 182);
+  border-radius: 8px;
+}
+.bg-s{
+  background: rgb(233, 177, 25);
+  border-radius: 8px;
+  width: 50px;
+}
+
+.bg-s:hover{
+  transform: scale(1.02);
+  background: rgb(196, 149, 21);
+}
+
+.bg-s:active{
+  transform: scale(1);
+}
+
+.bg-s1{
+  background: rgb(233, 177, 25);
+  border-radius: 8px;
+  color: white;
+}
+
+.hr-1{
+  /* height: 1px; */
+  display: flex;
+  width: 90%;
+  
+  border-top: 2px solid;
+}
+
+.fs-1{
+  border-bottom: 1px solid rgb(182, 182, 182);
+  width: 100%;
+}
+.logg{
+  width: 15px ;
+  height: 15px;
+}
+
+.esconder{
+  overflow: hidden;
+  /* height: 0px; */
+  display: none;
+}
