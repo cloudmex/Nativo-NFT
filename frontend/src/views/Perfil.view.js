@@ -9,7 +9,10 @@ import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
 
 import lupa from '../assets/landingSlider/img/lupa1.png'
-import filtro from '../assets/landingSlider/img/filtro.png'
+import filtroimg from '../assets/landingSlider/img/filtro.png'
+import countrys from '../utils/countrysList'
+import loading from '../assets/landingSlider/img/loader.gif'
+
 
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
@@ -24,9 +27,22 @@ function LightEcommerceA() {
   });
   const [esconder, setesconder] = React.useState(true);
   const [counter, setcounter] = React.useState();
+  const [load, setload] = React.useState(true);
+  const [filtro, setfiltro] = React.useState({
+    culture: "null",
+    country: "null",
+    type: "null",
+    date: "null",
+    price: "null",
+  });
+
+  const modificarFiltro = (v) => {
+    setfiltro(c=>({...c, ...v}))
+  }
 
    
   React.useEffect(() => {
+    setload(c => true);
     (async () => {
       let toks, onSaleToks;
       let arr=[];
@@ -75,9 +91,9 @@ function LightEcommerceA() {
         toks = await contract.obtener_pagina_v5({
           from_index: Landing.page,
           limit: Landing.tokensPerPageNear,
-          culture: "null",
-          country: "null",
+          ...filtro,
         });
+        console.log("filtro ",filtro);
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
 
@@ -106,8 +122,9 @@ function LightEcommerceA() {
           nPages: pagNumArr.length,
         });
       }
+      setload(c => false);
     })();
-  }, []);
+  }, [filtro]);
   
   return (
     <section className="text-gray-600 body-font">
@@ -128,14 +145,14 @@ function LightEcommerceA() {
         <div className="fs-1 flex items-center" onClick={e=>{
             setesconder(v=> !v);
           }}>
-          <img src={filtro} className="logg mr-1"/>
+          <img src={filtroimg} className="logg mr-1"/>
           <b>Filtro</b>
         </div>
       </div>
       <div className={"container py-5 px-5  mx-auto flex flex-wrap items-center "+(
         esconder ? "" : "esconder"
       )} >
-        <b>Opcion 1:</b>
+        <b>Tipo: </b>
       <select className="ml-2 p-2 lg:w-2/12 bg-s1 ">
           <option >
             Todos los tokens
@@ -147,47 +164,63 @@ function LightEcommerceA() {
             Tokens en subasta
           </option>
         </select>
-        <b className="ml-2" >Opcion 1:</b>
+        <b className="ml-2" >Fecha:</b>
         <select className="p-2 lg:w-2/12 ml-2 bg-s1">
           <option >
             Todos los tokens
           </option>
           <option >
-            Tokens en venta
+            Nuevos tokens
           </option>
           <option >
-            Tokens en subasta
+            Tokens Antiguos
           </option>
         </select>
-        <b className="ml-2" >Opcion 1:</b>
+        <b className="ml-2" >Precio:</b>
         <select className="p-2 lg:w-2/12 ml-2 bg-s1">
           <option >
             Todos los tokens
           </option>
           <option >
-            Tokens en venta
+            Asendente
           </option>
           <option >
-            Tokens en subasta
+            Desendente
           </option>
+        </select>
+        <b className="ml-2" >País:</b>
+        <select className="p-2 lg:w-2/12 ml-2 bg-s1" onChange={e=>{
+            modificarFiltro({country: (e.target.value == "Todos los tokens" ? "null" : e.target.value)});
+          }}>
+          <option >
+            Todos los tokens
+          </option>
+          {
+            countrys.map(c=>(
+              <option >
+                {c}
+              </option>
+            ))
+          }
         </select>
       </div>
       <div className="container px-5 py-3 mx-auto ">
       
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
-        {!Landing.tokens.length > 0 ? (
-          <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-            Actualmente no hay tokens NFT disponibles.
-          </p>
-        ) : null}
-        <div className="flex flex-wrap -m-4">
-          {Landing.tokens &&
+        
+        <div className="flex flex-wrap justify-center">
+          
+
+          {
+            load ?
+            <img src={loading} style={{width:"50px"}}/>
+            :
+            Landing.tokens.length  > 0 ?
             Landing.tokens.map((token, key) => {
               //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
               return (
                 <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                 {tokenData.image ?
                   <a href={"/detail/" + token.tokenID}>
                     <div className="token">
                     <div className="block relative h-48 rounded overflow-hidden">
@@ -219,15 +252,14 @@ function LightEcommerceA() {
                     </div>
                     </div>
                   </a>
-                  :
-                  <img 
-                     src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 
-                     className="object-cover object-center w-full h-full block" />
-
-                  }
                 </div>
               );
-            })}
+            })
+            :
+            <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
+                    Actualmente no hay tokens NFT disponibles.
+                  </p>
+          }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
           <nav
