@@ -57,7 +57,7 @@ function MisTokens(props) {
         backdrop: 'rgba(0, 0, 0,0.5)'
     }).then(async (result) => {
         if (result.isConfirmed) {
-          console.log(e);
+          //console.log(e);
           let contract = await getNearContract();
           let account = await getNearAccount();
       
@@ -69,7 +69,7 @@ function MisTokens(props) {
                 1,
           );
           } catch (error) {
-            console.error();
+            //console.error();
           }
         } else if (result.isDenied) {
 
@@ -95,7 +95,7 @@ function MisTokens(props) {
     } else {
       let contract = await getNearContract();
       let account = await getNearAccount();
-      console.log("pag",pag,"nfts.tokensPerPageNear",nfts.tokensPerPageNear)
+      //console.log("pag",pag,"nfts.tokensPerPageNear",nfts.tokensPerPageNear)
       let payload = {
         account_id: account.toString(),
         from_index: ""+pag.toString(),
@@ -139,7 +139,7 @@ function MisTokens(props) {
           .methods.tokensOfPaginav1(account, nfts.tokensPerPage, nfts.page)
           .call();
         let balance = await getContract().methods.balanceOf(account).call();
-        console.log(nftsArr);
+        //console.log(nftsArr);
 
         //filtrar tokens
         let copytoks = nftsArr.filter((tok) => tok.price > 0);
@@ -160,7 +160,7 @@ function MisTokens(props) {
         
         let contract = await getNearContract();
         let account = await getNearAccount();
-        console.log(account);
+        //console.log(account);
         let payload = {
           account : account,
           //from_index: nfts.page , 
@@ -171,8 +171,8 @@ function MisTokens(props) {
         let balance = await contract.nft_supply_for_owner({
           account_id: account,
         });
-        console.log("extras:",nftsArr  );
-        console.log("balance",balance);
+        //console.log("extras:",nftsArr  );
+        //console.log("balance",balance);
  
         //convertir los datos al formato esperado por la vista
         nftsArr = nftsArr.map((tok) => {
@@ -226,8 +226,8 @@ function MisTokens(props) {
         token_id: tokenId,
       };
       let amount = fromNearToYocto(0);
-      console.log(amount);
-      console.log(payload);
+      //console.log(amount);
+      //console.log(payload);
       quitar = await contract.quitar_del_market_place(
         payload,
         300000000000000, // attached GAS (optional)
@@ -235,7 +235,7 @@ function MisTokens(props) {
       );
     }
 
-    console.log(quitar);
+    //console.log(quitar);
     //recargar la pantalla si la transacción se ejecuto correctamente
     if (quitar.title || quitar.status) {
       history.go(0);

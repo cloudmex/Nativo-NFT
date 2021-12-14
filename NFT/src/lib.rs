@@ -710,34 +710,22 @@ impl Contract {
         //recorrer
     }
     pub fn get_ids_onsale(&self,tokens:u64) ->  Vec<u64> {
-         //declarar arreglo de ids
         let mut vectIDs = vec![];
-        //recorrer el arreglo total 
         let mut _tokfound =0;
         let totoal =  self.get_on_total_toks();
-        log!(" {}" ,&totoal);
-        vectIDs.push(0); //[0]
+        vectIDs.push(0); 
         for x in 0..totoal { 
-            
-            if  x>= totoal.clone() {  //192-192
-                break;
-            }
+            if  x>= totoal.clone() { break;  }
                 let mut token =self.get_token(x.to_string().clone());
-            
                 if token.on_sale{
                    _tokfound+=1;
-                   if _tokfound== tokens {   //30-30  tokid -45  2 30-30 -78  
-                    log!("token #30 {}" ,&token.token_id);
-                    vectIDs.push( token.token_id.parse::<u64>().unwrap() ); //vect [0,45,78]
+                   if _tokfound== tokens {   
+                    vectIDs.push( token.token_id.parse::<u64>().unwrap() );  
                     _tokfound=0;  
                     }
                }
-            
-            
-            if( _tokfound == tokens ){break; }           
+            if _tokfound == tokens {break; }           
         }
-            //ir sumando  x(cantidad de tokens retornados)  0-30
-        //[0,45,68,90]
         vectIDs
     }
     pub fn get_ids_onauction(&self,tokens:u64) ->  Vec<u64> {

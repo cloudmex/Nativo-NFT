@@ -57,7 +57,7 @@ function LightEcommerceA() {
 
             //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
           for(let i =Landing.page*10; i<(parseInt(Landing.page)+1)*Landing.tokensPerPage ; i++) {
-            console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
+            //console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
             //obtiene la informacion de x token
             let infoe  = await getContract().methods.getItemInfo(i).call();
             //Valida si está a la venta
@@ -81,9 +81,9 @@ function LightEcommerceA() {
       
         //instanciar contracto
         let contract = await getNearContract();
-        console.log("Page",Landing.page)
+        //console.log("Page",Landing.page)
         //obtener tokens a la venta
-       // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
+       // //console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
         let pag = await contract.get_ids_onsale({
           tokens: Landing.tokensPerPageNear})
         window.localStorage.setItem('pagSale',pag)
@@ -93,7 +93,7 @@ function LightEcommerceA() {
           limit: Landing.tokensPerPageNear,
           ...filtro,
         });
-        console.log("filtro ",filtro);
+        //console.log("filtro ",filtro);
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
 
@@ -113,9 +113,9 @@ function LightEcommerceA() {
           };
         });
 
-        console.log("toks",toks);
-        console.log("onsale",onSaleToks);
-        console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
+        //console.log("toks",toks);
+        //console.log("onsale",onSaleToks);
+        //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
         setLanding({
           ...Landing,
           tokens: toks,

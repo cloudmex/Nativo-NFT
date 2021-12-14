@@ -68,10 +68,10 @@ export const getFileByHash = async(hash) => await fleekStorage.getFileFromHash({
 });
 
 export const Reader = (e) => {
-  console.log(e.target.files);
+  //console.log(e.target.files);
   const file = e.target.files[0];
-  console.log(file);
-  console.log(e.target.value);
+  //console.log(file);
+  //console.log(e.target.value);
   const reader = new window.FileReader();
   reader.readAsArrayBuffer(file);
   return {

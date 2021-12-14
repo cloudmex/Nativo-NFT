@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
 import { isNearReady } from "../utils/near_interaction";
@@ -86,21 +86,21 @@ function LightEcommerceB(props) {
           //obtener el dueño del contrato
           let owner = await getContract().methods.ownerOf(tokenid).call();
           //agregar el dueño y los datos del token
-          console.log(JSON.parse(toks.data));
+          //console.log(JSON.parse(toks.data));
           setstate({
             ...state,
             tokens: toks,
             jdata: JSON.parse(toks.data),
             owner,
           });
-            console.log(toks.data)
+            //console.log(toks.data)
         }
       } else {
         //instanciar contracto
         let contract = await getNearContract();
         window.cont= contract;
         totalSupply = await contract.nft_total_supply();
-        console.log(totalSupply);
+        //console.log(totalSupply);
 
         //si es mayor que el total de tokens
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
@@ -119,7 +119,7 @@ function LightEcommerceB(props) {
           } else {
             setStateBidderMin((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
             setpuja((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
-            console.log((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+            //console.log((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
           }
           
           // console.log({
@@ -169,7 +169,7 @@ function LightEcommerceB(props) {
 
           const dateActual = (data.header.timestamp) / 1000000;
           finalTime = ((parseInt(toks.expires_at) - dateActual) / 1000);
-          console.log(finalTime);
+          //console.log(finalTime);
           
           
 
@@ -250,7 +250,7 @@ function LightEcommerceB(props) {
     } else {
 
       let amount = puja;//parseFloat(state.tokens.price);
-      console.log("amount", amount)
+      //console.log("amount", amount)
 
       //instanciar contracto
       let contract = await getNearContract();
@@ -263,7 +263,7 @@ function LightEcommerceB(props) {
         fromNearToYocto(amount)
       );
 
-      console.log(toks);
+      //console.log(toks);
     }
 
     //si status esta undefined o falso le mandamos el modal de error

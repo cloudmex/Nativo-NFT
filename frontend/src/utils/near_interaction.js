@@ -112,7 +112,7 @@ export async function getNearContract() {
  *
  * */
 export function fromNearToYocto(near) {
-  console.log(utils.format.parseNearAmount(near.toString()));
+  //console.log(utils.format.parseNearAmount(near.toString()));
   return utils.format.parseNearAmount(near.toString());
 }
 /**

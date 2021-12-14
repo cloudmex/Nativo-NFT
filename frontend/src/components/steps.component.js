@@ -6,7 +6,7 @@ function LightStepC(props) {
   return (
     <section className="text-gray-600 body-font bg-gray-100">
       <div className="container px-5 py-24 mx-auto flex flex-wrap">
-        <div class="grid grid-cols-1 gap-4 w-screen	justify-center">
+        <div className="grid grid-cols-1 gap-4 w-screen	justify-center">
           {/* CONFIGURACIÓN */}
           <div className="text-center">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
@@ -19,7 +19,7 @@ function LightStepC(props) {
                 </p>
                 <div className="flex justify-center">
                   <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
-                    <img src="https://img.icons8.com/color/48/000000/settings--v1.png" />
+                    <img src="https://img.icons8.com/color/48/000000/settings--v1.png" alt ="..." />
                   </div>
                   <div className="h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -40,7 +40,7 @@ function LightStepC(props) {
                 </p>
                 <div className="flex justify-center">
                   <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
-                    <img src="https://img.icons8.com/color/96/000000/artist-skin-type-3.png" style={{width: 80+'%'}}/>
+                    <img src="https://img.icons8.com/color/96/000000/artist-skin-type-3.png" alt ="..." style={{width: 80+'%'}}/>
                   </div>
                   <div className="h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -51,7 +51,7 @@ function LightStepC(props) {
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 w-screen	justify-center">
+        <div className="grid grid-cols-2 gap-4 w-screen	justify-center">
           {/* COMPRA/VENTA */}
           <div className="text-center">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
@@ -64,7 +64,7 @@ function LightStepC(props) {
                 </p>
                 <div className="flex justify-center">
                   <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
-                    <img src="https://img.icons8.com/color/96/000000/shopping-basket.png" />
+                    <img src="https://img.icons8.com/color/96/000000/shopping-basket.png" alt ="..." />
                   </div>
                   <div className="h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -85,7 +85,7 @@ function LightStepC(props) {
                 </p>
                 <div className="flex justify-center">
                   <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
-                    <img src="https://img.icons8.com/plasticine/100/000000/auction.png" />
+                    <img src="https://img.icons8.com/plasticine/100/000000/auction.png" alt ="..." />
                   </div>
                   <div className="h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>

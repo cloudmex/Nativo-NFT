@@ -97,7 +97,7 @@ function LightHeroE(props) {
 
         //la cuenta a la cual mandaremos el token
         account = await getSelectedAccount();
-        console.log(account);
+        //console.log(account);
       }
 
       //cargamos el modal
@@ -109,7 +109,7 @@ function LightHeroE(props) {
         disabled: true,
       });
 
-      console.log(JSON.stringify(values))
+      //console.log(JSON.stringify(values))
       const date = new Date(values.date)
       date.setDate(date.getDate()+1)
       date.setHours(values.hrs)
@@ -145,9 +145,9 @@ function LightHeroE(props) {
             //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
         };
-        console.log(contract);
-        console.log(payload);
-        console.log(fromYoctoToNear("5700000000000000000000"));
+        //console.log(contract);
+        //console.log(payload);
+        //console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);
        // alert(payload);
        let tokenresult=  contract.minar(
@@ -209,8 +209,8 @@ function LightHeroE(props) {
     reader.onloadend = function () {
       //subimos la imagen a ipfs
       uploadFile(file.name,reader.result).then(({hash}) =>{
-        // console.log(result);
-        console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
+        // //console.log(result);
+        //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
         formik.setFieldValue("image", hash);
       })
 
@@ -248,7 +248,7 @@ function LightHeroE(props) {
     });
     const dateActual =new Date((data.header.timestamp)/1000000);
     const fs = format(dateActual.getFullYear())+"-"+(format(dateActual.getMonth()+1))+"-"+format(dateActual.getDate());
-    console.log(fs)
+    //console.log(fs)
     setactualDate(fs)
   }
 

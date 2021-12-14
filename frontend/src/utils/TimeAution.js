@@ -7,12 +7,12 @@ export default async (contract, tokenid) => {
         finality: "final",
     });
 
-    const dateActual = data.header.timestamp;
+   // const dateActual = data.header.timestamp;
 
-    const ownerid = await contract.nft_token({ token_id: tokenid});
-        const toks = await contract.get_token({ token_id: tokenid ,owner_id: ownerid});
-        console.log("Token");
-        console.log(toks);
+   // const ownerid = await contract.nft_token({ token_id: tokenid});
+  //      const toks = await contract.get_token({ token_id: tokenid ,owner_id: ownerid});
+        ////console.log("Token");
+        ////console.log(toks);
     
         
     //timpo restante en segundos

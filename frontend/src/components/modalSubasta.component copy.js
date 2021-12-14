@@ -14,7 +14,7 @@ import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
 import { useHistory } from "react-router";
 
 export default function ModalRevender(props) {
-  const history = useHistory();
+//  const history = useHistory();
   const [state, setstate] = useState({ disabled: false });
   //Configuramos el formulario para revender un token
   const formik = useFormik({
@@ -49,8 +49,8 @@ export default function ModalRevender(props) {
           price: fromNearToYocto(values.price),
         };
         let amount = fromNearToYocto(0);
-        console.log(amount);
-        console.log(payload);
+        //console.log(amount);
+        //console.log(payload);
         revender = await contract.revender(
           payload,
           300000000000000, // attached GAS (optional)
