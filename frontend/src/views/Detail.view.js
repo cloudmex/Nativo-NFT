@@ -322,6 +322,13 @@ function LightEcommerceB(props) {
                   "$ "+state?.tokens.price+" "+currencys[parseInt(localStorage.getItem("blockchain"))]
                 }
               </span>
+              <a
+                className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                // disabled={state?.tokens.onSale}
+                href="/galeria"
+              >
+                Regresar a la galeria
+              </a>
               {stateLogin ? 
                       btn ? 
                         ""
@@ -338,7 +345,7 @@ function LightEcommerceB(props) {
                           :            
                           <button
                           className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                          disabled={state?.tokens.onSale}
+                          // disabled={state?.tokens.onSale}
                           onClick={async () => {
                             nearSignIn(window.location.href);
                           }}
