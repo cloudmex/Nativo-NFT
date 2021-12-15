@@ -919,3 +919,21 @@ select{
   /* height: 0px; */
   display: none;
 }
+
+
+.regresar{
+  
+}
+
+.regresar > img{
+  height: 50px;
+  
+}
+
+@media (max-width: 1024px) {
+
+  .regresar > img{
+    margin-bottom: 21px
+  }
+}
+
