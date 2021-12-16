@@ -49,6 +49,7 @@ export const methodOptions = {
     "obtener_pagina_v3_by_owner",
     "get_ids_onsale",
     "get_ids_onauction",
+   
   ],
   changeMethods: [
     "update_token",
@@ -62,6 +63,7 @@ export const methodOptions = {
     "subastar_nft",
     "finalizar_subasta",
     "quitar_del_market_place",
+    "get_by_on_sale",
   ],
 };
 /**

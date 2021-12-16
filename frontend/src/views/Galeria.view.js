@@ -65,10 +65,12 @@ function LightEcommerceA() {
         //console.log("Page",Landing.page)
         //obtener tokens a la venta
        // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
-        let pag = await contract.get_ids_onsale({
-          tokens: Landing.tokensPerPageNear})
+        let pag = await contract.get_by_on_sale({
+          tokens: Landing.tokensPerPageNear,_start_index:0})
+          
         window.localStorage.setItem('pagSale',pag)
         let pagNumArr = pag
+        
         toks = await contract.obtener_pagina_v5({
           from_index: Landing.page,
           limit: Landing.tokensPerPageNear,

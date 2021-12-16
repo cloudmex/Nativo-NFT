@@ -111,5 +111,6 @@ near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"cu
 
 
 near call nativoapp.testnet tryhash '{"token_id":"web","status":"onsale"}' --accountId dokxo.testnet
+ 
 
-near deploy --wasmFile target/wasm32-unknown-unknown/release/nft_marketplace.wasm --initFunction "migrate" --initArgs "{}" --accountId app.nativodeploy.testnet
+ near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativoapp.testnet
