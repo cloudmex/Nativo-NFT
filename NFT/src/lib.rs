@@ -23,9 +23,12 @@ use near_sdk::{
 use serde_json::json;
 use std::convert::TryInto;
 
+
 near_sdk::setup_alloc!();
 /// Balance is type for storing amounts of tokens.
 pub type Balance = u128;
+
+ 
 
 
 #[derive(BorshDeserialize, BorshSerialize )]
@@ -35,6 +38,7 @@ pub struct OldContract {
     n_total_tokens: u64,
     n_token_on_sale: u64,
     n_token_on_auction: u64,
+ 
 }
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize )]
@@ -44,6 +48,7 @@ pub struct Contract {
     n_total_tokens: u64,
     n_token_on_sale: u64,
     n_token_on_auction: u64,
+    tokenHM:HashMap<String, String>,
 }
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -80,9 +85,22 @@ pub struct Extras {
     expires_at: String,
     starts_at: String,
 }
-
+ 
+#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct locals {
+   tokenHM :HashMap<String, String>,
+}
+ 
 lazy_static! {
-    static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, HashMap<String,String>>> = Mutex::new(HashMap::new());
+    static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
+    static ref CONV_MAP: HashMap<String, String> = {
+        let mut map = HashMap::new();
+        
+        map
+    };
+   
+
 }
 
 impl Default for Contract {
@@ -106,11 +124,14 @@ impl Default for Contract {
              Some(StorageKey::TokenMetadata),
              Some(StorageKey::Enumeration),
              Some(StorageKey::Approval),
+
          ) ,
          metadata: LazyOption::new(StorageKey::Metadata, Some(&meta)),
          n_total_tokens: 0,
          n_token_on_sale: 0,
          n_token_on_auction: 0,
+         tokenHM:HashMap::new(),
+         
          
      }   }
 }
@@ -164,6 +185,8 @@ impl Contract {
             n_total_tokens: 0,
             n_token_on_sale: 0,
             n_token_on_auction: 0,
+            tokenHM:HashMap::new(),
+            
         }
     }
     
@@ -199,8 +222,8 @@ impl Contract {
      * @param tokenMetadata {TokenMetadata} los metadatos
      */
     #[payable]
-    pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,) -> Token {
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+    pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,status:String) -> Token {
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
        let token_id: TokenId =self.n_total_tokens.to_string();
@@ -221,13 +244,18 @@ impl Contract {
         log!("tranfer done");
         self.n_total_tokens  +=1;
         self.n_token_on_sale += 1;
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),status);
+         self.tokenHM=_map.clone();
+
         let mut originaltoken = Contract::enum_get_token( &self,self.tokens.owner_by_id.get(&token_id.to_string()).unwrap(),token_id.clone());
         originaltoken
     }
 
     #[payable]
     pub fn comprar_nft(&mut self, token_id: TokenId) -> TokenMetadata {
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
 
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
         //let token_id_u64 = token_id.parse::<u64>().unwrap();
@@ -242,43 +270,11 @@ impl Contract {
             .token_metadata_by_id.as_ref()
             .and_then(|by_id| by_id.get(&token_id))
             .unwrap();
-            /* {
-                title: 'Mr Burrito',
-                description: 'This is a burrito',
-                media: 'imagenimagenimagenimagenimagenim',
-                media_hash: null,
-                copies: null,
-                issued_at: null,
-                expires_at: null,
-                starts_at: null,
-                updated_at: null,
-                extra: "{'culture':'Burriroca','country':'BurritoLand','creator':'dev-1636751893359-19496702378959','price':'20','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}",
-                reference: null,
-                reference_hash: null
-              } */
+            
             let owner_id = self.tokens.owner_by_id.get(&token_id);
             let owner_value = owner_id.as_deref().unwrap_or("default string");
             let mut metadataextra = Contract::get_token(self, token_id.clone());
-        /*     {
-                token_id: '1',
-                owner_id: 'dev-1636751893359-19496702378959',
-                title: 'Mr Burrito',
-                description: 'This is a burrito',
-                media: 'imagenimagenimagenimagenimagenim',
-                culture: 'Burriroca',
-                country: 'BurritoLand',
-                creator: 'dev-1636751893359-19496702378959',
-                price: '20',
-                on_sale: true,
-                on_auction: false,
-                adressbidder: 'accountbidder',
-                highestbidder: 'notienealtos',
-                lowestbidder: 'notienebajos',
-                expires_at: 'noexpira',
-                starts_at: 'noinicia'
-            } */
-            
-            // si no cuenta con los fondos hacemos rollback
+      
         let amount = env::attached_deposit();
         assert_eq!(
             metadataextra.price.parse::<u128>().unwrap(),
@@ -355,6 +351,10 @@ impl Contract {
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale -= 1;
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),"unavailable".to_string());
+         self.tokenHM=_map.clone();
         //retornar la metadata
         originaltoken
     }
@@ -412,6 +412,10 @@ impl Contract {
             .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),"onsale".to_string());
+         self.tokenHM=_map.clone();
         //retornar la metadata
         originaltoken
     }
@@ -462,6 +466,10 @@ impl Contract {
                       .as_mut()
                       .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
          
+                       //insertar nuevo token a Hashmap
+                    let mut _map =self.tokenHM.clone();
+                    _map.insert(token_id.clone(),"onauction".to_string());
+                    self.tokenHM=_map.clone();
                 //cambiar el numero de nfts disponibles
                   
                   self.n_token_on_auction+=1;
@@ -469,7 +477,7 @@ impl Contract {
     
       #[payable]
       pub fn ofertar_subasta(&mut self, token_id: TokenId  ){
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         let mut amountsended=env::attached_deposit();
         
         // Verificar  si existe:
@@ -507,9 +515,9 @@ impl Contract {
                            false,// self.finalizar_subasta(token_id.clone())
                              "la subasta ya terminó" );  
                              log!("low:{},high:{},send:{}", extradatajson.lowestbidder.parse::<u128>().unwrap(),extradatajson.highestbidder.parse::<u128>().unwrap(),amountsended);
- assert_eq!( extradatajson.lowestbidder.parse::<u128>().unwrap() > amountsended, false, "la cantidad enviada es menos que el minimo");
- assert_eq!( extradatajson.highestbidder.parse::<u128>().unwrap() >= amountsended, false, "la cantidad enviada es menor o igual que la ultima puja");
-                                 
+                assert_eq!( extradatajson.lowestbidder.parse::<u128>().unwrap() > amountsended, false, "la cantidad enviada es menos que el minimo");
+                assert_eq!( extradatajson.highestbidder.parse::<u128>().unwrap() >= amountsended, false, "la cantidad enviada es menor o igual que la ultima puja");
+                                                
                   if extradatajson.lowestbidder.parse::<u128>().unwrap() <= amountsended
                          && extradatajson.highestbidder.parse::<u128>().unwrap() < amountsended {
                     if extradatajson.highestbidder.parse::<u128>().unwrap() > 0 {
@@ -535,13 +543,82 @@ impl Contract {
                         let mut bidding_info = HashMap::new();
                         let mut _map = USER_TOKEN_HASHMAP.lock().unwrap();
                         bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
-                        _map.insert(token_id,bidding_info);
+                     //   _map.insert(token_id,bidding_info);
+                         
                   }
                   
       }
+      pub fn gethashbyonsale(& mut self,ntoke: u64 ) -> Vec<u64> {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        let mut vectIDs = vec![];
 
+        for _key in _map.keys().clone() {
+            
+            if vectIDs.len() > ntoke as usize { break ;}
+           
+           if _map.get(&_key.to_string()).clone() ==Some(&"onsale".to_string()) {
+               
+                vectIDs.push(_key.to_string().parse::<u64>().unwrap() );
+              
+           }     
+        }
+         
+       return vectIDs ;
+        
+      } 
+      pub fn gethashbyonauction(& mut self,ntoke: u64 ) -> Vec<String> {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        let mut vectIDs = vec![];
+
+        for _key in _map.keys().clone() {
+            
+            if vectIDs.len() > ntoke as usize { break ;}
+           
+           if _map.get(&_key.to_string()).clone() ==Some(&"onauction".to_string()) {
+               
+                vectIDs.push(_key.to_string());
+              
+           }     
+        }
+         
+       return vectIDs ;
+        
+      } 
+
+      pub fn tryhash(& mut self,token_id : TokenId ,status:String) -> usize {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        _map.insert(token_id.clone(),status.clone());
+        self.tokenHM=_map.clone();
+        return  self.tokenHM.len();
+        
+      } 
+      pub fn gethash(& mut self,tokens:String   )   {
+
+        let mut _map = self.tokenHM.clone();
+        for val in _map.values() {
+            log!("key {}", val);
+        }
+
+       let x = _map.get(&tokens);
+       log!("value {:?}", x);
+ 
+      } 
+      pub fn clearhash(& mut self,_token:String     )   {
+
+        let mut _map = self.tokenHM.clone();
+   
+            _map.remove(&_token);
+            self.tokenHM=_map.clone();
+
+       
+       log!("value {:?}",_map.len());
+ 
+      } 
       pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         // Verificar  si existe:
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -603,6 +680,10 @@ impl Contract {
             //
             self.tokens
             .internal_transfer_unguarded(&token_id, &token_owner_id.as_ref().unwrap().to_string(), &extradatajson.adressbidder.to_string());
+            //insertar nuevo token a Hashmap
+            let mut _map =self.tokenHM.clone();
+            _map.insert(token_id.clone(),"unavailable".to_string());
+            self.tokenHM=_map.clone();
             self.n_token_on_auction-=1;
         return false ;
     }
@@ -693,6 +774,10 @@ impl Contract {
          .as_mut()
          .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
 
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),"unavailable".to_string());
+         self.tokenHM=_map.clone();
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
@@ -710,34 +795,41 @@ impl Contract {
         //recorrer
     }
     pub fn get_ids_onsale(&self,tokens:u64) ->  Vec<u64> {
-         //declarar arreglo de ids
         let mut vectIDs = vec![];
-        //recorrer el arreglo total 
         let mut _tokfound =0;
         let totoal =  self.get_on_total_toks();
-        log!(" {}" ,&totoal);
-        vectIDs.push(0); //[0]
+        vectIDs.push(0); 
         for x in 0..totoal { 
-            
-            if  x>= totoal.clone() {  //192-192
-                break;
-            }
+            if  x>= totoal.clone() { break;  }
                 let mut token =self.get_token(x.to_string().clone());
-            
                 if token.on_sale{
                    _tokfound+=1;
-                   if _tokfound== tokens {   //30-30  tokid -45  2 30-30 -78  
-                    log!("token #30 {}" ,&token.token_id);
-                    vectIDs.push( token.token_id.parse::<u64>().unwrap() ); //vect [0,45,78]
+                   if _tokfound== tokens {   
+                    vectIDs.push( token.token_id.parse::<u64>().unwrap() );  
                     _tokfound=0;  
                     }
                }
-            
-            
-            if( _tokfound == tokens ){break; }           
+            if _tokfound == tokens {break; }           
         }
-            //ir sumando  x(cantidad de tokens retornados)  0-30
-        //[0,45,68,90]
+        vectIDs
+    }
+    pub fn get_ids_onsale_v2(&self,tokens:u64) ->  Vec<u64> {
+        let mut vectIDs = vec![];
+        let mut _tokfound =0;
+        let totoal =  self.get_on_total_toks();
+        vectIDs.push(0); 
+        for x in 0..totoal { 
+            if  x>= totoal.clone() { break;  }
+                let mut token =self.get_token(x.to_string().clone());
+                if token.on_sale{
+                   _tokfound+=1;
+                   if _tokfound== tokens {   
+                    vectIDs.push( token.token_id.parse::<u64>().unwrap() );  
+                    _tokfound=0;  
+                    }
+               }
+            if _tokfound == tokens {break; }           
+        }
         vectIDs
     }
     pub fn get_ids_onauction(&self,tokens:u64) ->  Vec<u64> {
@@ -1021,6 +1113,7 @@ impl Contract {
             n_total_tokens:old_state.n_total_tokens,
             n_token_on_sale: old_state.n_token_on_sale,
             n_token_on_auction:old_state.n_token_on_auction,
+            tokenHM:HashMap::new(), 
         }
     }
    

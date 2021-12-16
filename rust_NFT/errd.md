@@ -108,3 +108,8 @@ near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"cu
 near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"null","country":"México"}' --accountId nativodeploy.testnet
 #Busqueda con filtro de culture y country  para galeria 
 near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"carros","country":"México"}' --accountId nativodeploy.testnet
+
+
+near call nativoapp.testnet tryhash '{"token_id":"web","status":"onsale"}' --accountId dokxo.testnet
+
+near deploy --wasmFile target/wasm32-unknown-unknown/release/nft_marketplace.wasm --initFunction "migrate" --initArgs "{}" --accountId app.nativodeploy.testnet

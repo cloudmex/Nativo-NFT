@@ -1,5 +1,5 @@
 import React from "react";
-import metamasklogo from "../icons/metamasklogo.png";
+//import metamasklogo from "../icons/metamasklogo.png";
 import { nearSignIn } from "../utils/near_interaction";
 
 /**
