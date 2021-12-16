@@ -144,6 +144,7 @@ function LightHeroE(props) {
             extra: "{'culture':'"+values.culture+"','country':'"+values.country+"','creator':'"+owner+"','price':'"+(fromNearToYocto(values.price))+"','on_sale':"+combo+",'on_auction':"+(!combo)+",'adressbidder':'accountbidder','highestbidder':'"+(!combo ? 0 : "notienealtos" )+"','lowestbidder':'"+(!combo ? fromNearToYocto(values.price) : "notienebajos" )+"','expires_at':'"+date.getTime()+"','starts_at':'"+dateActual+"'}"
             //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
+          status:"onsale",
         };
         console.log(contract);
         console.log(payload);
