@@ -110,10 +110,18 @@ function LightHeroE(props) {
       });
 
       console.log(JSON.stringify(values))
-      const date = new Date(values.date)
-      date.setDate(date.getDate()+1)
+      const fecha = values.date.split('-')
+      let dateSTR= fecha[1]+'-'+fecha[2]+'-'+fecha[0]
+      console.log(dateSTR)
+      const date = new Date(dateSTR)
+      date.setDate(date.getDate())
       date.setHours(values.hrs)
       date.setMinutes(values.min)
+      if(date<Date.now()) {
+        alert("La fecha y hora para la subasta debe de ser mayor a la fecha y hora actual")
+        window.location.reload();
+        return
+      }
       let token;
       if (mint.blockchain == "0") {
         //los datos de la transacccion
