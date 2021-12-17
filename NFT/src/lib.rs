@@ -630,7 +630,7 @@ impl Contract {
         //insertar nuevo token a Hashmap
         let mut _map =self.tokenHM.clone();
         let ends= _map.len().to_string().parse::<u64>().unwrap();
-        for x in 0..50 {
+        for x in 0..56 {
              _map.insert(x.to_string(),vec!["onsale".to_string(),"nativoapp.testnet".to_string()]);
         }
         self.tokenHM=_map.clone();
@@ -778,12 +778,13 @@ impl Contract {
         let mut _map =self.tokenHM.clone();
         let ends= _map.len().to_string().parse::<u64>().unwrap();
 
-        let totoal =  ends;
+        let total =  ends;
         vectIDs.push(0); 
-        for x in 0..totoal { 
-            if  x>= totoal.clone() { break;  }
+        for x in 0..total { 
+            if  x>= total.clone() { break;  }
             let tok = _map.get(&x.to_string() ).unwrap();
-            if tok[0] == "onsale".to_string()  {
+            log!("{:?}",tok[1]);
+             if tok[0] == "onsale".to_string()  {
                  _tokfound+=1;
                 if _tokfound== tokens {   
                     vectIDs.push( x.to_string().parse::<u64>().unwrap() );  
@@ -792,7 +793,7 @@ impl Contract {
             
              }    
             
-            if _tokfound == tokens {break; }           
+            if _tokfound == tokens {break; }            
         }
         vectIDs
     }

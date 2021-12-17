@@ -487,3 +487,26 @@ pub fn get_ids_onsale(&self,tokens:u64) ->  Vec<u64> {
             vectMEta
          
     }
+     //solo obtiene los tokenid que esten en onsale
+ pub fn get_by_on_sale(& mut self,tokens: u64,_start_index: u64 ) -> Vec<u64> {
+    //insertar nuevo token a Hashmap
+    let mut _map =self.tokenHM.clone();
+    let mut vectIDs = vec![];
+    let ends= _map.len().to_string().parse::<u64>();
+    
+    //este ciclo recupera los primeros
+    for x in _start_index..ends.unwrap()  {
+        
+        if vectIDs.len() >= tokens as usize { log!("max {} ",&x); break ;}
+       
+        if _map.get(&x.to_string()).clone() ==Some(&"onsale".to_string()) {
+            
+                vectIDs.push(x.to_string().parse::<u64>().unwrap() );
+            
+        }     
+         
+    }
+     
+   return vectIDs ;
+    
+} 
