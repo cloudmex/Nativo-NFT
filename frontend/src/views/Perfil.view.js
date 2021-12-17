@@ -7,8 +7,8 @@ import {
 } from "../utils/blockchain_interaction";
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
+import { useParams, useHistory } from "react-router-dom";
 
-import lupa from '../assets/landingSlider/img/lupa1.png'
 import filtroimg from '../assets/landingSlider/img/filtro.png'
 import countrys from '../utils/countrysList'
 import loading from '../assets/landingSlider/img/loader.gif'
@@ -26,6 +26,7 @@ function LightEcommerceA() {
     tokensPerPageNear: 30,
   });
   const [esconder, setesconder] = React.useState(true);
+  const [owner, setowner] = React.useState("user");
   const [counter, setcounter] = React.useState();
   const [load, setload] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
@@ -41,7 +42,10 @@ function LightEcommerceA() {
   }
 
    
+  const { tokenid } = useParams();
   React.useEffect(() => {
+  // console.log("esto ---> ",tokenid);
+  setowner(tokenid);
     setload(c => true);
     (async () => {
       let toks, onSaleToks;
@@ -84,7 +88,8 @@ function LightEcommerceA() {
         console.log("Page",Landing.page)
         //obtener tokens a la venta
        // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
-        let pag = await contract.get_ids_onsale({
+       return 0;
+       let pag = await contract.get_ids_onsale({
           tokens: Landing.tokensPerPageNear})
         window.localStorage.setItem('pagSale',pag)
         let pagNumArr = pag
@@ -129,16 +134,11 @@ function LightEcommerceA() {
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 py-4 mx-auto flex flex-wrap flex-col">
-        <b className="text-xl">vmwxrz.testnet</b>
-        <p>kublaikollection.eth 0x8486...527e</p>
+        <b className="text-xl">{owner+".testnet"}</b>
+        {/* <p>kublaikollection.eth 0x8486...527e</p> */}
         
       </div>
-      <div className={"container px-5 py-4 mx-auto flex flex-wrap"}>
-        <input type="text" className="p-2 lg:w-5/12 px-3 buscar" placeholder="Buscar"/>
-        <button type="text" className="p-2 lg:w-1/12 px-3 ml-2 bg-s" placeholder="Buscar">
-          <img src={lupa} />
-        </button>
-      </div>
+      
       <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
       )}>

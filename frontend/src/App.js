@@ -64,7 +64,7 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
             <Route path="/galeria" component={Galeria} />
-            <Route path="/perfil" component={Perfil} />
+            <Route path="/perfil/:tokenid" component={Perfil} />
             <Route path="/auctions" component={AuctionGaleria} />
             <Route path="/auction/:tokenid" component={Auction} />
             <BlockchainProtectedRoute path="/sendauction/:tokenid" component={SendAuction} />
