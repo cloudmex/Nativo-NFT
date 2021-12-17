@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name = "nativodeploy.testnet";
+export const contract_name = "nativoapp.testnet";
 
 export const config = {
   testnet: {

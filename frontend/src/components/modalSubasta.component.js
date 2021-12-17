@@ -52,11 +52,19 @@ export default function ModalRevender(props) {
         });
         const dateActual = (data.header.timestamp)/1000000;
         console.log(values.date)
-        const date = new Date(values.date)
-        date.setDate(date.getDate()+1)
+        const fecha = values.date.split('-')
+        let dateSTR= fecha[1]+'-'+fecha[2]+'-'+fecha[0]
+        console.log(dateSTR)
+        const date = new Date(dateSTR)
+        date.setDate(date.getDate())
         date.setHours(values.hrs)
         date.setMinutes(values.min)
         console.log(date)
+        if(date<Date.now()) {
+          alert("La fecha y hora para la subasta debe de ser mayor a la fecha y hora actual")
+          setstate({ disabled: false });
+          return
+        }
         let payload = {
           token_id: props.tokenId,
           price: fromNearToYocto(values.price),
