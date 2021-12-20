@@ -220,17 +220,17 @@ impl Contract {
      * @param tokenMetadata {TokenMetadata} los metadatos
      */
     #[payable]
-    pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,info:Vec<String>) -> Token {
+    pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata) -> Token {
         let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
        let token_id: TokenId =self.n_total_tokens.to_string();
-       
+       let mut info:Vec<String>=Vec::new();
 
        let mined= self.tokens.mint(
             token_id.clone(),
             account,   // token_owner_id,//cambiar por la direccion del contrato this.address
-            Some(token_metadata),
+            Some(token_metadata.clone())
         ); //Retorna    x.token_id
             //una vez minada hacer un tranfer del contract al owner
              //transferir el nft
@@ -242,6 +242,26 @@ impl Contract {
         log!("tranfer done");
         self.n_total_tokens  +=1;
         self.n_token_on_sale += 1;
+
+        let newextradata = str::replace(&token_metadata.extra.as_ref().unwrap().to_string(), "'", "\"");
+        //el string plano se convierte a JSon
+        let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();  
+
+        //info[0] status codeinfo
+        if extradatajson.on_sale{
+            info.push("S".to_string());
+        }
+        else if extradatajson.on_auction {
+            info.push("A".to_string());
+        }
+        //info[1] Creator
+        
+        info.push(extradatajson.creator.clone());
+        //info[2] owner en este punto creador y owner son el mismo
+        info.push(extradatajson.creator);
+        //info[3] fecha creacion
+        info.push(env::block_timestamp().to_string());
+         
          //insertar nuevo token a Hashmap
          let mut _map =self.tokenHM.clone();
          _map.insert(token_id.clone(),info);
@@ -630,8 +650,8 @@ impl Contract {
         //insertar nuevo token a Hashmap
         let mut _map =self.tokenHM.clone();
         let ends= _map.len().to_string().parse::<u64>().unwrap();
-        for x in 0..56 {
-             _map.insert(x.to_string(),vec!["onsale".to_string(),"nativoapp.testnet".to_string()]);
+        for x in 0..54 {
+             _map.insert(x.to_string(),vec!["S".to_string(),"nativoapp.testnet".to_string(),"nativoapp.testnet".to_string(),"1640026773".to_string()]);
         }
         self.tokenHM=_map.clone();
         return  self.tokenHM.len();
@@ -776,49 +796,57 @@ impl Contract {
         let mut vectIDs = vec![];
         let mut _tokfound =0;
         let mut _map =self.tokenHM.clone();
-        let ends= _map.len().to_string().parse::<u64>().unwrap();
-
-        let total =  ends;
-        vectIDs.push(0); 
-        for x in 0..total { 
-            if  x>= total.clone() { break;  }
-            let tok = _map.get(&x.to_string() ).unwrap();
-            log!("{:?}",tok[1]);
-             if tok[0] == "onsale".to_string()  {
+      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
+        let mut i=0;
+        let mut status =|x : Vec<_> | { i+=1; x[0] =="S"  };
+        let mut toksfilted: Vec<u64> = _map.iter()
+                .filter(|st| status(st.1.clone()))
+                .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                .collect() ;
+                toksfilted.sort();
+           // log!("{:?}",toksfilted);
+          vectIDs.push(0);
+        for x in 0..toksfilted.clone().len() { 
+          
                  _tokfound+=1;
                 if _tokfound== tokens {   
-                    vectIDs.push( x.to_string().parse::<u64>().unwrap() );  
+                    vectIDs.push( toksfilted[x].clone() );  
                     _tokfound=0;  
                     }
             
-             }    
+           
             
             if _tokfound == tokens {break; }            
         }
         vectIDs
+        //return toksfilted[0..25].to_vec();
     }
     //obtiene paginacion de los tokens en subasta
     pub fn get_pagination_onauction(&self,tokens:u64) ->  Vec<u64> {
         let mut vectIDs = vec![];
         let mut _tokfound =0;
         let mut _map =self.tokenHM.clone();
-        let ends= _map.len().to_string().parse::<u64>().unwrap();
-
-        let totoal =  ends;
-        vectIDs.push(0); 
-        for x in 0..totoal { 
-            if  x>= totoal.clone() { break;  }
-            let tok = _map.get(&x.to_string() ).unwrap();
-            if tok[0] == "onauction".to_string()  {
+      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
+        let mut i=0;
+        let mut status =|x : Vec<_> | { i+=1; x[0] =="A"  };
+        let mut toksfilted: Vec<u64> = _map.iter()
+                .filter(|st| status(st.1.clone()))
+                .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                .collect() ;
+                toksfilted.sort();
+           // log!("{:?}",toksfilted);
+          vectIDs.push(0);
+        for x in 0..toksfilted.clone().len() { 
+          
                  _tokfound+=1;
                 if _tokfound== tokens {   
-                    vectIDs.push( x.to_string().parse::<u64>().unwrap() );  
+                    vectIDs.push( toksfilted[x].clone() );  
                     _tokfound=0;  
                     }
             
-             }     
+           
             
-            if _tokfound == tokens {break; }           
+            if _tokfound == tokens {break; }            
         }
         vectIDs
     }
@@ -881,32 +909,55 @@ impl Contract {
     
  
     //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn obtener_pagina_on_sale(& mut self,tokens: u64,_start_index: u64 ) -> Vec<Meta> {
+    pub fn obtener_pagina_on_sale(& self,tokens: u64,_start_index: u64,account: ValidAccountId) -> Vec<Meta>  {
         //insertar nuevo token a Hashmap
         let mut _map =self.tokenHM.clone();
         let mut vectIDs = vec![];
         let mut vectMEta = vec![];
         let ends= _map.len().to_string().parse::<u64>();
+        let mut _tokfound =0;
+         
+      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
+        let mut i=0;
+        let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[0] =="S"  };
+        let mut toksfilted: Vec<u64> = _map.iter()
+                .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                .collect() ;
+                toksfilted.sort();
+          //  log!("{:?}",toksfilted);
+         // vectIDs.push(0);
+       /*  for x in 0..toksfilted.clone().len() { 
+          
+               
+                if _tokfound== tokens {   
+                    vectIDs.push( toksfilted[x].clone() );  
+                    _tokfound=0;  
+                    }
+            
+           
+            
+            if _tokfound == tokens {break; }            
+        } */
+         
         
         //este ciclo recupera los primeros
         for x in _start_index..ends.unwrap()  {
-            
-            if vectIDs.len() >= tokens as usize { log!("max {} ",&x); break ;}
-        
-            let tok = _map.get(&x.to_string() ).unwrap();
-            if tok[0] == "onsale".to_string()  {
+              _tokfound+=1;
+                if _tokfound > tokens  {break;}      
+            let tok = toksfilted[x as usize];
+            //log!("{}",tok.clone());
+
+                     vectIDs.push(tok );
                 
-                    vectIDs.push(x.to_string().parse::<u64>().unwrap() );
-                
-            }      
-            
-        }
+        }  
 
         let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
         //en este ciclo recupera los tokens que encontramos anteriormente
           for x in 0..endmeta { 
             let tokenid =  vectIDs[x as usize];
-            let mut token =self.get_token(tokenid.to_string());
+            let  token =self.get_token(tokenid.to_string());
+     
             vectMEta.push(token  );
                     
         }  
@@ -915,7 +966,7 @@ impl Contract {
     return vectMEta ;   
     }
     //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn obtener_pagina_on_auction(& mut self,tokens: u64,_start_index: u64 ) -> Vec<Meta> {
+    pub fn obtener_pagina_on_auction(&   self,tokens: u64,_start_index: u64 ) -> Vec<Meta> {
         //insertar nuevo token a Hashmap
         let mut _map =self.tokenHM.clone();
         let mut vectIDs = vec![];
