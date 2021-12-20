@@ -207,7 +207,7 @@ function LightEcommerceA() {
                     else{
                       window.localStorage.setItem("page",parseInt(Landing.pag.split(",")[index])+1);  
                     }
-                    setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
+                    //setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
 
                     window.location.reload();
                   }}

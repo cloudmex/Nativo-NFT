@@ -51,15 +51,14 @@ export const methodOptions = {
     "get_ids_onauction",
     "get_pagination_onsale",
     "get_pagination_onauction",
-    
+    "obtener_pagina_on_sale",
+    "obtener_pagina_on_auction",
+    "obtener_pagina_by_owner",
    
   ],
   changeMethods: [
     "update_token",
     "minar",
-    "obtener_pagina_on_sale",
-    "obtener_pagina_on_auction",
-    "obtener_pagina_by_owner",
     "ofertar_subasta",
     "extraer_token",
     "nft_transfer_call",
