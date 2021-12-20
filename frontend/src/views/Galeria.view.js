@@ -18,7 +18,7 @@ function LightEcommerceA() {
     pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 30,
+    tokensPerPageNear: 15,
   });
   const [counter, setcounter] = React.useState();
 
@@ -65,17 +65,15 @@ function LightEcommerceA() {
         //console.log("Page",Landing.page)
         //obtener tokens a la venta
        // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
-        let pag = await contract.get_by_on_sale({
-          tokens: Landing.tokensPerPageNear,_start_index:0})
+        let pag = await contract.get_pagination_onsale({
+          tokens: Landing.tokensPerPageNear})
           
         window.localStorage.setItem('pagSale',pag)
         let pagNumArr = pag
         
-        toks = await contract.obtener_pagina_v5({
-          from_index: Landing.page,
-          limit: Landing.tokensPerPageNear,
-          culture: "null",
-          country: "null",
+        toks = await contract.obtener_pagina_on_sale({
+          tokens: Landing.tokensPerPageNear,
+          _start_index: Landing.page,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();

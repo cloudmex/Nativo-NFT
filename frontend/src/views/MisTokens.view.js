@@ -167,7 +167,7 @@ function MisTokens(props) {
           //limit: nfts.tokensPerPageNear,
         };
 
-        let nftsArr = await contract.obtener_pagina_v3_by_owner(payload);
+        let nftsArr = await contract.obtener_pagina_by_owner(payload);
         let balance = await contract.nft_supply_for_owner({
           account_id: account,
         });
