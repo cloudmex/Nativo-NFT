@@ -70,10 +70,10 @@ function LightEcommerceA() {
           
         window.localStorage.setItem('pagSale',pag)
         let pagNumArr = pag
-        
         toks = await contract.obtener_pagina_on_sale({
           tokens: Landing.tokensPerPageNear,
           _start_index: Landing.page,
+          account:"syi216.testnet",
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
