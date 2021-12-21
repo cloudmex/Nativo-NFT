@@ -47,13 +47,15 @@ function LightHeroE(props) {
     fechaActual();
   },[])
   //guardara todos los valores del formulario
+  const pru = (parseInt(Math.random() *100000)+1);
+  
   const formik = useFormik({
     initialValues: {
-      title: "",
-      description: "",
-      price: 0,
-      culture: "",
-      country: "",
+      title: "Prueba "+pru,
+      description: "Esta es al descripcion de la prueba "+ pru,
+      price: (parseInt(Math.random() *5)+1),
+      culture: "auto",
+      country: "autlan",
       image: "",
       date: "",
       hrs: "",

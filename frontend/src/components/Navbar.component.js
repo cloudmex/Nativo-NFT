@@ -6,11 +6,13 @@ import { config, signOut } from "../utils/near_interaction";
 import * as nearAPI from "near-api-js";
 import { blockchains } from "../utils/constraint";
 import nativoLogo from '../assets/img/nativologocrop.png'
+import lupa from '../assets/landingSlider/img/lupa1.png'
 function LightHeaderB(props) {
   const [state, setState] = useState({
     dropdown:
       blockchains[parseInt(localStorage.getItem("blockchain"))] || "Blockchain",
   });
+  const [buscar, setbuscar] = useState("");
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -93,11 +95,31 @@ function LightHeaderB(props) {
             Mis Nfts
           </a>
         </nav>
+      
+        <form className={"flex flex-wrap mr-7"} 
+          onSubmit={e=>{
+            e.preventDefault();
+            window.location.href ="/perfil/"+buscar;
+          }}
+        >
+                  <input type="text"  className="p-2 lg:w-12/12 px-3 buscar" placeholder="Usuario"
+                    onChange={e=>{
+                      setbuscar(e.target.value); 
+                    }}  
+                  />
+                  <button type="submit" className="p-2 lg:w-1/12 px-3 ml-2 bg-s">
+                    <img src={lupa} />
+                  </button>
+                </form> 
+
         <Menu as="div" className="relative inline-block text-left">
+        
           {({ open }) => (
             <>
-              <div>
-                <Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-yellow-500">
+            
+              <div className="flex flex-nowrap ">
+               
+                <Menu.Button className=" inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-yellow-500">
                   {state.dropdown}
                   <ChevronDownIcon
                     className="-mr-1 ml-2 h-5 w-5"
@@ -106,6 +128,7 @@ function LightHeaderB(props) {
                 </Menu.Button>
               </div>
 
+              
               <Transition
                 show={open}
                 as={Fragment}
@@ -116,11 +139,17 @@ function LightHeaderB(props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
+
+                
                 <Menu.Items
                   static
                   className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white outline-none"
                 >
+                  
                   <div className="py-1">
+
+                  
+
                     <Menu.Item
                       onClick={() => {
                         changeBlockchain(0);

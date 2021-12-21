@@ -18,8 +18,8 @@ import {
   getNearAccount,
   getNearContract,
 } from "../utils/near_interaction";
-
 import Modal from "../components/modal.component";
+import flechaiz from '../assets/landingSlider/img/flechaIz.png'
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
@@ -218,14 +218,23 @@ function LightEcommerceB(props) {
   return (
     <>
     <section className="text-gray-600 body-font overflow-hidden">
-      <div className="container px-5 py-24 mx-auto">
+      <div className="container px-5 py-8 mx-auto">
+      <a
+        href="/galeria"
+        className="regresar"
+      >
+        <img 
+          src={flechaiz}
+        />
+      </a>
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <img
             alt="ecommerce"
             className="lg:w-1/2 w-full lg:h-auto h-64 object-fill  object-fill md:object-scale-down  rounded"
             src={`https://ipfs.io/ipfs/${state?.jdata.image}`}
           />
-          <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+          <div className="lg:w-1/2 w-full lg:pl-10 lg:mt-0">
+          
             <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mb-6">
               {state?.jdata.title}
             </h1>
@@ -288,7 +297,7 @@ function LightEcommerceB(props) {
             </div>
 
             <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Propietario</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
@@ -338,7 +347,14 @@ function LightEcommerceB(props) {
                           :            
                           <button
                           className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                          disabled={state?.tokens.onSale}
+                          style={
+                            btn
+                            ?
+                            {width:"100%", justifyContent:"center"}
+                            :
+                            {}
+                          }
+                          // disabled={state?.tokens.onSale}
                           onClick={async () => {
                             nearSignIn(window.location.href);
                           }}

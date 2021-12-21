@@ -438,7 +438,7 @@ function LightEcommerceB(props) {
                           : 
                           <button
                           className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                          disabled={state?.btnDisabled}
+                          // disabled={state?.btnDisabled}
                           onClick={async () => {
                             nearSignIn(window.location.href);
                           }}
