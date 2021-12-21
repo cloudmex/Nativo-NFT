@@ -73,10 +73,11 @@ function LightEcommerceA() {
         toks = await contract.obtener_pagina_on_sale({
           tokens: Landing.tokensPerPageNear,
           _start_index: Landing.page,
-          _account:"null",
-          _minprice:0,
-          _maxprice:0,
-          _date:0,
+          status:"S",
+          _Creatoraccount:"null",
+          _Owneraccount:"null",
+          price:0,
+          date:0,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
