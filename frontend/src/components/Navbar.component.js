@@ -74,7 +74,7 @@ function LightHeaderB(props) {
           href="/"
          
         >
-         <img  src={nativoLogo} class="d-inline-block align-top" alt="logo"   width="200px"/>
+         <img  src={nativoLogo} className="d-inline-block align-top" alt="logo"   width="200px"/>
 
          
         </a>

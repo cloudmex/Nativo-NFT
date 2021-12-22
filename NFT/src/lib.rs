@@ -23,9 +23,12 @@ use near_sdk::{
 use serde_json::json;
 use std::convert::TryInto;
 
+
 near_sdk::setup_alloc!();
 /// Balance is type for storing amounts of tokens.
 pub type Balance = u128;
+
+ 
 
 
 #[derive(BorshDeserialize, BorshSerialize )]
@@ -35,6 +38,8 @@ pub struct OldContract {
     n_total_tokens: u64,
     n_token_on_sale: u64,
     n_token_on_auction: u64,
+    tokenHM:HashMap<TokenId, Vec<String>>,
+ 
 }
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize )]
@@ -44,7 +49,9 @@ pub struct Contract {
     n_total_tokens: u64,
     n_token_on_sale: u64,
     n_token_on_auction: u64,
+    tokenHM:HashMap<TokenId, Vec<String> >,
 }
+ 
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Meta {
@@ -80,9 +87,18 @@ pub struct Extras {
     expires_at: String,
     starts_at: String,
 }
-
+ 
+ 
+ 
 lazy_static! {
-    static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, HashMap<String,String>>> = Mutex::new(HashMap::new());
+    static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
+    static ref CONV_MAP: HashMap<String, String> = {
+        let mut map = HashMap::new();
+        
+        map
+    };
+   
+
 }
 
 impl Default for Contract {
@@ -106,11 +122,14 @@ impl Default for Contract {
              Some(StorageKey::TokenMetadata),
              Some(StorageKey::Enumeration),
              Some(StorageKey::Approval),
+
          ) ,
          metadata: LazyOption::new(StorageKey::Metadata, Some(&meta)),
          n_total_tokens: 0,
          n_token_on_sale: 0,
          n_token_on_auction: 0,
+         tokenHM:HashMap::new(),
+         
          
      }   }
 }
@@ -164,6 +183,8 @@ impl Contract {
             n_total_tokens: 0,
             n_token_on_sale: 0,
             n_token_on_auction: 0,
+            tokenHM:HashMap::new(),
+            
         }
     }
     
@@ -199,17 +220,17 @@ impl Contract {
      * @param tokenMetadata {TokenMetadata} los metadatos
      */
     #[payable]
-    pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,) -> Token {
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+    pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata) -> Token {
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
        let token_id: TokenId =self.n_total_tokens.to_string();
-       
+       let mut info:Vec<String>=Vec::new();
 
        let mined= self.tokens.mint(
             token_id.clone(),
             account,   // token_owner_id,//cambiar por la direccion del contrato this.address
-            Some(token_metadata),
+            Some(token_metadata.clone())
         ); //Retorna    x.token_id
             //una vez minada hacer un tranfer del contract al owner
              //transferir el nft
@@ -221,13 +242,38 @@ impl Contract {
         log!("tranfer done");
         self.n_total_tokens  +=1;
         self.n_token_on_sale += 1;
+
+        let newextradata = str::replace(&token_metadata.extra.as_ref().unwrap().to_string(), "'", "\"");
+        //el string plano se convierte a JSon
+        let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();  
+
+        //info[0] status codeinfo
+        if extradatajson.on_sale{
+            info.push("S".to_string());
+        }
+        else if extradatajson.on_auction {
+            info.push("A".to_string());
+        }
+        //info[1] Creator
+        
+        info.push(extradatajson.creator.clone());
+        //info[2] owner en este punto creador y owner son el mismo
+        info.push(extradatajson.creator);
+        //info[3] fecha creacion
+        info.push(env::block_timestamp().to_string());
+         
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),info);
+         self.tokenHM=_map.clone();
+
         let mut originaltoken = Contract::enum_get_token( &self,self.tokens.owner_by_id.get(&token_id.to_string()).unwrap(),token_id.clone());
         originaltoken
     }
 
     #[payable]
-    pub fn comprar_nft(&mut self, token_id: TokenId) -> TokenMetadata {
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+    pub fn comprar_nft(&mut self, token_id: TokenId,info:Vec<String>) -> TokenMetadata {
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
 
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
         //let token_id_u64 = token_id.parse::<u64>().unwrap();
@@ -242,43 +288,11 @@ impl Contract {
             .token_metadata_by_id.as_ref()
             .and_then(|by_id| by_id.get(&token_id))
             .unwrap();
-            /* {
-                title: 'Mr Burrito',
-                description: 'This is a burrito',
-                media: 'imagenimagenimagenimagenimagenim',
-                media_hash: null,
-                copies: null,
-                issued_at: null,
-                expires_at: null,
-                starts_at: null,
-                updated_at: null,
-                extra: "{'culture':'Burriroca','country':'BurritoLand','creator':'dev-1636751893359-19496702378959','price':'20','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}",
-                reference: null,
-                reference_hash: null
-              } */
+            
             let owner_id = self.tokens.owner_by_id.get(&token_id);
             let owner_value = owner_id.as_deref().unwrap_or("default string");
             let mut metadataextra = Contract::get_token(self, token_id.clone());
-        /*     {
-                token_id: '1',
-                owner_id: 'dev-1636751893359-19496702378959',
-                title: 'Mr Burrito',
-                description: 'This is a burrito',
-                media: 'imagenimagenimagenimagenimagenim',
-                culture: 'Burriroca',
-                country: 'BurritoLand',
-                creator: 'dev-1636751893359-19496702378959',
-                price: '20',
-                on_sale: true,
-                on_auction: false,
-                adressbidder: 'accountbidder',
-                highestbidder: 'notienealtos',
-                lowestbidder: 'notienebajos',
-                expires_at: 'noexpira',
-                starts_at: 'noinicia'
-            } */
-            
-            // si no cuenta con los fondos hacemos rollback
+      
         let amount = env::attached_deposit();
         assert_eq!(
             metadataextra.price.parse::<u128>().unwrap(),
@@ -355,16 +369,17 @@ impl Contract {
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale -= 1;
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),info);
+         self.tokenHM=_map.clone();
         //retornar la metadata
         originaltoken
     }
 
-    // pub fn get_tokens_by_onwer(self,account_id: String, from_index:String,limit:String){
-    //     self.tokens.owner_by_id.tokens_per_owner.get(account_id);
-    // }
-
+   
     
-    pub fn revender(&mut self, token_id: TokenId, price: String) -> TokenMetadata {
+    pub fn revender(&mut self, token_id: TokenId, price: String,info:Vec<String>) -> TokenMetadata {
         //comprobar que el token exista
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -412,11 +427,15 @@ impl Contract {
             .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),info);
+         self.tokenHM=_map.clone();
         //retornar la metadata
         originaltoken
     }
 
-    pub fn subastar_nft(&mut self, token_id: TokenId,lowestbidder:String,starts_at:String,expires_at:String){
+    pub fn subastar_nft(&mut self, token_id: TokenId,lowestbidder:String,starts_at:String,expires_at:String,info:Vec<String>){
      
       
         // Verificar  si existe:
@@ -462,14 +481,18 @@ impl Contract {
                       .as_mut()
                       .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
          
+                       //insertar nuevo token a Hashmap
+                    let mut _map =self.tokenHM.clone();
+                    _map.insert(token_id.clone(),info);
+                    self.tokenHM=_map.clone();
                 //cambiar el numero de nfts disponibles
                   
                   self.n_token_on_auction+=1;
-      }
+    }
     
-      #[payable]
-      pub fn ofertar_subasta(&mut self, token_id: TokenId  ){
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+    #[payable]
+    pub fn ofertar_subasta(&mut self, token_id: TokenId   ){
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         let mut amountsended=env::attached_deposit();
         
         // Verificar  si existe:
@@ -507,9 +530,9 @@ impl Contract {
                            false,// self.finalizar_subasta(token_id.clone())
                              "la subasta ya terminó" );  
                              log!("low:{},high:{},send:{}", extradatajson.lowestbidder.parse::<u128>().unwrap(),extradatajson.highestbidder.parse::<u128>().unwrap(),amountsended);
- assert_eq!( extradatajson.lowestbidder.parse::<u128>().unwrap() > amountsended, false, "la cantidad enviada es menos que el minimo");
- assert_eq!( extradatajson.highestbidder.parse::<u128>().unwrap() >= amountsended, false, "la cantidad enviada es menor o igual que la ultima puja");
-                                 
+                assert_eq!( extradatajson.lowestbidder.parse::<u128>().unwrap() > amountsended, false, "la cantidad enviada es menos que el minimo");
+                assert_eq!( extradatajson.highestbidder.parse::<u128>().unwrap() >= amountsended, false, "la cantidad enviada es menor o igual que la ultima puja");
+                                                
                   if extradatajson.lowestbidder.parse::<u128>().unwrap() <= amountsended
                          && extradatajson.highestbidder.parse::<u128>().unwrap() < amountsended {
                     if extradatajson.highestbidder.parse::<u128>().unwrap() > 0 {
@@ -535,13 +558,13 @@ impl Contract {
                         let mut bidding_info = HashMap::new();
                         let mut _map = USER_TOKEN_HASHMAP.lock().unwrap();
                         bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
-                        _map.insert(token_id,bidding_info);
+                     //   _map.insert(token_id,bidding_info);
+                         
                   }
                   
-      }
-
-      pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
-        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
+    }
+    pub fn finalizar_subasta(&mut self, token_id: TokenId,info:Vec<String>) -> bool {
+        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         // Verificar  si existe:
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -562,10 +585,10 @@ impl Contract {
             let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
             //Validar si ha finalizado
            
-          /*   assert_eq!( extradatajson.expires_at.parse::<i64>().unwrap()
+              /*   assert_eq!( extradatajson.expires_at.parse::<i64>().unwrap()
             <
                  chrono::offset::Utc::now().timestamp()  , false,"la subasta aun no termina" );
- */
+            */
             let amount =extradatajson.highestbidder.parse::<f64>().unwrap();
             //si ya termino la subasta
             //pagamos las ganancias al al onwer anterior,ganancias al contrato y  regalias al creator
@@ -603,9 +626,64 @@ impl Contract {
             //
             self.tokens
             .internal_transfer_unguarded(&token_id, &token_owner_id.as_ref().unwrap().to_string(), &extradatajson.adressbidder.to_string());
+            //insertar nuevo token a Hashmap
+            let mut _map =self.tokenHM.clone();
+            _map.insert(token_id.clone(),info);
+            self.tokenHM=_map.clone();
             self.n_token_on_auction-=1;
         return false ;
     }
+
+   
+     
+    //Genera un nuevo registro o actualiza uno existente
+    pub fn inserthash(& mut self,token_id : TokenId ,info:Vec<String>) -> usize {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        _map.insert(token_id.clone(),info);
+        self.tokenHM=_map.clone();
+        return  self.tokenHM.len();
+        
+    } 
+    //harcodea 2000 registros al hashmap
+    pub fn fillhash(& mut self ) -> usize {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        let ends= _map.len().to_string().parse::<u64>().unwrap();
+        for x in 0..55 {
+             _map.insert(x.to_string(),vec!["S".to_string(),"dokxo.testnet".to_string(),"dokxo.testnet".to_string(),"2".to_string(),"1639897851".to_string()]);
+        }
+        self.tokenHM=_map.clone();
+        return  self.tokenHM.len();
+        
+    } 
+    //obtiene un registro del hashmap por key
+    pub fn gethash(& mut self,tokens:String   )   {
+
+        let mut _map = self.tokenHM.clone();
+        
+       let x = _map.get(&tokens);
+       log!("value {:?}", x);
+ 
+    }
+    //elimina un registro por key 
+    pub fn clearhash(& mut self,_token:String     )   {
+
+        let mut _map = self.tokenHM.clone();
+   
+            _map.remove(&_token);
+            self.tokenHM=_map.clone();
+
+       
+       log!("value {:?}",_map.len());
+ 
+    } 
+    //genera un nuevo hashmap
+    pub fn resethash(& mut self  )   {
+        let mut _map = self.tokenHM.clone();
+        self.tokenHM=HashMap::new();
+    } 
+    
     #[payable]
     pub fn extraer_token(&mut self, token_id: TokenId){
          
@@ -648,7 +726,7 @@ impl Contract {
             self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
     }
       /// 
-      pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
+    pub fn quitar_del_market_place(&mut self, token_id: TokenId,info:Vec<String>) -> TokenMetadata {
         //comprobar que el token exista
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(),
@@ -693,6 +771,10 @@ impl Contract {
          .as_mut()
          .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
 
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         _map.insert(token_id.clone(),info);
+         self.tokenHM=_map.clone();
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
@@ -709,71 +791,70 @@ impl Contract {
         self.n_token_on_sale
         //recorrer
     }
-    pub fn get_ids_onsale(&self,tokens:u64) ->  Vec<u64> {
-         //declarar arreglo de ids
+    //obtiene paginacion de los tokens en venta
+    pub fn get_pagination_onsale(&self,tokens:u64) ->  Vec<u64> {
         let mut vectIDs = vec![];
-        //recorrer el arreglo total 
         let mut _tokfound =0;
-        let totoal =  self.get_on_total_toks();
-        log!(" {}" ,&totoal);
-        vectIDs.push(0); //[0]
-        for x in 0..totoal { 
-            
-            if  x>= totoal.clone() {  //192-192
-                break;
-            }
-                let mut token =self.get_token(x.to_string().clone());
-            
-                if token.on_sale{
-                   _tokfound+=1;
-                   if _tokfound== tokens {   //30-30  tokid -45  2 30-30 -78  
-                    log!("token #30 {}" ,&token.token_id);
-                    vectIDs.push( token.token_id.parse::<u64>().unwrap() ); //vect [0,45,78]
+        let mut _map =self.tokenHM.clone();
+      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
+        let mut i=0;
+        let mut status =|x : Vec<_> | { i+=1; x[0] =="S"  };
+        let mut toksfilted: Vec<u64> = _map.iter()
+                .filter(|st| status(st.1.clone()))
+                .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                .collect() ;
+                toksfilted.sort();
+           // log!("{:?}",toksfilted);
+          vectIDs.push(0);
+        for x in 0..toksfilted.clone().len() { 
+          
+                 _tokfound+=1;
+                if _tokfound== tokens {   
+                    vectIDs.push( toksfilted[x].clone() );  
                     _tokfound=0;  
                     }
-               }
             
+           
             
-            if( _tokfound == tokens ){break; }           
+            if _tokfound == tokens {break; }            
         }
-            //ir sumando  x(cantidad de tokens retornados)  0-30
-        //[0,45,68,90]
+        vectIDs
+        //return toksfilted[0..25].to_vec();
+    }
+    //obtiene paginacion de los tokens en subasta
+    pub fn get_pagination_onauction(&self,tokens:u64) ->  Vec<u64> {
+        let mut vectIDs = vec![];
+        let mut _tokfound =0;
+        let mut _map =self.tokenHM.clone();
+      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
+        let mut i=0;
+        let mut status =|x : Vec<_> | { i+=1; x[0] =="A"  };
+        let mut toksfilted: Vec<u64> = _map.iter()
+                .filter(|st| status(st.1.clone()))
+                .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                .collect() ;
+                toksfilted.sort();
+           // log!("{:?}",toksfilted);
+          vectIDs.push(0);
+        for x in 0..toksfilted.clone().len() { 
+          
+                 _tokfound+=1;
+                if _tokfound== tokens {   
+                    vectIDs.push( toksfilted[x].clone() );  
+                    _tokfound=0;  
+                    }
+            
+           
+            
+            if _tokfound == tokens {break; }            
+        }
         vectIDs
     }
-    pub fn get_ids_onauction(&self,tokens:u64) ->  Vec<u64> {
-        //declarar arreglo de ids
-       let mut vectIDs = vec![];
-       //recorrer el arreglo total 
-       let mut _tokfound =0;
-       let totoal =  self.get_on_total_toks();
-       log!(" {}" ,&totoal);
-       vectIDs.push(0);  
-       for x in 0..totoal { 
-           
-           if  x>= totoal.clone() {   
-               break;
-           }
-               let mut token =self.get_token(x.to_string().clone());
-           
-               if token.on_auction{
-                  _tokfound+=1;
-                  if _tokfound== tokens {   
-                   log!("token #30 {}" ,&token.token_id);
-                   vectIDs.push( token.token_id.parse::<u64>().unwrap() );  
-                   _tokfound=0;  
-                   }
-              }
-           
-           
-           if( _tokfound == tokens ){break; }           
-       }
-           
-       vectIDs
-   }
+
+    
     pub fn get_on_auction_toks(&self) -> u64 {
         self.n_token_on_auction
     }
-
     pub fn get_on_auction_toksV2(&self) -> u64 {
         let mut _realonsale =0;
 
@@ -794,25 +875,6 @@ impl Contract {
     pub fn get_on_total_toks(&self) -> u64 {
         self.n_total_tokens
     }
-
-     /* fn update_token(&mut self, token_id: TokenId, extra: String) -> TokenMetadata {
-        //assert!(!env::state_exists(), "Already initialized");
-        let mut metadata = self
-            .tokens
-            .token_metadata_by_id
-            .as_ref()
-            .and_then(|by_id| by_id.get(&token_id))
-            .unwrap();
-        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
-        //assert_eq!(owner_id!= env::signer_account_id() && owner != ,false,"");
-        metadata.extra = Some(extra);
-        self.tokens
-            .token_metadata_by_id
-            .as_mut()
-            .and_then(|by_id| by_id.insert(&token_id, &metadata));
-        metadata
-    } */
-
     pub fn get_token(&self, token_id: TokenId) -> Meta {
         
         let mut metadata = self
@@ -846,163 +908,156 @@ impl Contract {
     }
     
  
-
-    pub fn obtener_pagina_v3_by_owner(&self,account: ValidAccountId) -> Vec<Meta>  {
+    //solo obtiene los tokenid que esten en onsale y retorna un vec de META
+    pub fn obtener_pagina_on_sale(& self,tokens: u64,_start_index: u64, _minprice:u64,_maxprice:u64,_date:u64) -> Vec<Meta>  {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        let mut vectIDs = vec![];
         let mut vectMEta = vec![];
-      
-       
-        let totoal =  self.get_on_total_toks();
-        log!("  brakes here  -> : {}",&totoal );
-            for x in 0..totoal { 
+        let ends= _map.len().to_string().parse::<u64>();
+        let mut _tokfound =0;
+        let mut i=0;
+        let mut toksfilted:Vec<u64> = vec![];
+        //comienza el filtrado segun los parametros
+        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
+
+            // (25,0, "null",0,0) ->Gallery
+            if _minprice==0 && _maxprice==0 && _date==0 {
+
+                let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[0] =="S"  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect() ;
+                     toksfilted.sort();
+
+            } // (25,0,"S","null",2,0) ->Gallery y price
+            else if _minprice>=0 &&   _date==0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> | 
+                { i+=1; vect2[0] =="S" && vect2[3].parse::<u64>().unwrap() >=_minprice  && vect2[3].parse::<u64>().unwrap() <=_maxprice };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                     return  vectMEta
+                  }   
+                      
+            }// (25,0,"S","null",0,2143234) ->Gallery y date
+            else if _minprice==0 && _date>0 {
+
+            }// (25,0,"null",2,2132433543) ->Gallery , price y date
+            else if _minprice>0 && _date>0 {
+
+            }
+
+
+        
+         
+        
            
-                if x == totoal { break; } 
-              
-                 let mut token =self.get_token(x.to_string().clone());
-            /*    
-                log!("  token -> : {:?}",token.token_id.clone() );
-             */    
-                if token.owner_id==account.to_string(){
-                        vectMEta.push(token  );
-                }
-           }
-            vectMEta
+            // (25,0,"S","null",2,2132433543) ->Gallery , price y date
+        // (25,0,"U","d.testnet",0,0) -> Gallery's artis
+            // (25,0,"U","d.testnet",2,0) -> Gallery's artis y price
+            // (25,0,"U","d.testnet",2,2234235443) -> Gallery's artis, price y date
+        // (25,0,"A","null",0,0) ->Gallery auction
+           // (25,0,"A","null",2,0) ->Gallery y price
+            // (25,0,"A","null",2,2132433543) ->Gallery , price y date
+
+         
+      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
+        
+      
+        
+        //este ciclo recupera los primeros
+        for x in _start_index..ends.unwrap()  {
+              _tokfound+=1;
+                if _tokfound > tokens  {break;}      
+            let tok = toksfilted[x as usize];
+            //log!("{}",tok.clone());
+
+                     vectIDs.push(tok );
+                
+        }  
+
+        let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
+        //en este ciclo recupera los tokens que encontramos anteriormente
+          for x in 0..endmeta { 
+            let tokenid =  vectIDs[x as usize];
+            let  token =self.get_token(tokenid.to_string());
+     
+            vectMEta.push(token  );
+                    
+        }  
+
+        
+    return vectMEta ;   
+    }
+    //solo obtiene los tokenid que esten en onsale y retorna un vec de META
+    pub fn obtener_pagina_on_auction(&   self,tokens: u64,_start_index: u64 ) -> Vec<Meta> {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        let mut vectIDs = vec![];
+        let mut vectMEta = vec![];
+        let ends= _map.len().to_string().parse::<u64>();
+        
+        //este ciclo recupera los primeros
+        for x in _start_index..ends.unwrap()  {
+            
+            if vectIDs.len() >= tokens as usize { log!("max {} ",&x); break ;}
+        
+            let tok = _map.get(&x.to_string() ).unwrap();
+            if tok[0] == "onauction".to_string()  {
+                
+                    vectIDs.push(x.to_string().parse::<u64>().unwrap() );
+                
+            }       
+            
+        }
+
+        let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
+        //en este ciclo recupera los tokens que encontramos anteriormente
+          for x in 0..endmeta { 
+            let tokenid =  vectIDs[x as usize];
+            let mut token =self.get_token(tokenid.to_string());
+            vectMEta.push(token  );
+                    
+        }  
+
+        
+    return vectMEta ;   
+    }
+    pub fn obtener_pagina_by_owner(&self,account: ValidAccountId) -> Vec<Meta>  {
+         //insertar nuevo token a Hashmap
+         let mut _map =self.tokenHM.clone();
+         let mut vectIDs = vec![];
+         let mut vectMEta = vec![];
+         let ends= _map.len().to_string().parse::<u64>();
+         
+         //este ciclo recupera los primeros
+         for x in 0..ends.unwrap()  {
+            let tok = _map.get(&x.to_string() ).unwrap();
+             if tok[1] == account.to_string()  {
+                  vectIDs.push(x.to_string().parse::<u64>().unwrap() );
+             }                  
+         }
+ 
+         let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
+         //en este ciclo recupera los tokens que encontramos anteriormente
+           for x in 0..endmeta { 
+             let tokenid =  vectIDs[x as usize];
+             let mut token =self.get_token(tokenid.to_string());
+             vectMEta.push(token);
+                     
+         }  
+ 
+         
+     return vectMEta ; 
          
     }
   
-    pub fn obtener_pagina_v5(&self, from_index: u64, limit: u64,culture: String,country:String) -> Vec<Meta>  {
-      
-        let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");  //0 //30 -> 30:45
-        //let mut counter: usize = from_index;                //46 //30 -> 30:89                      
-        log!("  from  -> : {},to -> {}",&from_index,&limit);
-        let mut _tokfound =0;  
-        let mut reg =0;
-        let totoal =  self.get_on_total_toks();
-                log!(" {}" ,&totoal);
-            for x in from_index..totoal { 
-                
-                if  x>= totoal.clone() { //0 ->150   //29-> 150
-                    break;
-                }
-                    let mut token =self.get_token(x.to_string().clone());
-               
-                 
-                     //si el token esta a lavente agregar al vect
-                 //si los filtros country y culture estan en null
-                 if token.on_sale.clone() && culture =="null" && country =="null" {
-                            
-                    vectMEta.push(token  );
-                    _tokfound+=1;
-                    reg+=1;
-                }
-             //si    country es diferente de null y culture esta en null
-                else if token.on_sale.clone()  && culture !="null" && country =="null"  {
-                    if token.culture == culture{
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }    
-                    
-                    
-                }
-                //si  country es null y culture es diferente de null
-                else if token.on_sale.clone()  && culture =="null" && country !="null"  {
-                    if token.country == country{
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }    
-                    
-                    
-                }
-                //si los filtros country es diferente de null y culture esta en null
-                else if token.on_sale.clone()  && culture !="null" && country !="null" {
-                        
-                    if token.culture == culture && token.country == country {
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }  
-                    
-                }
-                if _tokfound== limit {  //1 <30  //30-30
-                    break;
-                }
-                
-                          
-            }
-            
-            log!("  registros  -> : {} ",&reg);
-            vectMEta
-         
-    }
-    pub fn obtener_pagina_v5_auction(&self, from_index: u64, limit: u64,culture: String,country:String) -> Vec<Meta>  {
-      
-        let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");  //0 //30 -> 30:45
-                      //46 //30 -> 30:89                      
-        
-        let mut _tokfound =0;  
-        let mut reg =0;
-        let totoal =  self.get_on_total_toks();
-                log!(" {}" ,&totoal);
-            for x in from_index..totoal { 
-                
-                if  x>= totoal.clone() { //0 ->150   //29-> 150
-                    break;
-                }
-                    let mut token =self.get_token(x.to_string().clone());
-               
-                 
-                     //si el token esta a lavente agregar al vect
-                 //si los filtros country y culture estan en null
-                 if token.on_auction.clone() && culture =="null" && country =="null" {
-                            
-                    vectMEta.push(token  );
-                    _tokfound+=1;
-                    reg+=1;
-                }
-             //si    country es diferente de null y culture esta en null
-                else if token.on_auction.clone()  && culture !="null" && country =="null"  {
-                    if token.culture == culture{
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }    
-                    
-                    
-                }
-                //si  country es null y culture es diferente de null
-                else if token.on_auction.clone()  && culture =="null" && country !="null"  {
-                    if token.country == country{
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }    
-                    
-                    
-                }
-                //si los filtros country es diferente de null y culture esta en null
-                else if token.on_auction.clone()  && culture !="null" && country !="null" {
-                        
-                    if token.culture == culture && token.country == country {
-                        vectMEta.push(token  );
-                        _tokfound+=1;
-                        reg+=1;
-                    }  
-                    
-                }
-                if _tokfound== limit {  //1 <30  //30-30
-                    break;
-                }
-                
-                          
-            }
-            
-            log!("  registros  -> : {} ",&reg);
-            vectMEta
-         
-    }
 
     pub fn tokens_of(&self, account_id: ValidAccountId,from_index: U128,limit: u64,) -> Vec<Token> {
         return self
@@ -1021,6 +1076,7 @@ impl Contract {
             n_total_tokens:old_state.n_total_tokens,
             n_token_on_sale: old_state.n_token_on_sale,
             n_token_on_auction:old_state.n_token_on_auction,
+            tokenHM:old_state.tokenHM, 
         }
     }
    

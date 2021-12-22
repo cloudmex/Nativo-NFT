@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import getIcons from "./icons";
 
 //components
@@ -19,7 +19,7 @@ import Perfil from "./views/Perfil.view";
 import notFound from "./views/notFound.view";
 
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
-import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
+//import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
 import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
 const { create } = require("ipfs-http-client");
 
@@ -36,7 +36,7 @@ Object.entries(iconList).forEach(([type, icons]) => {
   Object.keys(icons).map((name) => blockListArr.push(`${name},${type}`));
 });
 
-const themeList = [
+/* const themeList = [
   "indigo",
   "yellow",
   "red",
@@ -44,7 +44,7 @@ const themeList = [
   "pink",
   "blue",
   "green",
-];
+]; */
 
 class App extends Component {
   constructor(props) {

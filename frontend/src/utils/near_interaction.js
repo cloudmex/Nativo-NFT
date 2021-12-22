@@ -49,6 +49,12 @@ export const methodOptions = {
     "obtener_pagina_v3_by_owner",
     "get_ids_onsale",
     "get_ids_onauction",
+    "get_pagination_onsale",
+    "get_pagination_onauction",
+    "obtener_pagina_on_sale",
+    "obtener_pagina_on_auction",
+    "obtener_pagina_by_owner",
+   
   ],
   changeMethods: [
     "update_token",
@@ -62,6 +68,7 @@ export const methodOptions = {
     "subastar_nft",
     "finalizar_subasta",
     "quitar_del_market_place",
+    "get_by_on_sale",
   ],
 };
 /**
@@ -112,7 +119,7 @@ export async function getNearContract() {
  *
  * */
 export function fromNearToYocto(near) {
-  console.log(utils.format.parseNearAmount(near.toString()));
+  //console.log(utils.format.parseNearAmount(near.toString()));
   return utils.format.parseNearAmount(near.toString());
 }
 /**

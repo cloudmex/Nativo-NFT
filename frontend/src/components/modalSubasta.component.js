@@ -11,10 +11,10 @@ import {
 
 import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
 
-import { useHistory } from "react-router";
+//import { useHistory } from "react-router";
 
 export default function ModalRevender(props) {
-  const history = useHistory();
+ // const history = useHistory();
   const [state, setstate] = useState({ disabled: false });
   //Configuramos el formulario para revender un token
   const formik = useFormik({
@@ -73,8 +73,8 @@ export default function ModalRevender(props) {
           starts_at: dateActual.toString(),
         };
         let amount = fromNearToYocto(0);
-        console.log(amount);
-        console.log(payload);
+        //console.log(amount);
+        //console.log(payload);
          
           await contract.subastar_nft(
           payload,

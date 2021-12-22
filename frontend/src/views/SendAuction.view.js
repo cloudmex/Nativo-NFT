@@ -87,7 +87,7 @@ function LightHeroE(props) {
 
         //la cuenta a la cual mandaremos el token
         account = await getSelectedAccount();
-        console.log(account);
+        //console.log(account);
       }
 
       //cargamos el modal
@@ -99,7 +99,7 @@ function LightHeroE(props) {
         disabled: true,
       });
 
-      console.log(JSON.stringify(values));
+      //console.log(JSON.stringify(values));
 
       let token;
       if (mint.blockchain == "0") {
@@ -130,8 +130,8 @@ function LightHeroE(props) {
             on_sale: true,
           },
         };
-        console.log(payload);
-        console.log(fromYoctoToNear("5700000000000000000000"));
+        //console.log(payload);
+        //console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);
        // alert(payload);
       let tokenresult=  contract.minar(
@@ -140,7 +140,7 @@ function LightHeroE(props) {
           amount
         );
 
-        console.log(tokenresult);
+        //console.log(tokenresult);
       }
       //if de error
       if (!token.status)
@@ -194,7 +194,7 @@ function LightHeroE(props) {
       //subimos la imagen a ipfs
       uploadFile(file.name,reader.result).then(({hash}) =>{
         // console.log(result);
-        console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
+        //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
         formik.setFieldValue("image", hash);
       })
 
@@ -229,7 +229,7 @@ function LightHeroE(props) {
   const fechaActual = () => {
     const d = new Date();
     const f = format(d.getFullYear())+"-"+(format(d.getMonth()+1))+"-"+format(d.getDate());
-    console.log(f);
+    //console.log(f);
     return f;
     
   }

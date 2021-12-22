@@ -108,3 +108,31 @@ near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"cu
 near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"null","country":"México"}' --accountId nativodeploy.testnet
 #Busqueda con filtro de culture y country  para galeria 
 near view nativodeploy.testnet obtener_pagina_v5 '{"from_index":0,"limit":30,"culture":"carros","country":"México"}' --accountId nativodeploy.testnet
+
+
+near call nativoapp.testnet tryhash '{"token_id":"web","status":"onsale"}' --accountId dokxo.testnet
+ 
+
+ near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativoapp.testnet
+
+cargo build --all --target wasm32-unknown-unknown --release
+ -////////////////////////////////////////////////////////////////////////////////////////////////
+near call nativoapp.testnet get_pagination_onsale  '{"tokens":25}' --accountId dokxo.testnet
+
+ near call nativoapp.testnet inserthash '{"token_id":"52","info":["onsale","dokxo.testnet"]}' --accountId dokxo.testnet
+ near call nativoapp.testnet gethash '{"tokens":"33"}' --accountId dokxo.testnet
+ near call nativoapp.testnet fillhash  --accountId dokxo.testnet
+ near call nativoapp.testnet resethash --accountId dokxo.testnet
+
+ near call nativoapp.testnet obtener_pagina_on_sale '{"tokens":25,"_start_index":0}' --accountId dokxo.testnet
+ near call nativoapp.testnet obtener_pagina_on_auction '{"tokens":25,"_start_index":0}' --accountId dokxo.testnet
+ near call nativoapp.testnet obtener_pagina_by_owner '{"account":"syi216.testnet"}' --accountId dokxo.testnet
+
+  near view nativoapp.testnet obtener_pagina_on_sale '{"tokens":25,"_start_index":0,"_creatoraccount":"tes","_owneraccount":"tes"}' --accountId joehank.testnet
+
+
+  near call dev-1640023698418-93584970975929 fillhash  --accountId dokxo.testnet
+ near call dev-1640023698418-93584970975929 gethash '{"tokens":"1999"}' --accountId dokxo.testnet
+ near call dev-1640023698418-93584970975929 inserthash '{"token_id":"2000","info":["onsale","dokxo.testnet"]}' --accountId dokxo.testnet
+near view dev-1640023698418-93584970975929 get_pagination_onsale  '{"tokens":25}' --accountId dokxo.testnet
+ near call dev-1640023698418-93584970975929 resethash --accountId dokxo.testnet
