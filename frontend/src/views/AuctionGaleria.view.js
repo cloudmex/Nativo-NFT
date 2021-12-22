@@ -126,10 +126,11 @@ function LightEcommerceA() {
           tokens: Landing.tokensPerPageNear,
           _start_index: Landing.page,
           status:"A",
-          _Creatoraccount:"null",
-          _Owneraccount:"null",
-          price:0,
-          date:0,
+          _creatoraccount:"tes",
+          _owneraccount:"tes",
+          _minprice:0,
+          _maxprice:0,
+          _date:0,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
