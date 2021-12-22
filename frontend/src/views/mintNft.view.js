@@ -51,11 +51,11 @@ function LightHeroE(props) {
   
   const formik = useFormik({
     initialValues: {
-      title: "Prueba "+pru,
-      description: "Esta es al descripcion de la prueba "+ pru,
-      price: (parseInt(Math.random() *5)+1),
-      culture: "auto",
-      country: "autlan",
+      title: "",
+      description: "",
+      price: 0,
+      culture: "",
+      country: "",
       image: "",
       date: "",
       hrs: "",

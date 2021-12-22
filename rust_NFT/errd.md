@@ -133,6 +133,6 @@ near call nativoapp.testnet get_pagination_onsale  '{"tokens":25}' --accountId d
 
   near call dev-1640023698418-93584970975929 fillhash  --accountId dokxo.testnet
  near call dev-1640023698418-93584970975929 gethash '{"tokens":"1999"}' --accountId dokxo.testnet
- near call dev-1640023698418-93584970975929 inserthash '{"token_id":"2000","info":["onsale","dokxo.testnet"]}' --accountId dokxo.testnet
+ near call sub.nativoapp.testnet inserthash '{"token_id":"2000","info":["S","joehank.testnet","joehank.testnet","3","1640205511361358482"]}' --accountId joehank.testnet
 near view dev-1640023698418-93584970975929 get_pagination_onsale  '{"tokens":25}' --accountId dokxo.testnet
  near call dev-1640023698418-93584970975929 resethash --accountId dokxo.testnet
