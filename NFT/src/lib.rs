@@ -909,7 +909,7 @@ impl Contract {
     
  
     //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn obtener_pagina_on_sale(& self,tokens: u64,_start_index: u64, _account: ValidAccountId,_minprice:u64,_maxprice:u64,_date:u64) -> Vec<Meta>  {
+    pub fn obtener_pagina_on_sale(& self,tokens: u64,_start_index: u64, _minprice:u64,_maxprice:u64,_date:u64) -> Vec<Meta>  {
         //insertar nuevo token a Hashmap
         let mut _map =self.tokenHM.clone();
         let mut vectIDs = vec![];

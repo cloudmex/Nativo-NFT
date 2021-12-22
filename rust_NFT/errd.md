@@ -128,6 +128,8 @@ near call nativoapp.testnet get_pagination_onsale  '{"tokens":25}' --accountId d
  near call nativoapp.testnet obtener_pagina_on_auction '{"tokens":25,"_start_index":0}' --accountId dokxo.testnet
  near call nativoapp.testnet obtener_pagina_by_owner '{"account":"syi216.testnet"}' --accountId dokxo.testnet
 
+  near view nativoapp.testnet obtener_pagina_on_sale '{"tokens":25,"_start_index":0,"_creatoraccount":"tes","_owneraccount":"tes"}' --accountId joehank.testnet
+
 
   near call dev-1640023698418-93584970975929 fillhash  --accountId dokxo.testnet
  near call dev-1640023698418-93584970975929 gethash '{"tokens":"1999"}' --accountId dokxo.testnet
