@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name = "sub.nativoapp.testnet";
+export const contract_name = process.env.REACT_APP_CONTRACT;
 console.log(process.env.REACT_APP_CONTRACT)
 
 export const config = {
