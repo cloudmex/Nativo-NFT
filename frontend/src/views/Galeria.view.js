@@ -85,15 +85,13 @@ function LightEcommerceA() {
 
         window.localStorage.setItem('pagSale', pag)
         let pagNumArr = pag
-        toks = await contract.obtener_pagina_on_sale({
+        toks = await contract.obtener_pagina_on_sale_V2({
           tokens: Landing.tokensPerPageNear,
           _start_index: Landing.page,
-          status: "S",
-          _creatoraccount: "tes",
-          _owneraccount: "tes",
           _minprice: 0,
           _maxprice: 0,
-          _date: 0,
+          _mindate: 0,
+          _maxdate: 0,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -127,7 +125,7 @@ function LightEcommerceA() {
   }, []);
   return (
     <section className="text-gray-600 body-font">
-      <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
+      {/* <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
         esconder ? "" : "py-2"
       )}>
         <div className="fs-1 flex items-center" onClick={e => {
@@ -166,7 +164,7 @@ function LightEcommerceA() {
         <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" />
         <button className="ml-20 p-2 lg:w-1/12 ml-2 bg-s1"><b>Aplicar</b></button>
 
-        {/* <b className="ml-2" >País:</b>
+        /* <b className="ml-2" >País:</b>
         <select className="p-2 lg:w-2/12 ml-2 bg-s1" onChange={e => {
           modificarFiltro({ country: (e.target.value == "Todos los tokens" ? "null" : e.target.value) });
         }}>
@@ -180,8 +178,8 @@ function LightEcommerceA() {
               </option>
             ))
           }
-        </select> */}
-      </div>
+        </select> 
+      </div> */}
       <div className="container px-5 py-8 mx-auto">
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
         {!Landing.tokens.length > 0 ? (

@@ -122,15 +122,13 @@ function LightEcommerceA() {
         window.localStorage.setItem('pagAuction',pag)
         let pagNumArr = pag
         //obtener tokens a la venta
-        toks = await contract.obtener_pagina_on_auction({
+        toks = await contract.obtener_pagina_on_auction_V2({
           tokens: Landing.tokensPerPageNear,
           _start_index: Landing.page,
-          status:"A",
-          _creatoraccount:"tes",
-          _owneraccount:"tes",
           _minprice:0,
           _maxprice:0,
-          _date:0,
+          _mindate:0,
+          _maxdate:0,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
