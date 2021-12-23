@@ -89,6 +89,7 @@ export async function nearSignIn(URL) {
 
 export async function isNearReady() {
   // conectarse a near
+  let near
   (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
@@ -103,6 +104,7 @@ export async function isNearReady() {
  */
 export async function getNearContract() {
   // conectarse a near
+  let near
   (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
@@ -138,6 +140,7 @@ export function fromYoctoToNear(yocto) {
  * */
 export async function getNearAccount() {
   // conectarse a near
+  let near
   (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
@@ -149,6 +152,7 @@ export async function getNearAccount() {
 
 export async function signOut() {
   // conectarse a near
+  let near
   (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
