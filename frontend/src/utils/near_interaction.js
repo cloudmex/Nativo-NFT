@@ -11,6 +11,7 @@ export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "dokxo.testnet";
 export const contract_name = process.env.REACT_APP_CONTRACT;
 console.log(process.env.REACT_APP_CONTRACT)
+console.log(process.env.REACT_APP_NEAR_ENV)
 
 export const config = {
   testnet: {
