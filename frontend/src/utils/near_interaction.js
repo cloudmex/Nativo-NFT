@@ -77,7 +77,8 @@ export const methodOptions = {
  *hacemos el signIn con near
  */
 export async function nearSignIn(URL) {
-  window.near = await connect(config.testnet);
+  (process.env.REACT_APP_NEAR_ENV == "testnet" ? window.near = await connect(config.testnet) : window.near = await connect(config.mainnet))
+  //window.near = await connect(config.testnet);
   window.wallet = new WalletConnection(window.near, "latina");
 
   window.wallet.requestSignIn(
@@ -90,7 +91,8 @@ export async function nearSignIn(URL) {
 
 export async function isNearReady() {
   // conectarse a near
-  const near = await connect(config.testnet);
+  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  //const near = await connect(config.testnet);
 
   // crear una wallet
   const wallet = new WalletConnection(near);
@@ -103,7 +105,8 @@ export async function isNearReady() {
  */
 export async function getNearContract() {
   // conectarse a near
-  const near = await connect(config.testnet);
+  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  //const near = await connect(config.testnet);
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
@@ -137,7 +140,8 @@ export function fromYoctoToNear(yocto) {
  * */
 export async function getNearAccount() {
   // conectarse a near
-  const near = await connect(config.testnet);
+  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  //const near = await connect(config.testnet);
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
@@ -147,7 +151,8 @@ export async function getNearAccount() {
 
 export async function signOut() {
   // conectarse a near
-  const near = await connect(config.testnet);
+  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  //const near = await connect(config.testnet);
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
