@@ -27,7 +27,6 @@ function LightEcommerceA() {
     tokensPerPageNear: 30,
   });
   const [esconder, setesconder] = React.useState(true);
-  const [owner, setowner] = React.useState("user");
   const [counter, setcounter] = React.useState();
   const [load, setload] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
@@ -43,10 +42,10 @@ function LightEcommerceA() {
   }
 
    
-  const { tokenid } = useParams();
+  const { tokenid:owner } = useParams();
   React.useEffect(() => {
-  // console.log("esto ---> ",tokenid);
-  setowner(tokenid);
+  // console.log("esto ---> ",owner);
+  
     setload(c => true);
     (async () => {
       let toks, onSaleToks;
@@ -95,10 +94,11 @@ function LightEcommerceA() {
         //  window.localStorage.setItem('pagSale',pag)
         let pagNumArr = [0]
         let payload = {
-          account : account,
+          account : (owner+".testnet").toString(),
           //from_index: nfts.page , 
           //limit: nfts.tokensPerPageNear,
         };
+        console.log("payload ",payload);
         toks = await contract.obtener_pagina_by_owner(payload);
         console.log("toks ",toks);
         //obtener cuantos tokens estan a la venta
@@ -131,7 +131,7 @@ function LightEcommerceA() {
       }
       setload(c => false);
     })();
-  }, [filtro]);
+  }, [owner]);
   
   return (
     <section className="text-gray-600 body-font">
@@ -210,7 +210,7 @@ function LightEcommerceA() {
       
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
         
-        <div className="flex flex-wrap justify-center">
+        <div className={"flex flex-wrap"+(load ? " justify-center" : "")}>
           
 
           {
