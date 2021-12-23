@@ -89,8 +89,7 @@ export async function nearSignIn(URL) {
 
 export async function isNearReady() {
   // conectarse a near
-  let near
-  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  const near = (process.env.REACT_APP_NEAR_ENV == "testnet" ? await connect(config.testnet) : await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
   // crear una wallet
@@ -104,8 +103,7 @@ export async function isNearReady() {
  */
 export async function getNearContract() {
   // conectarse a near
-  let near
-  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  const near = (process.env.REACT_APP_NEAR_ENV == "testnet" ? await connect(config.testnet) : await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
   // crear una wallet de
@@ -140,8 +138,7 @@ export function fromYoctoToNear(yocto) {
  * */
 export async function getNearAccount() {
   // conectarse a near
-  let near
-  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  const near = (process.env.REACT_APP_NEAR_ENV == "testnet" ? await connect(config.testnet) : await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
   // crear una wallet de
@@ -152,8 +149,7 @@ export async function getNearAccount() {
 
 export async function signOut() {
   // conectarse a near
-  let near
-  (process.env.REACT_APP_NEAR_ENV == "testnet" ? near = await connect(config.testnet) : near = await connect(config.mainnet))
+  const near = (process.env.REACT_APP_NEAR_ENV == "testnet" ? await connect(config.testnet) : await connect(config.mainnet))
   //const near = await connect(config.testnet);
 
   // crear una wallet de
