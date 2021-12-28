@@ -10,17 +10,17 @@ function LightStatisicC(props) {
             Información acerca de las culturas nativas en América Latina
           </h1>
         </div>
-        <div className="flex justify-center -m-4 text-center">
-          <div className="p-4 md:w-1/4 sm:w-1/2 w-full">
-            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div className="flex justify-center -m-4 text-center sp-1">
+          <div className="flex p-4 md:w-1/4 sm:w-1/2 w-full sp">
+            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg sp-3">
               <h2 className="title-font font-medium text-3xl text-gray-900">
                 522
               </h2>
               <p className="leading-relaxed">Número actual de culturas nativas en América Latina.</p>
             </div>
           </div>
-          <div className="p-4 md:w-1/4 sm:w-1/2 w-full">
-            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg">
+          <div className="flex p-4 md:w-1/4 sm:w-1/2 w-full sp">
+            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg sp-3">
               <h2 className="title-font font-medium text-3xl text-gray-900">
                 8 %
               </h2>

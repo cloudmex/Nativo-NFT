@@ -18,10 +18,10 @@ function LightStepC(props) {
                   Con ellos podrás comprar tus nft e ingresar a tu panel
                 </p>
                 <div className="flex justify-center">
-                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                  <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
                     <img src="https://img.icons8.com/color/48/000000/settings--v1.png" alt ="..." />
                   </div>
-                  <div className="h-full w-6 absolute flex items-center justify-center">
+                  <div className="h-full w-6 absolute flex items-center justify-center sp-5">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                   </div>
                 </div>
@@ -39,10 +39,10 @@ function LightStepC(props) {
                   Recibe <span className="tooltip">ganancias<span className="tooltiptext">del 87%</span></span> y <span className="tooltip">regalias<span className="tooltiptext">del 10%</span></span> por ellos
                 </p>
                 <div className="flex justify-center">
-                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                  <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
                     <img src="https://img.icons8.com/color/96/000000/artist-skin-type-3.png" alt ="..." style={{width: 80+'%'}}/>
                   </div>
-                  <div className="h-full w-6 absolute flex items-center justify-center">
+                  <div className="sp-5 h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                   </div>
                 </div>
@@ -63,10 +63,10 @@ function LightStepC(props) {
                   ¿Ya no quieres tu NFT? lo puedes revender en tu panel al precio que tu decidas.
                 </p>
                 <div className="flex justify-center">
-                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                  <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
                     <img src="https://img.icons8.com/color/96/000000/shopping-basket.png" alt ="..." />
                   </div>
-                  <div className="h-full w-6 absolute flex items-center justify-center">
+                  <div className="sp-5 h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                   </div>
                 </div>
@@ -84,10 +84,10 @@ function LightStepC(props) {
                   ¿Quieres ver cuanto ofrecen por tu NFT? puedes subastarlo y ver a cuanto asciende el precio
                 </p>
                 <div className="flex justify-center">
-                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                  <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
                     <img src="https://img.icons8.com/plasticine/100/000000/auction.png" alt ="..." />
                   </div>
-                  <div className="h-full w-6 absolute flex items-center justify-center">
+                  <div className="sp-5 h-full w-6 absolute flex items-center justify-center">
                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                   </div>
                 </div>
