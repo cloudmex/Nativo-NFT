@@ -7,12 +7,14 @@ import * as nearAPI from "near-api-js";
 import { blockchains } from "../utils/constraint";
 import nativoLogo from '../assets/img/nativologocrop.png'
 import lupa from '../assets/landingSlider/img/lupa1.png'
+import menu from '../assets/landingSlider/img/menu.png'
 function LightHeaderB(props) {
   const [state, setState] = useState({
     dropdown:
       blockchains[parseInt(localStorage.getItem("blockchain"))] || "Blockchain",
   });
   const [buscar, setbuscar] = useState("");
+  const [menu, setmenu] = useState(true);
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -78,8 +80,10 @@ function LightHeaderB(props) {
 
          
         </a>
-        <img src=""/>
-        <nav className="movil-nav md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
+        <div className={"menu "+(menu ? "" : "sx")} onClick={ e => {
+            setmenu(m => !m);
+        }} ></div>
+        <nav className={"movil-nav md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center "+(menu ? "esconder-nav" : "")}>
           <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
           </a>
