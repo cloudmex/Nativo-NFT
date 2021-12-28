@@ -816,6 +816,7 @@ code {
   margin-bottom: 15px;
   padding: 3px;
   position: relative;
+  
   /* height: 280px; */
   /* scale border mb-4 */
 }
@@ -935,5 +936,55 @@ select{
   .regresar > img{
     margin-bottom: 21px
   }
+
+  .token{
+    width: 100%;
+  }
 }
 
+.movil-logo{
+  width: 40%;
+}
+
+.movil-header{
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.movil-header > form{
+  margin-bottom: 3px;
+}
+
+.movil-nav{
+  width: 100%;
+  /* background: red; */
+  display: flex;
+  justify-content: flex-start;
+  background: red;
+  margin: 3px 0px;
+}
+
+.movil-nav >a{
+  /* display: none; */
+  color: white;
+  width: 30%;
+  margin: 5px;
+  margin-right: 100px;
+  /* border-left: 1px solid; */
+  padding-left: 5px;
+  
+  
+}
+
+
+@media (max-width: 645px) {
+  .ssmw-1{
+    width: 50%;
+  }
+}
+
+@media (max-width: 465px) {
+  .ssmw-1{
+    width: 100%;
+  }
+}

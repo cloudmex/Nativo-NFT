@@ -69,16 +69,17 @@ function LightHeaderB(props) {
 
   return (
     <header className="text-gray-600 body-font shadow-sm">
-      <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center movil-header">
         <a
           href="/"
-         
+          className="movil-logo"
         >
-         <img  src={nativoLogo} className="d-inline-block align-top" alt="logo"   width="200px"/>
+         <img  src={nativoLogo} className="d-inline-block align-top " alt="logo"   width="200px"/>
 
          
         </a>
-        <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
+        <img src=""/>
+        <nav className="movil-nav md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
           <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
           </a>
@@ -95,6 +96,7 @@ function LightHeaderB(props) {
             Mis Nfts
           </a>
         </nav>
+        
       
         <form className={"flex flex-wrap mr-7"} 
           onSubmit={e=>{
@@ -102,9 +104,14 @@ function LightHeaderB(props) {
             window.location.href ="/perfil/"+buscar;
           }}
         >
-                  <input type="text"  className="p-2 lg:w-12/12 px-3 buscar" placeholder="Usuario"
+                  <input type="text"  value={buscar}  maxLength={64} className="p-2 lg:w-12/12 px-3 buscar" placeholder="Usuario"
                     onChange={e=>{
-                      setbuscar(e.target.value); 
+                      
+                      const not = "abcdfghijklmnopqrstuvwxyzñ1234567890_-";
+                      const tex = e.target.value.toString().toLowerCase();
+                      if(not.includes(tex[tex.length -1]) || tex == ""){
+                        setbuscar(tex);  
+                      }
                     }}  
                   />
                   <button type="submit" className="p-2 lg:w-1/12 px-3 ml-2 bg-s">
