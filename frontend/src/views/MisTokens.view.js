@@ -12,6 +12,7 @@ import {
 import { useHistory } from "react-router";
 import ModalSubasta from '../components/modalSubasta.component'
 import Modal from "../components/modalRevender.component";
+import load from "../assets/landingSlider/img/loader.gif";
 import { currencys } from "../utils/constraint";
 import {
   getNearAccount,
@@ -41,6 +42,9 @@ function MisTokens(props) {
     //state para la ventana modal
     show: false,
   });
+  // const [imgs, setImgs] = useState([]);
+  let imgs = [];
+
 
   const history = useHistory();
 
@@ -175,9 +179,13 @@ function MisTokens(props) {
         //console.log("balance",balance);
  
         //convertir los datos al formato esperado por la vista
-        nftsArr = nftsArr.map((tok) => {
+        nftsArr = nftsArr.map((tok,i) => {
           //console.log("X->",  tok  )
-         
+         imgs.push(false);
+         fetch("https://ipfs.io/ipfs/"+tok.media).then(request => request.blob()).then(() => {
+           console.log("entro "+imgs.length);
+               imgs[i] = true;
+            });
           return {
             tokenID: tok.token_id,
             price:  fromYoctoToNear(tok.price),
@@ -185,10 +193,13 @@ function MisTokens(props) {
             onAuction: tok.on_auction,
             data: JSON.stringify({
               title: tok.title,//"2sdfeds",// tok.metadata.title,
-              image:tok.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
+              image: tok.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
             }),
           };
         });
+        
+
+        console.log(nftsArr);
         //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
         setNfts({
           ...nfts,
@@ -244,6 +255,9 @@ function MisTokens(props) {
     setNfts({ ...nfts, disabled: false });
   }
 
+ 
+  
+
   return (
     <>
       <section className="text-gray-600 body-font">
@@ -289,7 +303,7 @@ function MisTokens(props) {
                       <img
                         alt="gallery"
                         className="absolute inset-0 w-full h-full object-cover object-center"
-                        src={`https://ipfs.io/ipfs/${nftData.image}`}
+                        src={imgs[key] ? load : "https://ipfs.io/ipfs/"+nftData.image}
                       />
                       <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100 ">
                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
