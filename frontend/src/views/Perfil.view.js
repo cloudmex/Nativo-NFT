@@ -94,8 +94,8 @@ function LightEcommerceA() {
         //  window.localStorage.setItem('pagSale',pag)
         let pagNumArr = [0]
         let payload = {
-          account : (owner+".testnet").toString(),
-          //from_index: nfts.page , 
+          account : (owner.toString().toLowerCase()+".testnet").toString(),
+          //from_index: nfts.page, 
           //limit: nfts.tokensPerPageNear,
         };
         console.log("payload ",payload);
@@ -136,7 +136,7 @@ function LightEcommerceA() {
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 py-4 mx-auto flex flex-wrap flex-col">
-        <b className="text-xl">{owner+".testnet"}</b>
+        <b className="text-xl">{owner.toString().toLowerCase()+".testnet"}</b>
         {/* <p>kublaikollection.eth 0x8486...527e</p> */}
         
       </div>

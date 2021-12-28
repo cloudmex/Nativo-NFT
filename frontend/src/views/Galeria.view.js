@@ -196,7 +196,7 @@ function LightEcommerceA() {
               //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
               return (
-                <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                <div className="lg:w-1/3 md:w-1/2 sm:w-1/2 ssmw-1  px-3" key={key}>
                   {tokenData.image ?
                     <a href={"/detail/" + token.tokenID}>
                       <div className="token">
