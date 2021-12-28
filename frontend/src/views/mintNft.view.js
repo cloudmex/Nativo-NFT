@@ -309,12 +309,12 @@ function LightHeroE(props) {
           </h1>
           <div className="flex w-full md:justify-start justify-center items-end">
             <div className="relative mr-4 lg:w-full xl:w-1/2 w-3/4">
-              <select onChange={e=>{
+              {/* <select onChange={e=>{
                 setcombo(e.target.value == "A la venta");
               }}>
                 <option>A la venta</option>
                 <option>En subasta</option>
-              </select>
+              </select> */}
               
               <div className="flex justify-between ">
                 <label
