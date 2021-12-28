@@ -314,7 +314,7 @@ function MisTokens(props) {
                         <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
                         >
-                          <span className="text-gray-500">OnSale</span>
+                          <span className="text-gray-500">En venta</span>
                           <span className="ml-auto text-gray-900">
                             <span
                               className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
@@ -330,7 +330,7 @@ function MisTokens(props) {
                          
                         <p className="leading-relaxed">{nftData.description }</p>
                         {/* Etiqueta de token en subasta */}
-                        <div
+                        {/* <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
                         >
                           <span className="text-gray-500">OnAuction</span>
@@ -345,7 +345,7 @@ function MisTokens(props) {
                               {nft.onAuction ? "Disponible" : "No disponible"}
                             </span>
                           </span>
-                        </div>
+                        </div> */}
                         <br></br>
                         <h2
                           className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-1`}
@@ -387,7 +387,7 @@ function MisTokens(props) {
                           >
                             Poner en venta
                           </button>
-                          <button
+                          {/* <button
                             className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             onClick={() => {
                               setModalSub({
@@ -406,7 +406,7 @@ function MisTokens(props) {
                             }}
                           >
                             Poner en subasta
-                          </button>
+                          </button> */}
                          
                       
                           </>}

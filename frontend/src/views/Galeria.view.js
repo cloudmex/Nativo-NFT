@@ -85,6 +85,8 @@ function LightEcommerceA() {
 
         window.localStorage.setItem('pagSale', pag)
         let pagNumArr = pag
+        console.log("Tokens por pagina: ",Landing.tokensPerPageNear)
+        console.log("ID de donde inicia: ",Landing.page)
         toks = await contract.obtener_pagina_on_sale_V2({
           tokens: Landing.tokensPerPageNear,
           _start_index: Landing.page,
@@ -95,6 +97,7 @@ function LightEcommerceA() {
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
+        console.log(toks)
 
         //convertir los datos al formato esperado por la vista
         toks = toks.map((tok) => {

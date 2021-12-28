@@ -18,7 +18,7 @@ use near_sdk::collections::LazyOption;
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
-    env, log, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, PromiseOrValue,
+    env, log, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, PromiseOrValue,Gas
 };
 use serde_json::json;
 use std::convert::TryInto;
@@ -260,8 +260,7 @@ impl Contract {
         //info[2] owner en este punto creador y owner son el mismo
         info.push(extradatajson.creator);
         //info[3] precio del token
-        let priceint = (extradatajson.price.parse::<u128>().unwrap()) /1000000000000000000000000 as u128;
-        info.push(priceint.to_string());
+         info.push(extradatajson.price.to_string());
         //info[4] fecha creacion
         info.push(env::block_timestamp().to_string());
          
@@ -275,8 +274,9 @@ impl Contract {
     }
 
     #[payable]
-    pub fn comprar_nft(&mut self, token_id: TokenId,info:Vec<String>) -> TokenMetadata {
-        let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
+    pub fn comprar_nft(&mut self, token_id: TokenId ) -> TokenMetadata {
+        let Contractaccount: AccountId = "nativo.dokxo.testnet".parse().unwrap();
+        let mut info:Vec<String>=Vec::new();
 
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
         //let token_id_u64 = token_id.parse::<u64>().unwrap();
@@ -338,7 +338,24 @@ impl Contract {
         //se  reemplaza los ' por \" en un string plano                "'", "\""
         let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
         //el string plano se convierte a JSon
-        let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+        let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();   
+        //Se modifica el Hashmap
+            //se quita de la venta con U-> unavailable
+            info.push("U".to_string()); 
+            //el se mantiene el creador 
+            info.push(creator_id.clone().to_string());
+            // el nuevo owner es el signer de
+            info.push(buyer_id.clone().to_string());
+            // el precio
+            
+            info.push(extradatajson.price.to_string());
+            //el date 
+            info.push(extradatajson.starts_at.clone().to_string());
+                    //insertar nuevo token a Hashmap
+                let mut _map =self.tokenHM.clone();
+                _map.insert(token_id.clone(),info);
+                self.tokenHM=_map.clone();
+
         //Se modifica el json
         extradatajson.on_sale = false;
         //  extradatajson: Extras = serde_json::to(&newextradata).unwrap();    
@@ -372,17 +389,15 @@ impl Contract {
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale -= 1;
-         //insertar nuevo token a Hashmap
-         let mut _map =self.tokenHM.clone();
-         _map.insert(token_id.clone(),info);
-         self.tokenHM=_map.clone();
+         
         //retornar la metadata
         originaltoken
     }
 
    
     
-    pub fn revender(&mut self, token_id: TokenId, price: String,info:Vec<String>) -> TokenMetadata {
+    pub fn revender(&mut self, token_id: TokenId, price: String ) -> TokenMetadata {
+        let mut info:Vec<String>=Vec::new();
         //comprobar que el token exista
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -413,11 +428,28 @@ impl Contract {
             "Lo sentimos,este token se encuentra en subasta y aun no termina!"
         );
         if price.trim().parse::<u128>().unwrap() > 0 {
-            extradatajson.price =  price ;
+            extradatajson.price =  price.clone() ;
         }
         extradatajson.on_sale =  true ;
         //  extradatajson: Extras = serde_json::to(&newextradata).unwrap();    
         log!("{}",&extradatajson.on_sale.to_string());
+         //Se modifica el Hashmap
+            //se quita de la venta con U-> unavailable
+            info.push("S".to_string()); 
+            //el se mantiene el creador 
+            info.push(extradatajson.creator.clone().to_string());
+            // el nuevo owner es el signer de
+            info.push(owner_id.clone().to_string());
+            // el precio se guarda en yoctos
+           
+            info.push(price);
+            //el date 
+            info.push(extradatajson.starts_at.clone().to_string());
+                    //insertar nuevo token a Hashmap
+                let mut _map =self.tokenHM.clone();
+                _map.insert(token_id.clone(),info);
+                self.tokenHM=_map.clone();
+
         // se convierte el Json a un String plano
         let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
         let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
@@ -430,16 +462,14 @@ impl Contract {
             .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
-         //insertar nuevo token a Hashmap
-         let mut _map =self.tokenHM.clone();
-         _map.insert(token_id.clone(),info);
-         self.tokenHM=_map.clone();
+        
         //retornar la metadata
         originaltoken
     }
 
-    pub fn subastar_nft(&mut self, token_id: TokenId,lowestbidder:String,starts_at:String,expires_at:String,info:Vec<String>){
-     
+    pub fn subastar_nft(&mut self, token_id: TokenId,lowestbidder:String,starts_at:String,expires_at:String){
+        let mut info:Vec<String>=Vec::new();
+
       
         // Verificar  si existe:
         assert_eq!(
@@ -469,7 +499,7 @@ impl Contract {
                   extradatajson.on_sale = false;
                   extradatajson.on_auction = true;
                   extradatajson.lowestbidder=lowestbidder.clone();
-                  extradatajson.price=lowestbidder;
+                  extradatajson.price=lowestbidder.clone();
                   extradatajson.highestbidder=0.to_string();
                   extradatajson.expires_at=expires_at;
                   extradatajson.starts_at=starts_at; 
@@ -484,10 +514,21 @@ impl Contract {
                       .as_mut()
                       .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
          
-                       //insertar nuevo token a Hashmap
-                    let mut _map =self.tokenHM.clone();
-                    _map.insert(token_id.clone(),info);
-                    self.tokenHM=_map.clone();
+                       //Se modifica el Hashmap
+                            //se quita de la venta con U-> unavailable
+                            info.push("A".to_string()); 
+                            //el se mantiene el creador 
+                            info.push(extradatajson.creator.clone().to_string());
+                            // el nuevo owner es el signer de
+                            info.push(token_owner_id.unwrap().to_string());
+                            // el precio
+                            info.push(lowestbidder.clone().to_string());
+                            //el date 
+                            info.push(extradatajson.starts_at.clone().to_string());
+                                    //insertar nuevo token a Hashmap
+                                let mut _map =self.tokenHM.clone();
+                                _map.insert(token_id.clone(),info);
+                                self.tokenHM=_map.clone();
                 //cambiar el numero de nfts disponibles
                   
                   self.n_token_on_auction+=1;
@@ -497,7 +538,7 @@ impl Contract {
     pub fn ofertar_subasta(&mut self, token_id: TokenId   ){
         let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
         let mut amountsended=env::attached_deposit();
-        
+ 
         // Verificar  si existe:
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -566,8 +607,10 @@ impl Contract {
                   }
                   
     }
-    pub fn finalizar_subasta(&mut self, token_id: TokenId,info:Vec<String>) -> bool {
+    pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
         let Contractaccount: AccountId = "nativoapp.testnet".parse().unwrap();
+        let mut info:Vec<String>=Vec::new();
+
         // Verificar  si existe:
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -629,18 +672,143 @@ impl Contract {
             //
             self.tokens
             .internal_transfer_unguarded(&token_id, &token_owner_id.as_ref().unwrap().to_string(), &extradatajson.adressbidder.to_string());
-            //insertar nuevo token a Hashmap
-            let mut _map =self.tokenHM.clone();
-            _map.insert(token_id.clone(),info);
-            self.tokenHM=_map.clone();
+            
+              //Se modifica el Hashmap
+                    //se quita de la venta con U-> unavailable
+                    info.push("U".to_string()); 
+                    //el se mantiene el creador 
+                    info.push(extradatajson.creator.clone().to_string());
+                    // el nuevo owner es el signer de
+                    info.push(token_owner_id.unwrap().to_string());
+                    // el precio
+                    info.push(extradatajson.price.clone().to_string());
+                    //el date 
+                    info.push(extradatajson.starts_at.clone().to_string());
+                            //insertar nuevo token a Hashmap
+                        let mut _map =self.tokenHM.clone();
+                        _map.insert(token_id.clone(),info);
+                        self.tokenHM=_map.clone();
+
             self.n_token_on_auction-=1;
         return false ;
     }
 
    
      
-    //Genera un nuevo registro o actualiza uno existente
-    pub fn inserthash(& mut self,token_id : TokenId ,info:Vec<String>) -> usize {
+  
+    
+    #[payable]
+    pub fn extraer_token(&mut self, token_id: TokenId){
+         
+
+        // Verificar  si existe:
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+            //recuperar el token
+            let mut  originaltoken = self
+              .tokens
+              .token_metadata_by_id.as_ref()
+              .and_then(|by_id| by_id.get(&token_id))
+              .unwrap();
+              //recuperar el owner del token
+            let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+         /*    assert_eq!(
+                env::signer_account_id() != token_owner_id.as_ref().unwrap().to_string(),
+                false,
+                "no eres el dueño del token "
+            );  */
+            let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
+            let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
+            let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
+            //let msj2: String = Some("withdraw succesfully,enjoy it! :)".to_string());
+            //let apro: Option<u64> = Some(apro);
+             //   self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
+            self.tokens.nft_transfer_call(account, token_id, None,msj, "".to_string());
+           log!("transfer done");
+    }
+    #[payable]
+    pub fn aproved_token(&mut self, token_id: TokenId){
+        let token_owner_id = self.tokens.owner_by_id.get(&token_id);    
+        let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
+            let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
+            let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
+            let apro: Option<u64> = Some(0);
+            self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
+    }
+      /// 
+    pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
+        let mut info:Vec<String>=Vec::new();
+
+        //comprobar que el token exista
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+
+        //comprobar que el revendedor sea el owner
+        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+        assert_eq!(
+            env::signer_account_id() == owner_id,
+            true,
+            "no eres el dueño del token "
+        );
+
+
+
+         //obtener los metadatos de ese token
+         let mut originaltoken = self
+         .tokens
+         .token_metadata_by_id.as_ref()
+         .and_then(|by_id| by_id.get(&token_id))
+         .unwrap();
+      
+     //se  reemplaza los ' por \" en un string plano                "'", "\""
+     let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
+     //el string plano se convierte a JSon
+     let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+     //Se modifica el json
+     
+     
+     extradatajson.on_sale =  false ;
+ 
+     // se convierte el Json a un String plano
+     let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+     let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+    
+     originaltoken.extra = Some(finalextrajson);
+     //remplazamos la metadata
+     self.tokens
+         .token_metadata_by_id
+         .as_mut()
+         .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+
+          //Se modifica el Hashmap
+            //se quita de la venta con U-> unavailable
+            info.push("U".to_string()); 
+            //el se mantiene el creador 
+            info.push(extradatajson.creator.clone().to_string());
+            // el nuevo owner es el signer de
+            info.push(owner_id.clone().to_string());
+            // el precio
+            info.push(extradatajson.price.clone().to_string());
+            //el date 
+            info.push(extradatajson.starts_at.clone().to_string());
+                    //insertar nuevo token a Hashmap
+                let mut _map =self.tokenHM.clone();
+                _map.insert(token_id.clone(),info);
+                self.tokenHM=_map.clone();
+
+        //cambiar el numero de nfts disponibles
+        self.n_token_on_sale += 1;
+        //retornar la metadata
+        originaltoken
+    }
+  //Genera un nuevo registro o actualiza uno existente
+    pub fn inserthash(& mut self,token_id : TokenId,info:Vec<String> ) -> usize {
         //insertar nuevo token a Hashmap
         let mut _map =self.tokenHM.clone();
         _map.insert(token_id.clone(),info);
@@ -686,105 +854,6 @@ impl Contract {
         let mut _map = self.tokenHM.clone();
         self.tokenHM=HashMap::new();
     } 
-    
-    #[payable]
-    pub fn extraer_token(&mut self, token_id: TokenId){
-         
-
-        // Verificar  si existe:
-        assert_eq!(
-            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
-            true,
-            "ese token no existe "
-        );
-            //recuperar el token
-            let mut  originaltoken = self
-              .tokens
-              .token_metadata_by_id.as_ref()
-              .and_then(|by_id| by_id.get(&token_id))
-              .unwrap();
-              //recuperar el owner del token
-            let token_owner_id = self.tokens.owner_by_id.get(&token_id);
-         /*    assert_eq!(
-                env::signer_account_id() != token_owner_id.as_ref().unwrap().to_string(),
-                false,
-                "no eres el dueño del token "
-            );  */
-            let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
-            let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
-            let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
-            //let msj2: String = Some("withdraw succesfully,enjoy it! :)".to_string());
-            //let apro: Option<u64> = Some(apro);
-             //   self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
-            self.tokens.nft_transfer_call(account, token_id, None,msj, "".to_string());
-           log!("transfer done");
-    }
-    #[payable]
-    pub fn aproved_token(&mut self, token_id: TokenId){
-        let token_owner_id = self.tokens.owner_by_id.get(&token_id);    
-        let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
-            let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
-            let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
-            let apro: Option<u64> = Some(0);
-            self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
-    }
-      /// 
-    pub fn quitar_del_market_place(&mut self, token_id: TokenId,info:Vec<String>) -> TokenMetadata {
-        //comprobar que el token exista
-        assert_eq!(
-            token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(),
-            true,
-            "ese token no existe "
-        );
-
-        //comprobar que el revendedor sea el owner
-        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
-        assert_eq!(
-            env::signer_account_id() == owner_id,
-            true,
-            "no eres el dueño del token "
-        );
-
-
-
-         //obtener los metadatos de ese token
-         let mut originaltoken = self
-         .tokens
-         .token_metadata_by_id.as_ref()
-         .and_then(|by_id| by_id.get(&token_id))
-         .unwrap();
-      
-     //se  reemplaza los ' por \" en un string plano                "'", "\""
-     let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
-     //el string plano se convierte a JSon
-     let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
-     //Se modifica el json
-     
-     
-     extradatajson.on_sale =  false ;
- 
-     // se convierte el Json a un String plano
-     let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
-     let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
-    
-     originaltoken.extra = Some(finalextrajson);
-     //remplazamos la metadata
-     self.tokens
-         .token_metadata_by_id
-         .as_mut()
-         .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
-
-         //insertar nuevo token a Hashmap
-         let mut _map =self.tokenHM.clone();
-         _map.insert(token_id.clone(),info);
-         self.tokenHM=_map.clone();
-
-        //cambiar el numero de nfts disponibles
-        self.n_token_on_sale += 1;
-        //retornar la metadata
-        originaltoken
-    }
-
 
     pub fn storage_byte_cost() -> Balance {
         env::storage_byte_cost()
@@ -1022,7 +1091,8 @@ impl Contract {
                 if toksfilted.is_empty() {
                         log!("No hay tokens aun");
                         return  vectMEta
-                     }  
+                     }
+                     log!("sin filtro salida");  
             } // (25,0, 2,6,0,0) ->Gallery y price between range
             else if _minprice >=0 && _maxprice>=0 && _mindate==0 && _maxdate==0 {
                 let mut status =|tokeni:u64 ,vect2 : Vec<String> |
@@ -1177,7 +1247,7 @@ impl Contract {
          //este ciclo recupera los primeros
          for x in 0..ends.unwrap()  {
             let tok = _map.get(&x.to_string() ).unwrap();
-             if tok[1] == account.to_string()  {
+             if tok[2] == account.to_string()  {
                   vectIDs.push(x.to_string().parse::<u64>().unwrap() );
              }                  
          }
@@ -1202,6 +1272,7 @@ impl Contract {
             .tokens
             .nft_tokens_for_owner(account_id, Some(from_index), Some(limit));
     }
+
  
     #[private]
     #[init(ignore_state)]
@@ -1217,6 +1288,8 @@ impl Contract {
             tokenHM:old_state.tokenHM, 
         }
     }
+
+    
    
  
 }
@@ -1232,5 +1305,27 @@ impl NonFungibleTokenMetadataProvider for Contract {
         self.metadata.get().unwrap()
     }
 }
+/* 
+#[cfg(test)]
+mod tests {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+   
 
 
+    #[test]
+    fn t_get_tokens_on_sale()  {  
+         let account = "sub.nativoapp.testnet".to_string();
+        Promise::new(account).function_call(
+             b"get_on_sale_toks".to_vec(),
+             b"{}".to_vec(),
+             0 as Balance,
+             5_000_000_000_000 as Gas) ;
+        Ok("ok");
+    }
+
+     
+}
+
+ */
