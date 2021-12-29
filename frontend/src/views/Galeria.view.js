@@ -6,7 +6,7 @@ import {
   syncNets,
 } from "../utils/blockchain_interaction";
 import { currencys } from "../utils/constraint";
-import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
+import { getNearContract, fromYoctoToNear, fromNearToYocto } from "../utils/near_interaction";
 import filtroimg from '../assets/landingSlider/img/filtro.png'
 import countrys from '../utils/countrysList'
 
@@ -18,12 +18,25 @@ function LightEcommerceA() {
     tokens: [],
     page: parseInt(window.localStorage.getItem("page")),
     pag: window.localStorage.getItem("pagSale"),
+    minPrice: window.localStorage.getItem("minPriceS"),
+    maxPrice: window.localStorage.getItem("maxPriceS"),
+    minDate: window.localStorage.getItem("minDateS"),
+    maxDate: window.localStorage.getItem("maxDateS"),
+    minPrice: window.localStorage.getItem("minPriceS"),
+    filter: window.localStorage.getItem("filterS"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
     tokensPerPageNear: 15,
   });
   const [counter, setcounter] = React.useState();
-  const [esconder, setesconder] = React.useState(true);
+  const [esconder, setesconder] = React.useState(false);
+  const [minprice, setminprice] = React.useState(0);
+  const [maxprice, setmaxprice] = React.useState(0);
+  const [mindate, setmindate] = React.useState(0);
+  const [maxdate, setmaxdate] = React.useState(0);
+  const [pagsale, setpagsale] = React.useState(0);
+  const [trigger, settrigger] = React.useState(true);
+  window.localStorage.setItem('filterS', false)
   const [filtro, setfiltro] = React.useState({
     culture: "null",
     country: "null",
@@ -31,7 +44,11 @@ function LightEcommerceA() {
     date: "null",
     price: "null",
   });
-  const [combo, setcombo] = React.useState(true);
+  const [combo, setcombo] = React.useState("max");
+
+  const handleTrigger = () => {
+    settrigger(!trigger)
+  }
 
   const modificarFiltro = (v) => {
     setfiltro(c => ({ ...c, ...v }))
@@ -79,23 +96,52 @@ function LightEcommerceA() {
         //console.log("Page",Landing.page)
         //obtener tokens a la venta
         // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
-        let pag = await contract.get_pagination_onsale({
-          tokens: Landing.tokensPerPageNear
-        })
 
-        window.localStorage.setItem('pagSale', pag)
-        let pagNumArr = pag
-        console.log("Tokens por pagina: ",Landing.tokensPerPageNear)
-        console.log("ID de donde inicia: ",Landing.page)
-        toks = await contract.obtener_pagina_on_sale_V2({
-          tokens: Landing.tokensPerPageNear,
-          _start_index: Landing.page,
-          _minprice: 0,
-          _maxprice: 0,
-          _mindate: 0,
-          _maxdate: 0,
-        });
+        console.log("Tokens por pagina: ", Landing.tokensPerPageNear)
+        console.log("ID de donde inicia: ", Landing.page)
+        if (!esconder) {
+          var pag = await contract.get_pagination_onsale_filters({
+            tokens: Landing.tokensPerPageNear,
+            _start_index: Landing.page,
+            //_start_index: pagsale,
+            _minprice: 0,
+            _maxprice: 0,
+            _mindate: 0,
+            _maxdate: 0,
+          })
+          toks = await contract.obtener_pagina_on_sale_V2({
+            tokens: Landing.tokensPerPageNear,
+            _start_index: Landing.page,
+            //_start_index: pagsale,
+            _minprice: 0,
+            _maxprice: 0,
+            _mindate: 0,
+            _maxdate: 0,
+          });
+          window.localStorage.setItem('pagSale', pag)
+        }
+        else {
+          var pag = await contract.get_pagination_onsale_filters({
+            tokens: Landing.tokensPerPageNear,
+            _start_index: Landing.page,
+            _minprice: minprice,
+            _maxprice: maxprice,
+            _mindate: mindate,
+            _maxdate: maxdate,
+          })
+          toks = await contract.obtener_pagina_on_sale_V2({
+            tokens: Landing.tokensPerPageNear,
+            _start_index: Landing.page,
+            _minprice: minprice,
+            _maxprice: maxprice,
+            _mindate: mindate,
+            _maxdate: maxdate,
+          });
+          console.log(pag)
+          window.localStorage.setItem('pagSale', pag)
+        }
         //obtener cuantos tokens estan a la venta
+        let pagNumArr = pag
         onSaleToks = await contract.get_on_sale_toks();
         console.log(toks)
 
@@ -125,7 +171,7 @@ function LightEcommerceA() {
         });
       }
     })();
-  }, []);
+  }, [trigger]);
   return (
     <section className="text-gray-600 body-font">
       {/* <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
@@ -133,6 +179,27 @@ function LightEcommerceA() {
       )}>
         <div className="fs-1 flex items-center" onClick={e => {
           setesconder(v => !v);
+          window.localStorage.setItem('filterS', !Landing.filter)
+          setmaxdate(0)
+          setmindate(0)
+          setmaxprice(0)
+          setminprice(0)
+          if (combo == "max") {
+            let max = document.getElementById("max")
+            max.value = ""
+          }
+          else if (combo == "min") {
+            let min = document.getElementById("min")
+            min.value = ""
+          }
+          else if (combo == "ran") {
+            let max = document.getElementById("max")
+            max.value = ""
+            let min = document.getElementById("min")
+            min.value = ""
+          }
+          handleTrigger()
+          //settrigger(!trigger);
         }}>
           <img src={filtroimg} className="logg mr-1" />
           <b>Filtro</b>
@@ -143,45 +210,92 @@ function LightEcommerceA() {
       )} >
 
         <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e => {
-          setcombo(e.target.value == "Nuevos");
-        }}>
-          <option>Nuevos</option>
-          <option>Viejos</option>
-        </select>
-        {combo ? (
-          <>
-            <b className="ml-2" >Fecha:</b>
-            <input type="date" className="p-2 lg:w-1/18 ml-2 bg-s1" />
-          </>
-        ) : (
-          <>
-            <b className="ml-2" >Fecha inicial:</b>
-            <input type="date" className="p-2 lg:w-1/18 ml-2 bg-s1" />
-            <b className="ml-2" >Fecha final:</b>
-            <input type="date" className="p-2 lg:w-1/18 ml-2 bg-s1" />
-          </>
-        )}
-        <b className="ml-2" >Precio Minimo:</b>
-        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" />
-        <b className="ml-2" >Precio Maximo:</b>
-        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" />
-        <button className="ml-20 p-2 lg:w-1/12 ml-2 bg-s1"><b>Aplicar</b></button>
-
-        /* <b className="ml-2" >País:</b>
-        <select className="p-2 lg:w-2/12 ml-2 bg-s1" onChange={e => {
-          modificarFiltro({ country: (e.target.value == "Todos los tokens" ? "null" : e.target.value) });
-        }}>
-          <option >
-            Todos los tokens
-          </option>
-          {
-            countrys.map(c => (
-              <option >
-                {c}
-              </option>
-            ))
+          if (e.target.value == "A partir de") {
+            setcombo("max")
           }
-        </select> 
+          else if (e.target.value == "Antes de") {
+            setcombo("min")
+          }
+          else if (e.target.value == "Rango") {
+            setcombo("ran")
+          }
+        }}>
+          <option>A partir de</option>
+          <option>Antes de</option>
+          <option>Rango</option>
+        </select>
+        {combo == "max" ? (
+          <>
+            <b className="ml-2" >Desde:</b>
+            <input type="date" id="max" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+              if (e.target.value != "") {
+                const fecha = e.target.value.split('-')
+                let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                const date = new Date(dateSTR)
+                setmaxdate(parseInt(date.getTime()))
+                setmindate(0)
+              }
+              else {
+                setmaxdate(0)
+                setmindate(0)
+              }
+            }} />
+          </>
+        ) : (combo == "min" ? (
+          <>
+            <b className="ml-2" >Antes:</b>
+            <input type="date" id="min" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+              if (e.target.value != "") {
+                const fecha = e.target.value.split('-')
+                let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                const date = new Date(dateSTR)
+                setmindate(parseInt(date.getTime()))
+                setmaxdate(0)
+              }
+              else {
+                setmindate(0)
+                setmaxdate(0)
+              }
+            }} />
+          </>
+        )
+          : (
+            <>
+              <b className="ml-2" >Fecha inicial:</b>
+              <input type="date" id="min" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+                if (e.target.value != "") {
+                  const fecha = e.target.value.split('-')
+                  let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                  const date = new Date(dateSTR)
+                  setmindate(parseInt(date.getTime()))
+                }
+                else {
+                  setmindate(0)
+                }
+              }} />
+              <b className="ml-2" >Fecha final:</b>
+              <input type="date" id="max" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+                if (e.target.value != "") {
+                  const fecha = e.target.value.split('-')
+                  let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                  const date = new Date(dateSTR)
+                  setmaxdate(parseInt(date.getTime()))
+                }
+                else {
+                  setmaxdate(0)
+                }
+              }} />
+            </>))}
+        <b className="ml-2" >Precio Minimo:</b>
+        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => {
+          setminprice(parseFloat(e.target.value))
+
+        }} value={minprice} />
+        <b className="ml-2" >Precio Maximo:</b>
+        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => { setmaxprice(parseFloat(e.target.value)) }} value={maxprice} />
+        <button className="ml-20 p-2 lg:w-1/12 ml-2 bg-s1" onClick={handleTrigger}><b>Aplicar</b></button>
+
+
       </div> */}
       <div className="container px-5 py-8 mx-auto">
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
@@ -278,10 +392,13 @@ function LightEcommerceA() {
                     //  await getPage(index);
                     if (index == 0) {
                       window.localStorage.setItem("page", 0)
+                      //setpagsale(0)
                     }
                     else {
-                      window.localStorage.setItem("page", parseInt(Landing.pag.split(",")[index]) + 1);
+                      window.localStorage.setItem("page", parseInt(Landing.pag.split(",")[index]));
+                      //setpagsale(parseInt(Landing.pag.split(",")[index]))
                     }
+                    //settrigger(!trigger)
                     //setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
 
                     window.location.reload();

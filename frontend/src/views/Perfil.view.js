@@ -99,7 +99,7 @@ function LightEcommerceA() {
           //limit: nfts.tokensPerPageNear,
         };
         console.log("payload ",payload);
-        toks = await contract.obtener_pagina_by_owner(payload);
+        toks = await contract.obtener_pagina_by_creator(payload);
         console.log("toks ",toks);
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -141,7 +141,7 @@ function LightEcommerceA() {
         
       </div>
       
-      <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
+      {/* <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
       )}>
         <div className="fs-1 flex items-center" onClick={e=>{
@@ -205,7 +205,7 @@ function LightEcommerceA() {
             ))
           }
         </select>
-      </div>
+      </div> */}
       <div className="container px-5 py-3 mx-auto ">
       
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}

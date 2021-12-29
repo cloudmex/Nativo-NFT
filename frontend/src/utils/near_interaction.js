@@ -49,10 +49,12 @@ export const methodOptions = {
     "get_ids_onsale",
     "get_ids_onauction",
     "get_pagination_onsale",
+    "get_pagination_onsale_filters",
     "get_pagination_onauction",
     "obtener_pagina_on_sale_V2",
     "obtener_pagina_on_auction_V2",
     "obtener_pagina_by_owner",
+    "obtener_pagina_by_creator",
    
   ],
   changeMethods: [
