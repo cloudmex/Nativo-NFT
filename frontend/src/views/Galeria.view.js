@@ -45,8 +45,10 @@ function LightEcommerceA() {
     price: "null",
   });
   const [combo, setcombo] = React.useState("max");
+  const [cmbOpc, setcmbOpc] = React.useState(true);
 
   const handleTrigger = () => {
+    setpagsale(0)
     settrigger(!trigger)
   }
 
@@ -102,8 +104,8 @@ function LightEcommerceA() {
         if (!esconder) {
           var pag = await contract.get_pagination_onsale_filters({
             tokens: Landing.tokensPerPageNear,
-            _start_index: Landing.page,
-            //_start_index: pagsale,
+            //_start_index: Landing.page,
+            _start_index: pagsale,
             _minprice: 0,
             _maxprice: 0,
             _mindate: 0,
@@ -111,8 +113,8 @@ function LightEcommerceA() {
           })
           toks = await contract.obtener_pagina_on_sale_V2({
             tokens: Landing.tokensPerPageNear,
-            _start_index: Landing.page,
-            //_start_index: pagsale,
+            //_start_index: Landing.page,
+            _start_index: pagsale,
             _minprice: 0,
             _maxprice: 0,
             _mindate: 0,
@@ -123,7 +125,8 @@ function LightEcommerceA() {
         else {
           var pag = await contract.get_pagination_onsale_filters({
             tokens: Landing.tokensPerPageNear,
-            _start_index: Landing.page,
+            //_start_index: Landing.page,
+            _start_index: pagsale,
             _minprice: minprice,
             _maxprice: maxprice,
             _mindate: mindate,
@@ -131,7 +134,8 @@ function LightEcommerceA() {
           })
           toks = await contract.obtener_pagina_on_sale_V2({
             tokens: Landing.tokensPerPageNear,
-            _start_index: Landing.page,
+            //_start_index: Landing.page,
+            _start_index: pagsale,
             _minprice: minprice,
             _maxprice: maxprice,
             _mindate: mindate,
@@ -174,7 +178,7 @@ function LightEcommerceA() {
   }, [trigger]);
   return (
     <section className="text-gray-600 body-font">
-      {/* <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
+       <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
         esconder ? "" : "py-2"
       )}>
         <div className="fs-1 flex items-center" onClick={e => {
@@ -184,20 +188,24 @@ function LightEcommerceA() {
           setmindate(0)
           setmaxprice(0)
           setminprice(0)
-          if (combo == "max") {
-            let max = document.getElementById("max")
-            max.value = ""
+          setpagsale(0)
+          if(cmbOpc){
+            if (combo == "max") {
+              let max = document.getElementById("max")
+              max.value = ""
+            }
+            else if (combo == "min") {
+              let min = document.getElementById("min")
+              min.value = ""
+            }
+            else if (combo == "ran") {
+              let max = document.getElementById("max")
+              max.value = ""
+              let min = document.getElementById("min")
+              min.value = ""
+            }
           }
-          else if (combo == "min") {
-            let min = document.getElementById("min")
-            min.value = ""
-          }
-          else if (combo == "ran") {
-            let max = document.getElementById("max")
-            max.value = ""
-            let min = document.getElementById("min")
-            min.value = ""
-          }
+          
           handleTrigger()
           //settrigger(!trigger);
         }}>
@@ -208,7 +216,25 @@ function LightEcommerceA() {
       <div className={"container py-5 px-5  mx-auto flex flex-wrap items-center " + (
         esconder ? "" : "esconder"
       )} >
-
+        <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e =>{
+          if (e.target.value=="Fecha") {
+            setcmbOpc(true)
+            setminprice(0)
+            setmaxprice(0)
+            setpagsale(0)
+          } 
+          else{
+            setcmbOpc(false)
+            setmindate(0)
+            setmaxdate(0)
+            setpagsale(0)
+          }
+        }}>
+          <option>Fecha</option>
+          <option>Precio</option>
+        </select>
+        {cmbOpc ?
+        <>
         <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e => {
           if (e.target.value == "A partir de") {
             setcombo("max")
@@ -286,17 +312,20 @@ function LightEcommerceA() {
                 }
               }} />
             </>))}
+        </> :
+        <>
         <b className="ml-2" >Precio Minimo:</b>
-        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => {
-          setminprice(parseFloat(e.target.value))
-
-        }} value={minprice} />
+        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => {setminprice(parseFloat(e.target.value))}} value={minprice} />
         <b className="ml-2" >Precio Maximo:</b>
-        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => { setmaxprice(parseFloat(e.target.value)) }} value={maxprice} />
+        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => {setmaxprice(parseFloat(e.target.value))}} value={maxprice} />
+        </>
+        }
+        
+        
         <button className="ml-20 p-2 lg:w-1/12 ml-2 bg-s1" onClick={handleTrigger}><b>Aplicar</b></button>
 
 
-      </div> */}
+      </div>
       <div className="container px-5 py-8 mx-auto">
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
         {!Landing.tokens.length > 0 ? (
@@ -383,7 +412,7 @@ function LightEcommerceA() {
               return (
                 <a
 
-                  className={`bg-white ${Landing.page == index
+                  className={`bg-white ${pagsale/Landing.tokensPerPageNear == index
                     ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
                     : "border-gray-300 text-gray-500 hover:bg-gray-50"
                     }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
@@ -392,16 +421,17 @@ function LightEcommerceA() {
                     //  await getPage(index);
                     if (index == 0) {
                       window.localStorage.setItem("page", 0)
-                      //setpagsale(0)
+                      setpagsale(0)
                     }
                     else {
                       window.localStorage.setItem("page", parseInt(Landing.pag.split(",")[index]));
-                      //setpagsale(parseInt(Landing.pag.split(",")[index]))
+                      setpagsale(parseInt(Landing.pag.split(",")[index]))
                     }
-                    //settrigger(!trigger)
+                    window.scroll(0,0)
+                    settrigger(!trigger)
                     //setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
 
-                    window.location.reload();
+                    //window.location.reload();
                   }}
                 >
                   {index + 1}
