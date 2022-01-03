@@ -388,9 +388,30 @@ function LightEcommerceA() {
                       </div>
                     </a>
                     :
-                    <img
+                    <>
+                    <div className="token">
+                        <div className="block relative h-48 rounded overflow-hidden">
+
+                        <img
                       src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"}
                       className="object-cover object-center w-full h-full block" />
+
+
+
+                        </div>
+                        <div className="mt-4">
+                          <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                            Cargando Informacion
+                          </h2>
+                          <p className="mt-1 mb-4 ml-2">
+                            Espere un momento por favor<br />
+                            Se esta recuperando la Informacion<br/>
+                            del NFT
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                    
 
                   }
                 </div>
