@@ -227,7 +227,11 @@ impl Contract {
        // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
        let token_id: TokenId =self.n_total_tokens.to_string();
        let mut info:Vec<String>=Vec::new();
-
+       assert_eq!(
+        token_metadata.media != None,
+        true,
+        "media del token vacia "
+    );
        let mined= self.tokens.mint(
             token_id.clone(),
             account,   // token_owner_id,//cambiar por la direccion del contrato this.address
@@ -1087,7 +1091,7 @@ impl Contract {
             owner_id : owner_id.to_string(),
             title : metadata.title.as_ref().unwrap().to_string(),
             description : metadata.description.as_ref().unwrap().to_string(),
-            media : metadata.media.as_ref().unwrap().to_string(),
+            media : metadata.media.unwrap_or_default().to_string(),
             culture : extradatajson.culture,
             country : extradatajson.country,
             creator : extradatajson.creator,
@@ -1122,8 +1126,8 @@ impl Contract {
             if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
                 let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[0] =="S"  };
                 toksfilted = _map.iter()
-                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap_or_default() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap_or_default() )
                      .collect() ;
                      toksfilted.sort();
                 if toksfilted.is_empty() {
