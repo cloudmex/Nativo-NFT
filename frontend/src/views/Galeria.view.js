@@ -341,6 +341,9 @@ function LightEcommerceA() {
 
 
       </div>
+      <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
+        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+      </div>
       <div className="container px-5 py-8 mx-auto">
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
         {!Landing.tokens.length > 0 ? (
