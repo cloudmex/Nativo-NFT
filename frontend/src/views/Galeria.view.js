@@ -8,6 +8,7 @@ import {
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear, fromNearToYocto } from "../utils/near_interaction";
 import filtroimg from '../assets/landingSlider/img/filtro.png'
+import Pagination from '@mui/material/Pagination';
 import countrys from '../utils/countrysList'
 
 
@@ -35,6 +36,7 @@ function LightEcommerceA() {
   const [mindate, setmindate] = React.useState(0);
   const [maxdate, setmaxdate] = React.useState(0);
   const [pagsale, setpagsale] = React.useState(0);
+  const [page, setpage] = React.useState(1);
   const [trigger, settrigger] = React.useState(true);
   window.localStorage.setItem('filterS', false)
   const [filtro, setfiltro] = React.useState({
@@ -47,8 +49,17 @@ function LightEcommerceA() {
   const [combo, setcombo] = React.useState("max");
   const [cmbOpc, setcmbOpc] = React.useState(true);
 
+  const handleChangePage = (e, value) => {
+    console.log(value)
+    setpage(value)
+    setpagsale(parseInt(Landing.pag.split(",")[value-1]))
+    window.scroll(0, 0)
+    settrigger(!trigger)
+  }
+
   const handleTrigger = () => {
     setpagsale(0)
+    setpage(1)
     settrigger(!trigger)
   }
 
@@ -100,7 +111,7 @@ function LightEcommerceA() {
         // console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
 
         console.log("Tokens por pagina: ", Landing.tokensPerPageNear)
-        console.log("ID de donde inicia: ", Landing.page)
+        console.log("ID de donde inicia: ", pagsale)
         if (!esconder) {
           var pag = await contract.get_pagination_onsale_filters({
             tokens: Landing.tokensPerPageNear,
@@ -111,6 +122,7 @@ function LightEcommerceA() {
             _mindate: 0,
             _maxdate: 0,
           })
+          console.log(pag)
           toks = await contract.obtener_pagina_on_sale_V2({
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
@@ -178,7 +190,7 @@ function LightEcommerceA() {
   }, [trigger]);
   return (
     <section className="text-gray-600 body-font">
-       <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
+      <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
         esconder ? "" : "py-2"
       )}>
         <div className="fs-1 flex items-center" onClick={e => {
@@ -189,7 +201,8 @@ function LightEcommerceA() {
           setmaxprice(0)
           setminprice(0)
           setpagsale(0)
-          if(cmbOpc){
+          setpage(1)
+          if (cmbOpc) {
             if (combo == "max") {
               let max = document.getElementById("max")
               max.value = ""
@@ -205,7 +218,7 @@ function LightEcommerceA() {
               min.value = ""
             }
           }
-          
+
           handleTrigger()
           //settrigger(!trigger);
         }}>
@@ -216,112 +229,114 @@ function LightEcommerceA() {
       <div className={"container py-5 px-5  mx-auto flex flex-wrap items-center " + (
         esconder ? "" : "esconder"
       )} >
-        <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e =>{
-          if (e.target.value=="Fecha") {
+        <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e => {
+          if (e.target.value == "Fecha") {
             setcmbOpc(true)
             setminprice(0)
             setmaxprice(0)
             setpagsale(0)
-          } 
-          else{
+            setpage(1)
+          }
+          else {
             setcmbOpc(false)
             setmindate(0)
             setmaxdate(0)
             setpagsale(0)
+            setpage(1)
           }
         }}>
           <option>Fecha</option>
           <option>Precio</option>
         </select>
         {cmbOpc ?
-        <>
-        <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e => {
-          if (e.target.value == "A partir de") {
-            setcombo("max")
-          }
-          else if (e.target.value == "Antes de") {
-            setcombo("min")
-          }
-          else if (e.target.value == "Rango") {
-            setcombo("ran")
-          }
-        }}>
-          <option>A partir de</option>
-          <option>Antes de</option>
-          <option>Rango</option>
-        </select>
-        {combo == "max" ? (
           <>
-            <b className="ml-2" >Desde:</b>
-            <input type="date" id="max" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
-              if (e.target.value != "") {
-                const fecha = e.target.value.split('-')
-                let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
-                const date = new Date(dateSTR)
-                setmaxdate(parseInt(date.getTime()))
-                setmindate(0)
+            <select className="p-2 lg:w-1/12 ml-2 bg-s1" onChange={e => {
+              if (e.target.value == "A partir de") {
+                setcombo("max")
               }
-              else {
-                setmaxdate(0)
-                setmindate(0)
+              else if (e.target.value == "Antes de") {
+                setcombo("min")
               }
-            }} />
-          </>
-        ) : (combo == "min" ? (
+              else if (e.target.value == "Rango") {
+                setcombo("ran")
+              }
+            }}>
+              <option>A partir de</option>
+              <option>Antes de</option>
+              <option>Rango</option>
+            </select>
+            {combo == "max" ? (
+              <>
+                <b className="ml-2" >Desde:</b>
+                <input type="date" id="max" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+                  if (e.target.value != "") {
+                    const fecha = e.target.value.split('-')
+                    let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                    const date = new Date(dateSTR)
+                    setmaxdate(parseInt(date.getTime()))
+                    setmindate(0)
+                  }
+                  else {
+                    setmaxdate(0)
+                    setmindate(0)
+                  }
+                }} />
+              </>
+            ) : (combo == "min" ? (
+              <>
+                <b className="ml-2" >Antes:</b>
+                <input type="date" id="min" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+                  if (e.target.value != "") {
+                    const fecha = e.target.value.split('-')
+                    let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                    const date = new Date(dateSTR)
+                    setmindate(parseInt(date.getTime()))
+                    setmaxdate(0)
+                  }
+                  else {
+                    setmindate(0)
+                    setmaxdate(0)
+                  }
+                }} />
+              </>
+            )
+              : (
+                <>
+                  <b className="ml-2" >Fecha inicial:</b>
+                  <input type="date" id="min" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+                    if (e.target.value != "") {
+                      const fecha = e.target.value.split('-')
+                      let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                      const date = new Date(dateSTR)
+                      setmindate(parseInt(date.getTime()))
+                    }
+                    else {
+                      setmindate(0)
+                    }
+                  }} />
+                  <b className="ml-2" >Fecha final:</b>
+                  <input type="date" id="max" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
+                    if (e.target.value != "") {
+                      const fecha = e.target.value.split('-')
+                      let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
+                      const date = new Date(dateSTR)
+                      setmaxdate(parseInt(date.getTime()))
+                    }
+                    else {
+                      setmaxdate(0)
+                    }
+                  }} />
+                </>))}
+          </> :
           <>
-            <b className="ml-2" >Antes:</b>
-            <input type="date" id="min" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
-              if (e.target.value != "") {
-                const fecha = e.target.value.split('-')
-                let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
-                const date = new Date(dateSTR)
-                setmindate(parseInt(date.getTime()))
-                setmaxdate(0)
-              }
-              else {
-                setmindate(0)
-                setmaxdate(0)
-              }
-            }} />
+            <b className="ml-2" >Precio Minimo:</b>
+            <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => { setminprice(parseFloat(e.target.value)) }} value={minprice} />
+            <b className="ml-2" >Precio Maximo:</b>
+            <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => { setmaxprice(parseFloat(e.target.value)) }} value={maxprice} />
           </>
-        )
-          : (
-            <>
-              <b className="ml-2" >Fecha inicial:</b>
-              <input type="date" id="min" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
-                if (e.target.value != "") {
-                  const fecha = e.target.value.split('-')
-                  let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
-                  const date = new Date(dateSTR)
-                  setmindate(parseInt(date.getTime()))
-                }
-                else {
-                  setmindate(0)
-                }
-              }} />
-              <b className="ml-2" >Fecha final:</b>
-              <input type="date" id="max" className="p-2 lg:w-1/18 ml-2 bg-s1" onChange={e => {
-                if (e.target.value != "") {
-                  const fecha = e.target.value.split('-')
-                  let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
-                  const date = new Date(dateSTR)
-                  setmaxdate(parseInt(date.getTime()))
-                }
-                else {
-                  setmaxdate(0)
-                }
-              }} />
-            </>))}
-        </> :
-        <>
-        <b className="ml-2" >Precio Minimo:</b>
-        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => {setminprice(parseFloat(e.target.value))}} value={minprice} />
-        <b className="ml-2" >Precio Maximo:</b>
-        <input type="number" className="p-2 lg:w-1/12 ml-2 bg-s1" min="0" step="0.1" onChange={e => {setmaxprice(parseFloat(e.target.value))}} value={maxprice} />
-        </>
         }
-        
-        
+
+
         <button className="ml-20 p-2 lg:w-1/12 ml-2 bg-s1" onClick={handleTrigger}><b>Aplicar</b></button>
 
 
@@ -373,17 +388,40 @@ function LightEcommerceA() {
                       </div>
                     </a>
                     :
-                    <img
+                    <>
+                    <div className="token">
+                        <div className="block relative h-48 rounded overflow-hidden">
+
+                        <img
                       src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"}
                       className="object-cover object-center w-full h-full block" />
+
+
+
+                        </div>
+                        <div className="mt-4">
+                          <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                            Cargando Informacion
+                          </h2>
+                          <p className="mt-1 mb-4 ml-2">
+                            Espere un momento por favor<br />
+                            Se esta recuperando la Informacion<br/>
+                            del NFT
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                    
 
                   }
                 </div>
               );
             })}
         </div>
+        
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-          <nav
+          <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+          {/* <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
           >
@@ -412,7 +450,7 @@ function LightEcommerceA() {
               return (
                 <a
 
-                  className={`bg-white ${pagsale/Landing.tokensPerPageNear == index
+                  className={`bg-white ${pagsale / Landing.tokensPerPageNear == index
                     ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
                     : "border-gray-300 text-gray-500 hover:bg-gray-50"
                     }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
@@ -427,7 +465,7 @@ function LightEcommerceA() {
                       window.localStorage.setItem("page", parseInt(Landing.pag.split(",")[index]));
                       setpagsale(parseInt(Landing.pag.split(",")[index]))
                     }
-                    window.scroll(0,0)
+                    window.scroll(0, 0)
                     settrigger(!trigger)
                     //setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
 
@@ -438,7 +476,7 @@ function LightEcommerceA() {
                 </a>
               );
             })}
-          </nav>
+          </nav> */}
         </div>
       </div>
     </section>
