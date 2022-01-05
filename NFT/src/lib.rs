@@ -50,7 +50,9 @@ pub struct Contract {
     n_total_tokens: u64,
     n_token_on_sale: u64,
     n_token_on_auction: u64,
-    tokenHM:HashMap<TokenId, Vec<String> >,
+    n_chunks: u64,
+    tokenHM:HashMap<TokenId, Vec<String>>,
+    tk_chunk:Vec<HashMap<TokenId, Vec<String>>>,
 }
  
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
@@ -90,7 +92,7 @@ pub struct Extras {
 }
  
  
- 
+
 lazy_static! {
     static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
     static ref CONV_MAP: HashMap<String, String> = {
@@ -129,8 +131,9 @@ impl Default for Contract {
          n_total_tokens: 0,
          n_token_on_sale: 0,
          n_token_on_auction: 0,
+         n_chunks: 0,
          tokenHM:HashMap::new(),
-         
+         tk_chunk:Vec::new(),
          
      }   }
 }
@@ -184,8 +187,9 @@ impl Contract {
             n_total_tokens: 0,
             n_token_on_sale: 0,
             n_token_on_auction: 0,
+            n_chunks: 0,
             tokenHM:HashMap::new(),
-            
+            tk_chunk:Vec::new(),
         }
     }
     
@@ -268,11 +272,49 @@ impl Contract {
          info.push(extradatajson.price.to_string());
         //info[4] fecha creacion
         info.push(env::block_timestamp().to_string());
+         //obtener el chunk id
+         let mut chunkid: usize = self.n_chunks.try_into().unwrap();
+         //clonar lo que esta guardado en el chunk
+         let mut _tkc =self.tk_chunk.clone();
+         //validar el tamañ del chunk
+         if _tkc.len() == 0 {
+              //insertar nuevo token a Hashmap
+                let mut _map =self.tokenHM.clone();
+                _map.insert(token_id.clone(),info.clone());
+                //insertar nuevo token a vec<Hashmap>
+                _tkc.push(_map.clone());
+                //modificar la variable del contracto tk_chunk
+                self.tk_chunk=_tkc.clone();
+         }
+         else{ 
+             log!("tkchun len {}",_tkc.clone().len());
+                        //Validar si el tamaño del chunk ya excede el maximo estandarizado
+                if _tkc[chunkid.clone()].len() >=660 as usize {
+                    //avanzar al siguiente chunk
+                    chunkid+=1;
+                    self.n_chunks=chunkid.clone() as u64;
+                    let mut _map =self.tokenHM.clone();
+                    _map.insert(token_id.clone(),info.clone());
+                    //insertar nuevo token a vec<Hashmap>
+                    _tkc.push(_map.clone());
+                    //modificar la variable del contracto tk_chunk
+                    self.tk_chunk=_tkc.clone();
+                }else{
+                    let mut _map =self.tk_chunk.clone();
+                    _map[chunkid].insert(token_id.clone(),info.clone());
+                    //insertar nuevo token a vec<Hashmap>
+               
+                    //modificar la variable del contracto tk_chunk
+                    self.tk_chunk=_map.clone();
+                }
+
+                
+         }
+        
+      
          
-         //insertar nuevo token a Hashmap
-         let mut _map =self.tokenHM.clone();
-         _map.insert(token_id.clone(),info);
-         self.tokenHM=_map.clone();
+
+        
 
         let mut originaltoken = Contract::enum_get_token( &self,self.tokens.owner_by_id.get(&token_id.to_string()).unwrap(),token_id.clone());
         originaltoken
@@ -658,7 +700,7 @@ impl Contract {
                     //TODO: transferir la regalia del token
                     Promise::new(Contractaccount.clone()).transfer(gains as u128);
                         //cambiamos el on sale/on auction a false
-                        if(extradatajson.highestbidder.parse::<u128>().unwrap() == 0 as u128){
+                        if extradatajson.highestbidder.parse::<u128>().unwrap() == 0 as u128 {
                             extradatajson.adressbidder=token_owner_id.as_ref().unwrap().to_string();
                         }
                         extradatajson.on_sale=false;
@@ -834,11 +876,11 @@ impl Contract {
         
     } 
     //obtiene un registro del hashmap por key
-    pub fn gethash(& self,tokens:String   )   {
+    pub fn gethash(& self,position:String,chunk:usize   )   {
 
-        let mut _map = self.tokenHM.clone();
+        let mut _map = self.tk_chunk.clone();
         
-       let x = _map.get(&tokens);
+       let x = _map[chunk].get(&position);
        log!("value {:?}", x);
  
     }
@@ -898,13 +940,14 @@ impl Contract {
         //return toksfilted[0..25].to_vec();
     }
     //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn get_pagination_onsale_filters(& self,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<u64>  {
+    pub fn get_pagination_onsale_filters(& self,chunk:usize,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<u64>  {
         //insertar nuevo token a Hashmap
-        let mut _map =self.tokenHM.clone();
+        let mut _map =self.tk_chunk[chunk].clone();
         let mut vectIDs = vec![];
         let mut vectMEta = vec![];
         let ends= _map.len().to_string().parse::<u64>();
         let mut _tokfound =0;
+        
         let mut i=0;
         let mut toksfilted:Vec<u64> = vec![];
         //comienza el filtrado segun los parametros
@@ -1007,7 +1050,7 @@ impl Contract {
             }
      
      log!("{:?}",toksfilted);
-     vectIDs.push(0);  
+     //vectIDs.push(0);  
      for x in 0..toksfilted.clone().len()-1 { 
         _tokfound+=1;
       if _tokfound== tokens {   
@@ -1075,6 +1118,10 @@ impl Contract {
     pub fn get_on_total_toks(&self) -> u64 {
         self.n_total_tokens
     }
+
+    pub fn get_n_in_chuck(&self,chunk:usize) -> usize {
+      return  self.tk_chunk[chunk].len() ;
+    }
     pub fn get_token(&self, token_id: TokenId) -> Meta {
         
         let mut metadata = self
@@ -1111,9 +1158,9 @@ impl Contract {
   
 
     //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn obtener_pagina_on_sale_V2(& self,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<Meta>  {
+    pub fn obtener_pagina_on_sale_V2(& self,chunk:usize,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<Meta>  {
         //insertar nuevo token a Hashmap
-        let mut _map =self.tokenHM.clone();
+        let mut _map =self.tk_chunk[chunk].clone();
         let mut vectIDs = vec![];
         let mut vectMEta = vec![];
         let ends= _map.len().to_string().parse::<u64>();
@@ -1355,7 +1402,10 @@ impl Contract {
             n_total_tokens:old_state.n_total_tokens,
             n_token_on_sale: old_state.n_token_on_sale,
             n_token_on_auction:old_state.n_token_on_auction,
-            tokenHM:old_state.tokenHM, 
+            n_chunks: 0,
+            tokenHM:old_state.tokenHM,
+            tk_chunk:Vec::new(),
+
         }
     }
 

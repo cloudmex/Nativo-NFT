@@ -114,6 +114,7 @@ function LightEcommerceA() {
         console.log("ID de donde inicia: ", pagsale)
         if (!esconder) {
           var pag = await contract.get_pagination_onsale_filters({
+            chunk:0,
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -124,6 +125,7 @@ function LightEcommerceA() {
           })
           console.log(pag)
           toks = await contract.obtener_pagina_on_sale_V2({
+            chunk:0,
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -136,6 +138,7 @@ function LightEcommerceA() {
         }
         else {
           var pag = await contract.get_pagination_onsale_filters({
+            chunk:0,
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -145,6 +148,7 @@ function LightEcommerceA() {
             _maxdate: maxdate,
           })
           toks = await contract.obtener_pagina_on_sale_V2({
+            chunk:0,
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
