@@ -53,8 +53,8 @@ function LightEcommerceA() {
   const handleChangePage = (e, value) => {
     console.log(value)
     setpage(value)
-    setpagsale(parseInt(Landing.pag.split(",")[value-1].split("-")[1]))
-    setchunksale(parseInt(Landing.pag.split(",")[value-1].split("-")[0]))
+    setpagsale(parseInt(Landing.pag.split(",")[value].split("-")[1]))
+    setchunksale(parseInt(Landing.pag.split(",")[value].split("-")[0]))
     window.scroll(0, 0)
     settrigger(!trigger)
   }
