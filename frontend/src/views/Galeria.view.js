@@ -36,6 +36,7 @@ function LightEcommerceA() {
   const [mindate, setmindate] = React.useState(0);
   const [maxdate, setmaxdate] = React.useState(0);
   const [pagsale, setpagsale] = React.useState(0);
+  const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [trigger, settrigger] = React.useState(true);
   window.localStorage.setItem('filterS', false)
@@ -52,13 +53,15 @@ function LightEcommerceA() {
   const handleChangePage = (e, value) => {
     console.log(value)
     setpage(value)
-    setpagsale(parseInt(Landing.pag.split(",")[value-1]))
+    setpagsale(parseInt(Landing.pag.split(",")[value-1].split("-")[1]))
+    setchunksale(parseInt(Landing.pag.split(",")[value-1].split("-")[0]))
     window.scroll(0, 0)
     settrigger(!trigger)
   }
 
   const handleTrigger = () => {
     setpagsale(0)
+    setchunksale(0)
     setpage(1)
     settrigger(!trigger)
   }
@@ -113,8 +116,7 @@ function LightEcommerceA() {
         console.log("Tokens por pagina: ", Landing.tokensPerPageNear)
         console.log("ID de donde inicia: ", pagsale)
         if (!esconder) {
-          var pag = await contract.get_pagination_onsale_filters({
-            chunk:0,
+          var pag = await contract.get_pagination_onsale_filters_v2({
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -125,7 +127,7 @@ function LightEcommerceA() {
           })
           console.log(pag)
           toks = await contract.obtener_pagina_on_sale_V2({
-            chunk:0,
+            chunk: chunksale,
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -137,8 +139,7 @@ function LightEcommerceA() {
           window.localStorage.setItem('pagSale', pag)
         }
         else {
-          var pag = await contract.get_pagination_onsale_filters({
-            chunk:0,
+          var pag = await contract.get_pagination_onsale_filters_v2({
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -148,7 +149,7 @@ function LightEcommerceA() {
             _maxdate: maxdate,
           })
           toks = await contract.obtener_pagina_on_sale_V2({
-            chunk:0,
+            chunk: chunksale,
             tokens: Landing.tokensPerPageNear,
             //_start_index: Landing.page,
             _start_index: pagsale,
@@ -205,6 +206,7 @@ function LightEcommerceA() {
           setmaxprice(0)
           setminprice(0)
           setpagsale(0)
+          setchunksale(0)
           setpage(1)
           if (cmbOpc) {
             if (combo == "max") {
@@ -239,6 +241,7 @@ function LightEcommerceA() {
             setminprice(0)
             setmaxprice(0)
             setpagsale(0)
+            setchunksale(0)
             setpage(1)
           }
           else {
@@ -246,6 +249,7 @@ function LightEcommerceA() {
             setmindate(0)
             setmaxdate(0)
             setpagsale(0)
+            setchunksale(0)
             setpage(1)
           }
         }}>
