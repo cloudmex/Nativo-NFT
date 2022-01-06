@@ -15,7 +15,7 @@ EL CHIDO CON EL QUE SÍ FUNCIONA LA MINACIÓN
 
 near call dev-1636751893359-19496702378959 minar '{"token_owner_id": "dev-1636751893359-19496702378959", "token_metadata":{"title":"nombre del token","description": "descripción","media": "imagenimagenimagenimagenimagenim","media_hash":"imagenimagenimagenimagenimagenim"}}' --accountId dev-1636751893359-19496702378959 --amount 0.1
 
-near deploy --wasmFile target/wasm32-unknown-unknown/release/nft_marketplace.wasm --initFunction "migrate" --initArgs "{}" --accountId dev-1636751893359-19496702378959
+near deploy --wasmFile target/wasm32-unknown-unknown/release/nft_marketplace.wasm --initFunction "migrate" --initArgs "{}" --accountId nativov2.testnet
 
 
 near call dev-1636751893359-19496702378959 minar '{"token_owner_id": "dev-1636751893359-19496702378959", "token_metadata": { "title": "Tenochtitlan", "description": "This is Tenochtitlan", "media": "imagenimagenimagenimagenimagenim","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'dev-1636751893359-19496702378959'","'price'":"'10'"}'"}}' --accountId dev-1636751893359-19496702378959 --amount 0.1
@@ -78,7 +78,7 @@ near view nativodeploy.testnet obtener_pagina_v3 '{"from_index":0,"limit":136}' 
 
 near view nativodeploy.testnet obtener_pagina_v3_auction '{"from_index":0,"limit":136}' --accountId nativodeploy.testnet
 
-near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativodeploy.testnet
+near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativov2.testnet
 
 near view nativodeploy.testnet obtener_pagina_v3_by_filtros '{"from_index":0,"limit":30,"culture":"null","country":"null"}' --accountId nativodeploy.testnet
 
@@ -136,3 +136,7 @@ near call nativoapp.testnet get_pagination_onsale  '{"tokens":25}' --accountId d
  near call sub.nativoapp.testnet inserthash '{"token_id":"2000","info":["S","joehank.testnet","joehank.testnet","3","1640205511361358482"]}' --accountId joehank.testnet
 near view dev-1640023698418-93584970975929 get_pagination_onsale  '{"tokens":25}' --accountId dokxo.testnet
  near call dev-1640023698418-93584970975929 resethash --accountId dokxo.testnet
+
+
+
+near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativov2.testnet --initGas=300000000000000

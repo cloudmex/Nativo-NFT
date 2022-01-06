@@ -136,7 +136,7 @@ function LightEcommerceA() {
             _mindate: 0,
             _maxdate: 0,
           });
-          window.localStorage.setItem('pagSale', pag)
+          window.localStorage.setItem('pagSale', "0,"+pag)
         }
         else {
           var pag = await contract.get_pagination_onsale_filters_v2({
