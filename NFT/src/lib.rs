@@ -324,7 +324,7 @@ impl Contract {
     /// ///////////////////////////////////COMPRA/VENTA DE TOKENS
     #[payable]
     pub fn comprar_nft(&mut self, token_id: TokenId, chunk: usize ) -> TokenMetadata {
-        let Contractaccount: AccountId = "nativo.dokxo.testnet".parse().unwrap();
+        let Contractaccount: AccountId = "nativov2.testnet".parse().unwrap();
         let mut info:Vec<String>=Vec::new();
 
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
@@ -443,7 +443,7 @@ impl Contract {
         originaltoken
     }
    
-    pub fn revender(&mut self, token_id: TokenId, price: String ) -> TokenMetadata {
+    pub fn revender(&mut self, token_id: TokenId, price: String, chunk: usize ) -> TokenMetadata {
         let mut info:Vec<String>=Vec::new();
         //comprobar que el token exista
         assert_eq!(
@@ -493,9 +493,9 @@ impl Contract {
             //el date 
             info.push(extradatajson.starts_at.clone().to_string());
                     //insertar nuevo token a Hashmap
-                let mut _map =self.tokenHM.clone();
-                _map.insert(token_id.clone(),info);
-                self.tokenHM=_map.clone();
+                let mut _map =self.tk_chunk.clone();
+                _map[chunk].insert(token_id.clone(),info);
+                self.tk_chunk=_map.clone();
 
         // se convierte el Json a un String plano
         let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
@@ -795,7 +795,7 @@ impl Contract {
             self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
     }
       
-    pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
+    pub fn quitar_del_market_place(&mut self, token_id: TokenId, chunk: usize) -> TokenMetadata {
         let mut info:Vec<String>=Vec::new();
 
         //comprobar que el token exista
@@ -854,9 +854,9 @@ impl Contract {
             //el date 
             info.push(extradatajson.starts_at.clone().to_string());
                     //insertar nuevo token a Hashmap
-                let mut _map =self.tokenHM.clone();
-                _map.insert(token_id.clone(),info);
-                self.tokenHM=_map.clone();
+                let mut _map =self.tk_chunk.clone();
+                _map[chunk].insert(token_id.clone(),info);
+                self.tk_chunk=_map.clone();
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
