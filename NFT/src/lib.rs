@@ -219,12 +219,8 @@ impl Contract {
     }
 
 
-    //all methods created 
-      /**
-     * permite minar nuevos tokens
-     * @param token_owner_id {ValidAccountId} a quien le va a pertenecer el token
-     * @param tokenMetadata {TokenMetadata} los metadatos
-     */
+    ///////////////////////////////////////////////////////
+    /// ///////////////////////////////////CREACION DE TOKENS
     #[payable]
     pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata) -> Token {
         let Contractaccount: AccountId = "nativov2.testnet".parse().unwrap();
@@ -249,7 +245,7 @@ impl Contract {
           
         self.tokens
         .internal_transfer_unguarded(&token_id, &Contractaccount.to_string(), &token_owner_id.to_string());
-    //    log!("tranfer done");
+     //    log!("tranfer done");
         self.n_total_tokens  +=1;
         self.n_token_on_sale += 1;
 
@@ -290,7 +286,7 @@ impl Contract {
          else{ 
         //     log!("tkchun len {}",_tkc.clone().len());
                         //Validar si el tamaño del chunk ya excede el maximo estandarizado
-                if _tkc[chunkid.clone()].len() >=660 as usize {
+                if _tkc[chunkid.clone()].len() >=20 as usize {
                     //avanzar al siguiente chunk
                     chunkid+=1;
                     self.n_chunks=chunkid.clone() as u64;
@@ -320,10 +316,15 @@ impl Contract {
         let mut originaltoken = Contract::enum_get_token( &self,self.tokens.owner_by_id.get(&token_id.to_string()).unwrap(),token_id.clone());
         originaltoken
     }
-
+ 
+    /// ///////////////////////////////////CREACION DE TOKENS
+    ///  ///////////////////////////////////////////////////////
+    
+      ///////////////////////////////////////////////////////
+    /// ///////////////////////////////////COMPRA/VENTA DE TOKENS
     #[payable]
-    pub fn comprar_nft(&mut self, token_id: TokenId ) -> TokenMetadata {
-        let Contractaccount: AccountId = "nativo.dokxo.testnet".parse().unwrap();
+    pub fn comprar_nft(&mut self, token_id: TokenId, chunk: usize ) -> TokenMetadata {
+        let Contractaccount: AccountId = "nativov2.testnet".parse().unwrap();
         let mut info:Vec<String>=Vec::new();
 
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
@@ -400,9 +401,9 @@ impl Contract {
             //el date 
             info.push(extradatajson.starts_at.clone().to_string());
                     //insertar nuevo token a Hashmap
-                let mut _map =self.tokenHM.clone();
-                _map.insert(token_id.clone(),info);
-                self.tokenHM=_map.clone();
+            let mut _map =self.tk_chunk.clone();
+            _map[chunk].insert(token_id.clone(),info);
+            self.tk_chunk=_map.clone();
 
         //Se modifica el json
         extradatajson.on_sale = false;
@@ -411,7 +412,7 @@ impl Contract {
         // se convierte el Json a un String plano
         let mut extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
         let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
-    //    log!("{}",&finalextrajson.to_string());
+      //    log!("{}",&finalextrajson.to_string());
         originaltoken.extra = Some(finalextrajson);
         //remplazamos la metadata
         self.tokens
@@ -441,10 +442,8 @@ impl Contract {
         //retornar la metadata
         originaltoken
     }
-
    
-    
-    pub fn revender(&mut self, token_id: TokenId, price: String ) -> TokenMetadata {
+    pub fn revender(&mut self, token_id: TokenId, price: String, chunk: usize ) -> TokenMetadata {
         let mut info:Vec<String>=Vec::new();
         //comprobar que el token exista
         assert_eq!(
@@ -494,14 +493,14 @@ impl Contract {
             //el date 
             info.push(extradatajson.starts_at.clone().to_string());
                     //insertar nuevo token a Hashmap
-                let mut _map =self.tokenHM.clone();
-                _map.insert(token_id.clone(),info);
-                self.tokenHM=_map.clone();
+                let mut _map =self.tk_chunk.clone();
+                _map[chunk].insert(token_id.clone(),info);
+                self.tk_chunk=_map.clone();
 
         // se convierte el Json a un String plano
         let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
         let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
-    //    log!("{}",&finalextrajson.to_string());
+      //    log!("{}",&finalextrajson.to_string());
         originaltoken.extra = Some(finalextrajson);
         //remplazamos la metadata
         self.tokens
@@ -514,7 +513,12 @@ impl Contract {
         //retornar la metadata
         originaltoken
     }
-
+    
+    /// ///////////////////////////////////COMPRA/VENTA DE TOKENS
+    ///  /////////////////////////////////////////////////////// 
+    
+    ///////////////////////////////////////////////////////
+    /// ///////////////////////////////////SUBASTA DE TOKENS
     pub fn subastar_nft(&mut self, token_id: TokenId,lowestbidder:String,starts_at:String,expires_at:String){
         let mut info:Vec<String>=Vec::new();
 
@@ -741,9 +745,13 @@ impl Contract {
         return false ;
     }
 
-   
-     
   
+    //////////////////////////////////////SUBASTA DE TOKENS
+    ///////////////////////////////////////////////////////
+  
+
+    ///////////////////////////////////////////////////////
+    /// ///////////////////////////////////MIS DE TOKENS
     
     #[payable]
     pub fn extraer_token(&mut self, token_id: TokenId){
@@ -786,8 +794,8 @@ impl Contract {
             let apro: Option<u64> = Some(0);
             self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
     }
-      /// 
-    pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
+      
+    pub fn quitar_del_market_place(&mut self, token_id: TokenId, chunk: usize) -> TokenMetadata {
         let mut info:Vec<String>=Vec::new();
 
         //comprobar que el token exista
@@ -846,420 +854,16 @@ impl Contract {
             //el date 
             info.push(extradatajson.starts_at.clone().to_string());
                     //insertar nuevo token a Hashmap
-                let mut _map =self.tokenHM.clone();
-                _map.insert(token_id.clone(),info);
-                self.tokenHM=_map.clone();
+                let mut _map =self.tk_chunk.clone();
+                _map[chunk].insert(token_id.clone(),info);
+                self.tk_chunk=_map.clone();
 
         //cambiar el numero de nfts disponibles
         self.n_token_on_sale += 1;
         //retornar la metadata
         originaltoken
     }
-  //Genera un nuevo registro o actualiza uno existente
-    pub fn inserthash(& mut self,token_id : TokenId,info:Vec<String> ) -> usize {
-        //insertar nuevo token a Hashmap
-        let mut _map =self.tokenHM.clone();
-        _map.insert(token_id.clone(),info);
-        self.tokenHM=_map.clone();
-        return  self.tokenHM.len();
-        
-    } 
-    //harcodea 2000 registros al hashmap
-    pub fn fillhash(& mut self ) -> usize {
-        //insertar nuevo token a Hashmap
-        let mut _map =self.tokenHM.clone();
-        let ends= _map.len().to_string().parse::<u64>().unwrap();
-        for x in 0..55 {
-             _map.insert(x.to_string(),vec!["S".to_string(),"dokxo.testnet".to_string(),"dokxo.testnet".to_string(),"2".to_string(),"1639897851".to_string()]);
-        }
-        self.tokenHM=_map.clone();
-        return  self.tokenHM.len();
-        
-    } 
-    //obtiene un registro del hashmap por key
-    pub fn gethash(& self,position:String,chunk:usize   )   {
 
-        let mut _map = self.tk_chunk.clone();
-        
-       let x = _map[chunk].get(&position);
-    //   log!("value {:?}", x);
- 
-    }
-    //elimina un registro por key 
-    pub fn clearhash(& mut self,_token:String     )   {
-
-        let mut _map = self.tokenHM.clone();
-   
-            _map.remove(&_token);
-            self.tokenHM=_map.clone();
-
-       
-   //    log!("value {:?}",_map.len());
- 
-    } 
-    //genera un nuevo hashmap
-    pub fn resethash(& mut self  )   {
-        let mut _map = self.tokenHM.clone();
-        self.tokenHM=HashMap::new();
-    } 
-
-    pub fn storage_byte_cost() -> Balance {
-        env::storage_byte_cost()
-    }
-
-    pub fn get_on_sale_toks(&self) -> u64 {
-        self.n_token_on_sale
-        //recorrer
-    }
-    //obtiene paginacion de los tokens en venta
-    pub fn get_pagination_onsale(&self,tokens:u64) ->  Vec<u64> {
-        let mut vectIDs = vec![];
-        let mut _tokfound =0;
-        let mut _map =self.tokenHM.clone();
-      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
-        
-        let mut status =|x : Vec<_> | {   x[0] =="S"  };
-        let mut toksfilted: Vec<u64> = _map.iter()
-                .filter(|st| status(st.1.clone()))
-                .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                .collect() ;
-                toksfilted.sort();
-    //     log!("{:?}",toksfilted);
-          vectIDs.push(0);
-        for x in 0..toksfilted.clone().len()-1 { 
-             _tokfound+=1;
-           if _tokfound== tokens {   
-                    vectIDs.push(x as u64 +1);  
-                    _tokfound=0;  
-                    }
-            
-           
-            
-            if x == toksfilted.clone().len() {break; }            
-        }
-        vectIDs
-        //return toksfilted[0..25].to_vec();
-    }
-    //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn get_pagination_onsale_filters(& self,chunk:usize,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<u64>  {
-        //insertar nuevo token a Hashmap
-        let mut _map =self.tk_chunk[chunk].clone();
-        let mut vectIDs = vec![];
-        let mut vectMEta = vec![];
-        let ends= _map.len().to_string().parse::<u64>();
-        let mut _tokfound =0;
-        
-        let mut i=0;
-        let mut toksfilted:Vec<u64> = vec![];
-        //comienza el filtrado segun los parametros
-        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
-            // (25,0, "null",0,0) ->Gallery
-                    if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
-                        let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[0] =="S"  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect() ;
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            //    log!("No hay tokens aun");
-                                return  vectMEta
-                            }
-                        //    log!("sin filtro salida");  
-                    } // (25,0, 2,6,0,0) ->Gallery y price between range
-                    else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                        //    log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
-                            return  vectMEta
-                        }  
-                    }// (25,0, 4,0,0,0) ->Gallery and less than min price
-                    else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                      //      log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,12,0,0) ->Gallery and more than max price
-                    else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                          //  log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
-                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                        //    log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
-                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                    //        log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
-                    else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                      //      log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
-                            return  vectMEta
-                        }  
-                    }
-            
-       //     log!("{:?}",toksfilted);
-        //    //vectIDs.push(0);  
-            for x in 0..toksfilted.clone().len()-1 { 
-                _tokfound+=1;
-            if _tokfound== tokens {   
-                    vectIDs.push(x as u64 +1);  
-                    _tokfound=0;  
-                    }
-            
-            
-            
-            if x == toksfilted.clone().len() {break; }            
-        }
-
-        return vectIDs;
-    }
-
-    //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn get_pagination_onsale_filters_v2(& self, tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<String>  {
-        //insertar nuevo token a Hashmap
-        let n_chunks = self.tk_chunk.clone().len();
-        let mut vectIDs = vec![];
-        let mut vectMEta = vec![];
-
-        for x in 0..n_chunks {
-
-       
-        let mut _map =self.tk_chunk[x].clone();
-        
-        let ends= _map.len().to_string().parse::<u64>();
-        let mut _tokfound =0;
-        
-        let mut i=0;
-        let mut toksfilted:Vec<u64> = vec![];
-        //comienza el filtrado segun los parametros
-        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
-            // (25,0, "null",0,0) ->Gallery
-                    if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
-                        let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[0] =="S"  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect() ;
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                                log!("No hay tokens aun");
-                                return  vectMEta
-                            }
-                            log!("sin filtro salida");  
-                    } // (25,0, 2,6,0,0) ->Gallery y price between range
-                    else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
-                            return  vectMEta
-                        }  
-                    }// (25,0, 4,0,0,0) ->Gallery and less than min price
-                    else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,12,0,0) ->Gallery and more than max price
-                    else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
-                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
-                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
-                            return  vectMEta
-                        }  
-                    }
-                    // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
-                    else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
-                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
-                        { i+=1; vect2[0] =="S" && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
-                        toksfilted = _map.iter()
-                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
-                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                            .collect();
-                            toksfilted.sort();
-                        if toksfilted.is_empty() {
-                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
-                            return  vectMEta
-                        }  
-                    }
-            
-           // log!("{:?}",toksfilted);
-           
-            for y in 0..toksfilted.clone().len()-1 { 
-                _tokfound+=1;
-                if y == 0{
-                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64).to_string());  
-                }
-            if _tokfound== tokens {   
-                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64+1).to_string());  
-                    _tokfound=0;  
-                    }
-            
-            
-            
-            if y == toksfilted.clone().len() {break; }            
-        }
-    }//for x
-        return vectIDs;
-    }
-    //obtiene paginacion de los tokens en subasta
-    pub fn get_pagination_onauction(&self,tokens:u64) ->  Vec<u64> {
-        let mut vectIDs = vec![];
-        let mut _tokfound =0;
-        let mut _map =self.tokenHM.clone();
-      //  let ends= _map.len().to_string().parse::<u64>().unwrap();
-        let mut i=0;
-        let mut status =|x : Vec<_> | { i+=1; x[0] =="A"  };
-        let mut toksfilted: Vec<u64> = _map.iter()
-                .filter(|st| status(st.1.clone()))
-                .map(|p| p.0.clone().parse::<u64>().unwrap() )
-                .collect() ;
-                toksfilted.sort();
-           // log!("{:?}",toksfilted);
-          vectIDs.push(0);
-        for x in 0..toksfilted.clone().len() { 
-          
-                 _tokfound+=1;
-                if _tokfound== tokens {   
-                    vectIDs.push( toksfilted[x].clone() );  
-                    _tokfound=0;  
-                    }
-            
-           
-            
-            if _tokfound == tokens {break; }            
-        }
-        vectIDs
-    }
-
-    
-    pub fn get_on_auction_toks(&self) -> u64 {
-        self.n_token_on_auction
-    }
-    pub fn get_on_auction_toksV2(&self) -> u64 {
-        let mut _realonsale =0;
-
-        let limit = self.get_on_total_toks();
-        log!("tokans total {}",&limit);
-        for x in 0..(limit-1) { 
-                          
-                let mut token =self.get_token(x.to_string().clone());
-                if token.on_auction{       
-                    _realonsale += 1;
-                }
-                if x== (limit-1) {
-                    break;
-                }
-       }
-        _realonsale
-    }
-    pub fn get_on_total_toks(&self) -> u64 {
-        self.n_total_tokens
-    }
-
-    pub fn get_n_in_chuck(&self,chunk:usize) -> usize {
-      return  self.tk_chunk[chunk].len() ;
-    }
     pub fn get_token(&self, token_id: TokenId) -> Meta {
         
         let mut metadata = self
@@ -1291,11 +895,529 @@ impl Contract {
         };
         token
     }
+    /// ///////////////////////////////////MIS DE TOKENS
+    ////////////////////////////////////////////////////////// 
     
+    ///////////////////////////////////////////////////////
+    /// //////////////////METODOS DE PRUEBA PARA HASHMAP
+  //Genera un nuevo registro o actualiza uno existente
+    pub fn inserthash(& mut self,token_id : TokenId,info:Vec<String> ) -> usize {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        _map.insert(token_id.clone(),info);
+        self.tokenHM=_map.clone();
+        return  self.tokenHM.len();
+        
+    } 
+    //harcodea 2000 registros al hashmap
+    pub fn fillhash(& mut self ) -> usize {
+        //insertar nuevo token a Hashmap
+        let mut _map =self.tokenHM.clone();
+        let ends= _map.len().to_string().parse::<u64>().unwrap();
+        for x in 0..55 {
+             _map.insert(x.to_string(),vec!["S".to_string(),"dokxo.testnet".to_string(),"dokxo.testnet".to_string(),"2".to_string(),"1639897851".to_string()]);
+        }
+        self.tokenHM=_map.clone();
+        return  self.tokenHM.len();
+        
+    } 
+    //obtiene un registro del hashmap por key
+    pub fn gethash(& self,position:String,chunk:usize   )   {
+
+        let mut _map = self.tk_chunk.clone();
+        
+       let x = _map[chunk].get(&position);
+       log!("value {:?}", x);
  
+    }
+    //elimina un registro por key 
+    pub fn clearhash(& mut self,_token:String     )   {
+
+        let mut _map = self.tokenHM.clone();
+   
+            _map.remove(&_token);
+            self.tokenHM=_map.clone();
+
+       
+     //    log!("value {:?}",_map.len());
+ 
+    } 
+    //genera un nuevo hashmap
+    pub fn resethash(& mut self  )   {
+        let mut _map = self.tokenHM.clone();
+        self.tokenHM=HashMap::new();
+    } 
+///////////////////////////////////////////////////////
+    /// //////////////////METODOS DE PRUEBA PARA HASHMAP
+   
+    ////////////////////////////////////////////////77
+    /// ///////////// CONTADORES TOTALES
+    pub fn get_on_total_toks(&self) -> u64 {
+        self.n_total_tokens
+    }
+    pub fn get_on_sale_toks(&self) -> u64 {
+        self.n_token_on_sale
+    }
+    pub fn get_on_auction_toks(&self) -> u64 {
+        self.n_token_on_auction
+    }
+    pub fn get_n_in_chuck(&self,chunk:usize) -> usize {
+        return  self.tk_chunk[chunk].len() ;
+      }
+    pub fn storage_byte_cost() -> Balance {
+        env::storage_byte_cost()
+    }
+    /// ///////////// CONTADORES TOTALES
+    ///   ////////////////////////////////////////////////77
+
+   /////////////////////////////////////////////////
+   /// ////////////////// PAGINACIÓN
+ 
+    
+    //obtiene la paginacion entre chunks con filtros
+    pub fn get_pagination_onsale_filters_v2(& self,  tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<String>  {
+        //insertar nuevo token a Hashmap
+        let n_chunks = self.tk_chunk.clone().len();
+        let mut vectIDs = vec![];
+        let mut vectMEta = vec![];
+
+        for x in 0..n_chunks {
+
+       //log!("len vecid {} ,chunk {}" ,vectIDs.len(),x.clone());
+        let mut _map =self.tk_chunk[x].clone();
+        
+        let ends= _map.len().to_string().parse::<u64>();
+        let mut _tokfound =0;
+        
+        let mut i=0;
+        let mut toksfilted:Vec<u64> = vec![];
+        //comienza el filtrado segun los parametros
+        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
+            // (25,0, "null",0,0) ->Gallery
+                    if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
+                        let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[0] =="S".to_string()  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect() ;
+                            toksfilted.sort();
+                          //  log!("ne tokens {}" ,toksfilted.clone().len() );
+                        if toksfilted.is_empty() && x==n_chunks  {
+                                log!("No hay tokens en el chunk {}" ,x);
+                                break;
+                            }
+                         //   log!("sin filtro salida");  
+                    } // (25,0, 2,6,0,0) ->Gallery y price between range
+                    else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[0] =="S".to_string() && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                         
+                        if toksfilted.is_empty() && x==n_chunks  {
+                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                            break;
+                        }
+                    }// (25,0, 4,0,0,0) ->Gallery and less than min price
+                    else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1;  vect2[0] =="S".to_string() && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                            return  vectMEta
+                        }  
+                        if toksfilted.is_empty() && x==n_chunks  {
+                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                            break;
+                        }
+                    }
+                    // (25,0, 0,12,0,0) ->Gallery and more than max price
+                    else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                        log!("max price {}",_maxprice.clone());
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1;  vect2[0] =="S".to_string() && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() && x==n_chunks {
+                            log!("No se encontraron tokens mayor o igual a {}",_maxprice);
+                            break;
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
+                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1;  vect2[0] =="S".to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() && x==n_chunks {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            break;
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
+                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1;  vect2[0] =="S".to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty()&& x==n_chunks  {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            break;
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
+                    else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1;  vect2[0] =="S".to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() && x==n_chunks {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            break;
+                        }  
+                    }
+            
+           // log!("{:?}",toksfilted);
+           
+            for y in 0..toksfilted.clone().len() { 
+             //   log!("toens {:?}",toksfilted.clone().get(y).unwrap() );
+                _tokfound+=1;
+                if y == 0{
+                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64).to_string());  
+                }
+            if _tokfound== tokens {   
+                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64+1).to_string());  
+                    _tokfound=0;  
+                    }
+            
+            
+            
+            if y == toksfilted.clone().len() {break; }            
+        }
+      }//for x
+        return vectIDs;
+    }
+
+    //obtiene la paginacion entre chunks con filtros de un creador
+    pub fn get_pagination_creator_filters(& self,account: ValidAccountId, tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<String>  {
+        //insertar nuevo token a Hashmap
+        let n_chunks = self.tk_chunk.clone().len();
+        let mut vectIDs = vec![];
+        let mut vectMEta = vec![];
+
+        for x in 0..n_chunks {
+
+       //log!("len vecid {} ,chunk {}" ,vectIDs.len(),x.clone());
+        let mut _map =self.tk_chunk[x].clone();
+        
+        let ends= _map.len().to_string().parse::<u64>();
+        let mut _tokfound =0;
+        
+        let mut i=0;
+        let mut toksfilted:Vec<u64> = vec![];
+        //comienza el filtrado segun los parametros
+        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
+            // (25,0, "null",0,0) ->Gallery
+                    if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
+                        let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[1] ==account.to_string()  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect() ;
+                            toksfilted.sort();
+                          //  log!("ne tokens {}" ,toksfilted.clone().len() );
+                        if toksfilted.is_empty() && x==n_chunks  {
+                                log!("No hay tokens en el chunk {}" ,x);
+                                break;
+                            }
+                         //   log!("sin filtro salida");  
+                    } // (25,0, 2,6,0,0) ->Gallery y price between range
+                    else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                         
+                        if toksfilted.is_empty() && x==n_chunks  {
+                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                            break;
+                        }
+                    }// (25,0, 4,0,0,0) ->Gallery and less than min price
+                    else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                            return  vectMEta
+                        }  
+                        if toksfilted.is_empty() && x==n_chunks  {
+                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                            break;
+                        }
+                    }
+                    // (25,0, 0,12,0,0) ->Gallery and more than max price
+                    else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                            return  vectMEta
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
+                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            return  vectMEta
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
+                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            return  vectMEta
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
+                    else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            return  vectMEta
+                        }  
+                    }
+            
+           // log!("{:?}",toksfilted);
+           
+            for y in 0..toksfilted.clone().len() { 
+             //   log!("toens {:?}",toksfilted.clone().get(y).unwrap() );
+                _tokfound+=1;
+                if y == 0{
+                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64).to_string());  
+                }
+            if _tokfound== tokens {   
+                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64+1).to_string());  
+                    _tokfound=0;  
+                    }
+            
+            
+            
+            if y == toksfilted.clone().len() {break; }            
+        }
+      }//for x
+        return vectIDs;
+    }
+
+    
+     //obtiene la paginacion entre chunks con filtros de un owner
+     pub fn get_pagination_owner_filters(& self,account: ValidAccountId, tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<String>  {
+        //insertar nuevo token a Hashmap
+        let n_chunks = self.tk_chunk.clone().len();
+        let mut vectIDs = vec![];
+        let mut vectMEta = vec![];
+
+        for x in 0..n_chunks {
+
+       //log!("len vecid {} ,chunk {}" ,vectIDs.len(),x.clone());
+        let mut _map =self.tk_chunk[x].clone();
+        
+        let ends= _map.len().to_string().parse::<u64>();
+        let mut _tokfound =0;
+        
+        let mut i=0;
+        let mut toksfilted:Vec<u64> = vec![];
+        //comienza el filtrado segun los parametros
+        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
+            // (25,0, "null",0,0) ->Gallery
+                    if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
+                        let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[2] ==account.to_string()  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect() ;
+                            toksfilted.sort();
+                          //  log!("ne tokens {}" ,toksfilted.clone().len() );
+                        if toksfilted.is_empty() && x==n_chunks  {
+                                log!("No hay tokens en el chunk {}" ,x);
+                                break;
+                            }
+                         //   log!("sin filtro salida");  
+                    } // (25,0, 2,6,0,0) ->Gallery y price between range
+                    else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[2] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                         
+                        if toksfilted.is_empty() && x==n_chunks  {
+                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                            break;
+                        }
+                    }// (25,0, 4,0,0,0) ->Gallery and less than min price
+                    else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[2] ==account.to_string() && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                            return  vectMEta
+                        }  
+                        if toksfilted.is_empty() && x==n_chunks  {
+                            log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                            break;
+                        }
+                    }
+                    // (25,0, 0,12,0,0) ->Gallery and more than max price
+                    else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                            return  vectMEta
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
+                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            return  vectMEta
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
+                    else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            return  vectMEta
+                        }  
+                    }
+                    // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
+                    else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
+                        let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                        { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
+                        toksfilted = _map.iter()
+                            .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                            .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                            .collect();
+                            toksfilted.sort();
+                        if toksfilted.is_empty() {
+                            log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                            return  vectMEta
+                        }  
+                    }
+            
+           // log!("{:?}",toksfilted);
+           
+            for y in 0..toksfilted.clone().len() { 
+             //   log!("toens {:?}",toksfilted.clone().get(y).unwrap() );
+                _tokfound+=1;
+                if y == 0{
+                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64).to_string());  
+                }
+            if _tokfound== tokens {   
+                    vectIDs.push( x.to_string()+&"-".to_string()+ &(y as u64+1).to_string());  
+                    _tokfound=0;  
+                    }
+            
+            
+            
+            if y == toksfilted.clone().len() {break; }            
+        }
+      }//for x
+        return vectIDs;
+    }
+   
+     
+   ///////////////////// PAGINACIÓN
+   /////////////////////////////////////////////////
+    
+    
+    
+    
+    
+ //////////////////////////////////////////////////////////////
+ /// OBTENCION DE INFORMACIÓN LOS TOKENS POR PAGINA
   
 
-    //solo obtiene los tokenid que esten en onsale y retorna un vec de META
+    //devuelve un arreglo con la infor de los tokens por pagina con filtros
     pub fn obtener_pagina_on_sale_V2(& self,chunk:usize,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<Meta>  {
         //insertar nuevo token a Hashmap
         let mut _map =self.tk_chunk[chunk].clone();
@@ -1426,110 +1548,280 @@ impl Contract {
             let  token =self.get_token(tokenid.to_string());
             vectMEta.push(token  );
         }  
-    return vectMEta ;  
+     return vectMEta ;  
     }
 
-   
-
-    //solo obtiene los tokenid que esten en onsale y retorna un vec de META
-    pub fn obtener_pagina_on_auction(&   self,tokens: u64,_start_index: u64 ) -> Vec<Meta> {
+    //devuelve un arreglo con la infor de los tokens por pagina con filtros de los creadores
+    pub fn obtener_pagina_creator(& self,account: ValidAccountId,chunk:usize,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<Meta>  {
         //insertar nuevo token a Hashmap
-        let mut _map =self.tokenHM.clone();
+        let mut _map =self.tk_chunk[chunk].clone();
         let mut vectIDs = vec![];
         let mut vectMEta = vec![];
         let ends= _map.len().to_string().parse::<u64>();
-        
+        let mut _tokfound =0;
+        let mut i=0;
+        let mut toksfilted:Vec<u64> = vec![];
+        //comienza el filtrado segun los parametros
+        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
+            // (25,0, "null",0,0) ->Gallery
+            if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
+                let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[1] ==account.to_string()  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap_or_default() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap_or_default() )
+                     .collect() ;
+                     toksfilted.sort();
+                if toksfilted.is_empty() {
+                        log!("No hay tokens aun");
+                        return  vectMEta
+                     }
+                     log!("sin filtro salida");  
+            } // (25,0, 2,6,0,0) ->Gallery y price between range
+            else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                     return  vectMEta
+                  }  
+            }// (25,0, 4,0,0,0) ->Gallery and less than min price
+            else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                     return  vectMEta
+                  }  
+            }
+            // (25,0, 0,12,0,0) ->Gallery and more than max price
+            else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[1] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                     return  vectMEta
+                  }  
+            }
+            // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
+            else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1;   vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                     return  vectMEta
+                  }  
+            }
+            // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
+            else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens menor a {} ",_mindate);
+                     return  vectMEta
+                  }  
+            }
+             // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
+             else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[1] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                     return  vectMEta
+                  }  
+            }
+         
         //este ciclo recupera los primeros
-        for x in _start_index..ends.unwrap()  {
-            
-            if vectIDs.len() >= tokens as usize { // log!("max {} ",&x); 
-            break ;}
-        
-            let tok = _map.get(&x.to_string() ).unwrap();
-            if tok[0] == "onauction".to_string()  {
-                
-                    vectIDs.push(x.to_string().parse::<u64>().unwrap() );
-                
-            }       
-            
-        }
-
+     // log!("{:?}",toksfilted);
+        for x in _start_index..ends.clone().unwrap()  {
+         
+             
+              
+             if x as usize == toksfilted.len() {break;}
+                  let tok = toksfilted[x as usize  ];
+                 //log!("{}",tok.clone());
+                   vectIDs.push(tok );
+                    _tokfound+=1;
+                if _tokfound >= tokens || x == ends.clone().unwrap() {break;}   
+              
+          
+      }  
         let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
         //en este ciclo recupera los tokens que encontramos anteriormente
-          for x in 0..endmeta { 
+          for x in 0..endmeta {
             let tokenid =  vectIDs[x as usize];
-            let mut token =self.get_token(tokenid.to_string());
+            let  token =self.get_token(tokenid.to_string());
             vectMEta.push(token  );
-                    
         }  
-
-        
-    return vectMEta ;   
+     return vectMEta ;  
     }
-    pub fn obtener_pagina_by_owner(&self,account: ValidAccountId) -> Vec<Meta>  {
-         //insertar nuevo token a Hashmap
-         let mut _map =self.tokenHM.clone();
-         let mut vectIDs = vec![];
-         let mut vectMEta = vec![];
-         let ends= _map.len().to_string().parse::<u64>();
-         
-         //este ciclo recupera los primeros
-         for x in 0..ends.unwrap()  {
-            let tok = _map.get(&x.to_string() ).unwrap();
-             if tok[2] == account.to_string()  {
-                  vectIDs.push(x.to_string().parse::<u64>().unwrap() );
-             }                  
-         }
- 
-         let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
-         //en este ciclo recupera los tokens que encontramos anteriormente
-           for x in 0..endmeta { 
-             let tokenid =  vectIDs[x as usize];
-             let mut token =self.get_token(tokenid.to_string());
-             vectMEta.push(token);
-                     
-         }  
- 
-         
-     return vectMEta ; 
-         
-    }
-    pub fn obtener_pagina_by_creator(&self,account: ValidAccountId) -> Vec<Meta>  {
+   
+    //devuelve un arreglo con la infor de los tokens por pagina con filtros de los owners
+    pub fn obtener_pagina_owner(& self,account: ValidAccountId,chunk:usize,tokens: u64,_start_index: u64, _minprice:u128,_maxprice:u128,_mindate:f64,_maxdate:f64) -> Vec<Meta>  {
         //insertar nuevo token a Hashmap
-        let mut _map =self.tokenHM.clone();
+        let mut _map =self.tk_chunk[chunk].clone();
         let mut vectIDs = vec![];
         let mut vectMEta = vec![];
         let ends= _map.len().to_string().parse::<u64>();
-        
+        let mut _tokfound =0;
+        let mut i=0;
+        let mut toksfilted:Vec<u64> = vec![];
+        //comienza el filtrado segun los parametros
+        //(tokens:N , _start_index:N,status:"S" ,account:"tes", price:N ,date:N)
+            // (25,0, "null",0,0) ->Gallery
+            if _minprice==0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0{
+                let mut status =|p:u64 ,x : Vec<_> | { i+=1; x[2] ==account.to_string()  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap_or_default() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap_or_default() )
+                     .collect() ;
+                     toksfilted.sort();
+                if toksfilted.is_empty() {
+                        log!("No hay tokens aun");
+                        return  vectMEta
+                     }
+                     log!("sin filtro salida");  
+            } // (25,0, 2,6,0,0) ->Gallery y price between range
+            else if _minprice >0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[2] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >= (_minprice*1000000000000000000000000)  && vect2[3].parse::<u128>().unwrap() <=(_maxprice*1000000000000000000000000) };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}  ,{},{}",_minprice,_maxprice,(_minprice*1000000000000000000000000),(_maxprice*1000000000000000000000000));
+                     return  vectMEta
+                  }  
+            }// (25,0, 4,0,0,0) ->Gallery and less than min price
+            else if _minprice >0 && _maxprice==0 && _mindate==0.0 && _maxdate==0.0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[2] ==account.to_string() && vect2[3].parse::<u128>().unwrap() <=(_minprice*1000000000000000000000000)   };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                     return  vectMEta
+                  }  
+            }
+            // (25,0, 0,12,0,0) ->Gallery and more than max price
+            else if _minprice ==0 && _maxprice>0 && _mindate==0.0 && _maxdate==0.0 {
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[2] ==account.to_string() && vect2[3].parse::<u128>().unwrap() >=(_maxprice*1000000000000000000000000)  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre {} y {}",_minprice,_maxprice);
+                     return  vectMEta
+                  }  
+            }
+            // (25,0, 0,0,yesterday,today) ->Gallery and  range between 2 date
+            else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate>0.0{
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1;   vect2[2] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_mindate  && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_maxdate };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                     return  vectMEta
+                  }  
+            }
+            // (25,0, 0,0,yesterday,today) ->Gallery and  less than mindate
+            else if _minprice ==0 && _maxprice==0 && _mindate>0.0 && _maxdate==0.0{
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { vect2[2] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() <=_mindate  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens menor a {} ",_mindate);
+                     return  vectMEta
+                  }  
+            }
+             // (25,0, 0,0,yesterday,today) ->Gallery and  more  than maxdate
+             else if _minprice ==0 && _maxprice==0 && _mindate==0.0 && _maxdate>0.0{
+                let mut status =|tokeni:u64 ,vect2 : Vec<String> |
+                { i+=1; vect2[2] ==account.to_string() && vect2[4].substring(0, 13).parse::<f64>().unwrap() >=_maxdate  };
+                toksfilted = _map.iter()
+                     .filter(|st| status(st.0.clone().parse::<u64>().unwrap() ,st.1.clone()))
+                     .map(|p| p.0.clone().parse::<u64>().unwrap() )
+                     .collect();
+                     toksfilted.sort();
+                  if toksfilted.is_empty() {
+                     log!("No se encontraron tokens entre la fechas {} y {}",_mindate,_maxdate);
+                     return  vectMEta
+                  }  
+            }
+         
         //este ciclo recupera los primeros
-        for x in 0..ends.unwrap()  {
-           let tok = _map.get(&x.to_string() ).unwrap();
-            if tok[1] == account.to_string()  {
-                 vectIDs.push(x.to_string().parse::<u64>().unwrap() );
-            }                  
-        }
-
+      
+        for x in _start_index..ends.clone().unwrap()  {
+               if x as usize == toksfilted.len() {break;}
+                  let tok = toksfilted[x as usize  ];
+                 //log!("{}",tok.clone());
+                   vectIDs.push(tok );
+                    _tokfound+=1;
+                if _tokfound >= tokens || x == ends.clone().unwrap() {break;}   
+              
+          
+      }  
         let endmeta = vectIDs.len().to_string().parse::<u64>().unwrap();
         //en este ciclo recupera los tokens que encontramos anteriormente
-          for x in 0..endmeta { 
+          for x in 0..endmeta {
             let tokenid =  vectIDs[x as usize];
-            let mut token =self.get_token(tokenid.to_string());
-            vectMEta.push(token);
-                    
+            let  token =self.get_token(tokenid.to_string());
+            vectMEta.push(token  );
         }  
-
-        
-    return vectMEta ; 
-        
-   }
-  
-
-    pub fn tokens_of(&self, account_id: ValidAccountId,from_index: U128,limit: u64,) -> Vec<Token> {
-        return self
-            .tokens
-            .nft_tokens_for_owner(account_id, Some(from_index), Some(limit));
+     return vectMEta ;  
     }
 
+/// OBTENCION DE INFORMACIÓN LOS TOKENS POR PAGINA
+//////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////
+    /// //////////////////METODOS DE MIGRACIÖN
  
     #[private]
     #[init(ignore_state)]
@@ -1549,6 +1841,8 @@ impl Contract {
 
         }
     }
+/////////////////////METODOS DE MIGRACIÖN
+///////////////////////////////////////////////////////
 
 }
     

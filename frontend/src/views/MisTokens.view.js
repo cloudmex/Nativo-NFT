@@ -30,11 +30,12 @@ function MisTokens(props) {
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [trigger, settrigger] = React.useState(true);
+  const [ini, setini] = React.useState(true);
   const [nfts, setNfts] = useState({
     nfts: [],
     page: parseInt(window.localStorage.getItem("Mypage")),
     tokensPerPage: 9,
-    tokensPerPageNear: 15,
+    tokensPerPageNear: 25,
 
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
@@ -56,6 +57,8 @@ function MisTokens(props) {
     setpage(value)
     setpagsale(parseInt(pagCount.split(",")[value - 1].split("-")[1]))
     setchunksale(parseInt(pagCount.split(",")[value - 1].split("-")[0]))
+    console.log(parseInt(pagCount.split(",")[value - 1].split("-")[1]))
+    console.log(parseInt(pagCount.split(",")[value - 1].split("-")[0]))
     window.scroll(0, 0)
     settrigger(!trigger)
   }
@@ -203,19 +206,29 @@ function MisTokens(props) {
         })
         let pagNumArr = pag
         let pagi = pag.toString()
+        console.log(pagi)
         setpagCount(pagi)
         console.log(pagCount)
+        console.log(chunksale)
+        console.log(pagsale)
+        window.localStorage.setItem("pagPerf",parseInt(pagi.split(",")[0].split("-")[1]))
+        window.localStorage.setItem("pagCPerf",parseInt(pagi.split(",")[0].split("-")[0]))
         let toks = await contract.obtener_pagina_owner({
           account: account,
-          chunk: chunksale,
+          chunk: (ini ? parseInt(window.localStorage.getItem("pagCPerf")): chunksale),
           tokens: nfts.tokensPerPageNear,
           //_start_index: Landing.page,
-          _start_index: pagsale,
+          _start_index: (ini ? parseInt(window.localStorage.getItem("pagPerf")): pagsale),
           _minprice: 0,
           _maxprice: 0,
           _mindate: 0,
           _maxdate: 0,
         });
+        if(ini){
+          window.localStorage.removeItem("pagCPerf")
+          window.localStorage.removeItem("pagPPerf")
+          setini(!ini)
+        }
         //console.log("extras:",nftsArr  );
         //console.log("balance",balance);
 
@@ -250,7 +263,7 @@ function MisTokens(props) {
         });
       }
     })();
-  }, []);
+  }, [trigger]);
 
   /**
    * Función que cambia a "no disponible" un token nft que esta a la venta siempre que se sea el owner
@@ -276,6 +289,7 @@ function MisTokens(props) {
       let contract = await getNearContract();
       let payload = {
         token_id: tokenId,
+        chunk: parseInt(tokenId/660),
       };
       let amount = fromNearToYocto(0);
       //console.log(amount);
@@ -302,21 +316,21 @@ function MisTokens(props) {
   return (
     <>
       <section className="text-gray-600 body-font">
-        <div className="container px-5 py-24 mx-auto">
+        <div className="container px-5 pt-5 mx-auto">
           <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
             <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
           </div>
           <div className="flex flex-col text-center w-full mb-20">
-            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
+            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 mt-8">
               Mis piezas de arte NFT
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
               En esta sección aparecen los token nfts que has creado o
               adquirido.
             </p>
-            <div className="flex justify-end">
+            <div className="">
               <button
-                className={`sp-7 mt-2 text-white bg-${props.theme}-500 border-0 py-2 px-5 focus:outline-none hover:bg-${props.theme}-600 rounded text-md`}
+                className={`sp-4 mt-5 text-white bg-${props.theme}-500 border-0 py-2 font-bold px-7 focus:outline-none hover:bg-${props.theme}-600 rounded text-md `}
                 onClick={() => {
                   sendtonearwallet(nfts.tokenID)
                 }}
@@ -327,12 +341,12 @@ function MisTokens(props) {
             </div>
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
             {nfts.nfts.length > 0 ? null : (
-              <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
+              <p className="lg:w-2/3 mx-auto leading-relaxed text-base mt-8">
                 Actualmente no tienes tokens en tu pertenencia.
               </p>
             )}
           </div>
-          <div className="flex flex-wrap -m-4">
+          <div className="flex flex-wrap -m-9 mb-6">
             {/* Hacemos un map del array de nft dentro del state */}
             {nfts?.nfts &&
               nfts.nfts.map((nft, key) => {
@@ -341,7 +355,7 @@ function MisTokens(props) {
                 //console.log("Aquiiii",nft);
                 return (
                   //devolvemos un card por cada token nft del usuario
-                  <div className="lg:w-1/3 sm:w-1/2 p-4 sp-6" key={key}>
+                  <div className="lg:w-1/3 md:w-1/2 sm:w-1/2 ssmw-1  px-6 my-5" key={key}>
 
                     <div className="flex relative">
                       <img
@@ -465,7 +479,7 @@ function MisTokens(props) {
               })}
           </div>
 
-          <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
+          <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-1">
             <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
             {/* <nav
               className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"

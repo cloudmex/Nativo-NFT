@@ -25,7 +25,7 @@ function LightEcommerceA() {
     pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 15,
+    tokensPerPageNear: 25,
   });
   const [esconder, setesconder] = React.useState(true);
   const [counter, setcounter] = React.useState();
@@ -34,6 +34,7 @@ function LightEcommerceA() {
   const [pagCount, setpagCount] = React.useState("");
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
+  const [ini, setini] = React.useState(true);
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -116,7 +117,7 @@ function LightEcommerceA() {
         // console.log("payload ",payload);
         // toks = await contract.obtener_pagina_by_creator(payload);
         var pag = await contract.get_pagination_creator_filters({
-          account : (owner.toString().toLowerCase()+".testnet").toString(),
+          account : (owner.toString().toLowerCase()).toString(),
           tokens: Landing.tokensPerPageNear,
           //_start_index: Landing.page,
           _start_index: pagsale,
@@ -129,12 +130,17 @@ function LightEcommerceA() {
         setpagCount(pagi)
         console.log(pagi)
         console.log(pagCount)
+        window.localStorage.setItem("pagPerf",parseInt(pagi.split(",")[0].split("-")[1]))
+        window.localStorage.setItem("pagCPerf",parseInt(pagi.split(",")[0].split("-")[0]))
+        console.log(chunksale)
+        console.log(pagsale)
+        console.log(page)
         toks = await contract.obtener_pagina_creator({
-          account : (owner.toString().toLowerCase()+".testnet").toString(),
-          chunk: chunksale,
+          account : (owner.toString().toLowerCase()).toString(),
+          chunk: (ini ? parseInt(window.localStorage.getItem("pagCPerf")): chunksale),
           tokens: Landing.tokensPerPageNear,
           //_start_index: Landing.page,
-          _start_index: pagsale,
+          _start_index: (ini ? parseInt(window.localStorage.getItem("pagPerf")): pagsale),
           _minprice: 0,
           _maxprice: 0,
           _mindate: 0,
@@ -143,7 +149,11 @@ function LightEcommerceA() {
         console.log("toks ",toks);
         let pagNumArr = pag
         //obtener cuantos tokens estan a la venta
-        
+        if(ini){
+          window.localStorage.removeItem("pagCPerf")
+          window.localStorage.removeItem("pagPPerf")
+          setini(!ini)
+        }
 
         //convertir los datos al formato esperado por la vista
         toks = toks.map((tok) => {
@@ -177,7 +187,7 @@ function LightEcommerceA() {
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 pt-6 mx-auto flex flex-wrap flex-col">
-        <b className="text-xl">{owner.toString().toLowerCase()+".testnet"}</b>
+        <b className="text-xl">{owner.toString().toLowerCase()}</b>
         {/* <p>kublaikollection.eth 0x8486...527e</p> */}
         
       </div>

@@ -14,7 +14,7 @@ Asegurate de tener instalado la herramienta `near-cli`, esta sera utilizada para
 
 ## Desplegar contrato en testnet
 `near dev-deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm`
-` near deploy nativoapp.testnet --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm`
+` near deploy nativov2.testnet --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm`
  
 # 💻 Comandos del contrato
 

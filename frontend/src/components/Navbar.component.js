@@ -108,10 +108,10 @@ function LightHeaderB(props) {
             window.location.href ="/perfil/"+buscar;
           }}
         >
-                  <input type="text"  value={buscar}  maxLength={64} className="p-2 lg:w-12/12 px-3 buscar" placeholder="Usuario"
+                  <input type="text"  value={buscar}  maxLength={64} className="p-2 lg:w-12/12 px-3 buscar" placeholder={(process.env.REACT_APP_NEAR_ENV == "mainnet" ? "usuario.near" : "usuario.testnet")}
                     onChange={e=>{
                       
-                      const not = "abcdefghijklmnopqrstuvwxyzñ1234567890_-";
+                      const not = "abcdefghijklmnopqrstuvwxyzñ1234567890_-.";
                       const tex = e.target.value.toString().toLowerCase();
                       if(not.includes(tex[tex.length -1]) || tex == ""){
                         setbuscar(tex);  
