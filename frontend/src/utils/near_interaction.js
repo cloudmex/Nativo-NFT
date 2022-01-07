@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name =(process.env.REACT_APP_CONTRACT === undefined ? "nativov2.testnet" : process.env.REACT_APP_CONTRACT);
+export const contract_name =(process.env.REACT_APP_CONTRACT === undefined ? "dev-1641514596273-99685459701992" : process.env.REACT_APP_CONTRACT);
 export const config = {
   testnet: {
     networkId: "testnet",
@@ -55,6 +55,10 @@ export const methodOptions = {
     "obtener_pagina_on_auction_V2",
     "obtener_pagina_by_owner",
     "obtener_pagina_by_creator",
+    "get_pagination_creator_filters",
+    "obtener_pagina_creator",
+    "get_pagination_owner_filters",
+    "obtener_pagina_owner",
    
   ],
   changeMethods: [

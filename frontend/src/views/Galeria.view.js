@@ -36,6 +36,7 @@ function LightEcommerceA() {
   const [mindate, setmindate] = React.useState(0);
   const [maxdate, setmaxdate] = React.useState(0);
   const [pagsale, setpagsale] = React.useState(0);
+  const [pagCount, setpagCount] = React.useState("");
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [trigger, settrigger] = React.useState(true);
@@ -53,8 +54,8 @@ function LightEcommerceA() {
   const handleChangePage = (e, value) => {
     console.log(value)
     setpage(value)
-    setpagsale(parseInt(Landing.pag.split(",")[value].split("-")[1]))
-    setchunksale(parseInt(Landing.pag.split(",")[value].split("-")[0]))
+    setpagsale(parseInt(pagCount.split(",")[value-1].split("-")[1]))
+    setchunksale(parseInt(pagCount.split(",")[value-1].split("-")[0]))
     window.scroll(0, 0)
     settrigger(!trigger)
   }
@@ -125,7 +126,9 @@ function LightEcommerceA() {
             _mindate: 0,
             _maxdate: 0,
           })
-          console.log(pag)
+          let pagi= pag.toString()
+          setpagCount(pagi)
+          console.log(pagCount)
           toks = await contract.obtener_pagina_on_sale_V2({
             chunk: chunksale,
             tokens: Landing.tokensPerPageNear,
@@ -136,7 +139,8 @@ function LightEcommerceA() {
             _mindate: 0,
             _maxdate: 0,
           });
-          window.localStorage.setItem('pagSale', "0,"+pag)
+          window.localStorage.setItem('pagSale', pag)
+          
         }
         else {
           var pag = await contract.get_pagination_onsale_filters_v2({
@@ -148,6 +152,9 @@ function LightEcommerceA() {
             _mindate: mindate,
             _maxdate: maxdate,
           })
+          let pagi= pag.toString()
+          setpagCount(pagi)
+          console.log(pagCount)
           toks = await contract.obtener_pagina_on_sale_V2({
             chunk: chunksale,
             tokens: Landing.tokensPerPageNear,
@@ -158,7 +165,6 @@ function LightEcommerceA() {
             _mindate: mindate,
             _maxdate: maxdate,
           });
-          console.log(pag)
           window.localStorage.setItem('pagSale', pag)
         }
         //obtener cuantos tokens estan a la venta
@@ -193,6 +199,9 @@ function LightEcommerceA() {
       }
     })();
   }, [trigger]);
+
+
+
   return (
     <section className="text-gray-600 body-font">
       <div className={"container px-5 py-4 mx-auto flex flex-wrap items-center " + (
