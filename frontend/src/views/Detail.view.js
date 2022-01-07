@@ -93,11 +93,12 @@ function LightEcommerceB(props) {
           //   country:toks.metadata.country,
           //   creator:toks.metadata.creator,
           // });
-
+          
           setstate({
             ...state,
             tokens: {
               tokenID: toks.token_id,
+              chunk: parseInt(toks.token_id/660),
               onSale: toks.on_sale,
               price: fromYoctoToNear(toks.price),
               // culture:toks.culture,
@@ -182,6 +183,7 @@ function LightEcommerceB(props) {
       toks = await contract.comprar_nft(
         {
           token_id: state.tokens.tokenID,
+          chunk: state.tokens.chunk,
         },
         300000000000000,
         fromNearToYocto(amount)

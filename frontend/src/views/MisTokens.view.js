@@ -195,7 +195,7 @@ function MisTokens(props) {
         // });
 
         var pag = await contract.get_pagination_owner_filters({
-          account: "alantest.testnet",
+          account: account,
           tokens: nfts.tokensPerPageNear,
           //_start_index: Landing.page,
           _start_index: pagsale,
@@ -214,7 +214,7 @@ function MisTokens(props) {
         window.localStorage.setItem("pagPerf",parseInt(pagi.split(",")[0].split("-")[1]))
         window.localStorage.setItem("pagCPerf",parseInt(pagi.split(",")[0].split("-")[0]))
         let toks = await contract.obtener_pagina_owner({
-          account: "alantest.testnet",
+          account: account,
           chunk: (ini ? parseInt(window.localStorage.getItem("pagCPerf")): chunksale),
           tokens: nfts.tokensPerPageNear,
           //_start_index: Landing.page,
