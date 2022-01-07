@@ -289,6 +289,7 @@ function MisTokens(props) {
       let contract = await getNearContract();
       let payload = {
         token_id: tokenId,
+        chunk: parseInt(tokenId/660),
       };
       let amount = fromNearToYocto(0);
       //console.log(amount);
