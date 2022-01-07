@@ -13,6 +13,7 @@ import { useHistory } from "react-router";
 import ModalSubasta from '../components/modalSubasta.component'
 import Modal from "../components/modalRevender.component";
 import load from "../assets/landingSlider/img/loader.gif";
+import Pagination from '@mui/material/Pagination';
 import { currencys } from "../utils/constraint";
 import {
   getNearAccount,
@@ -24,9 +25,14 @@ import Swal from 'sweetalert2';
 
 function MisTokens(props) {
   //Hooks para el manejo de estados
+  const [pagsale, setpagsale] = React.useState(0);
+  const [pagCount, setpagCount] = React.useState("");
+  const [chunksale, setchunksale] = React.useState(0);
+  const [page, setpage] = React.useState(1);
+  const [trigger, settrigger] = React.useState(true);
   const [nfts, setNfts] = useState({
     nfts: [],
-    page:  parseInt( window.localStorage.getItem("Mypage")),
+    page: parseInt(window.localStorage.getItem("Mypage")),
     tokensPerPage: 9,
     tokensPerPageNear: 15,
 
@@ -45,40 +51,49 @@ function MisTokens(props) {
   // const [imgs, setImgs] = useState([]);
   let imgs = [];
 
+  const handleChangePage = (e, value) => {
+    console.log(value)
+    setpage(value)
+    setpagsale(parseInt(pagCount.split(",")[value - 1].split("-")[1]))
+    setchunksale(parseInt(pagCount.split(",")[value - 1].split("-")[0]))
+    window.scroll(0, 0)
+    settrigger(!trigger)
+  }
+
 
   const history = useHistory();
 
-  const sendtonearwallet = async (e)=>{   
+  const sendtonearwallet = async (e) => {
     Swal.fire({
-        title: `¡ATENCIÓN!`,
-        icon: 'info',
-        text: 'Esta acción creará una transferencia nula que generará un error, pero los tokens serán agregados al Near Wallet una vez finalizada. (Solo se debe realizar una vez)',
-        showDenyButton: true,
-        confirmButtonText: 'Continuar',
-        confirmButtonColor: '#f89c0c',
-        denyButtonText: `Cancelar`,
-        iconColor: '#f89c0c',
-        backdrop: 'rgba(0, 0, 0,0.5)'
+      title: `¡ATENCIÓN!`,
+      icon: 'info',
+      text: 'Esta acción creará una transferencia nula que generará un error, pero los tokens serán agregados al Near Wallet una vez finalizada. (Solo se debe realizar una vez)',
+      showDenyButton: true,
+      confirmButtonText: 'Continuar',
+      confirmButtonColor: '#f89c0c',
+      denyButtonText: `Cancelar`,
+      iconColor: '#f89c0c',
+      backdrop: 'rgba(0, 0, 0,0.5)'
     }).then(async (result) => {
-        if (result.isConfirmed) {
-          //console.log(e);
-          let contract = await getNearContract();
-          let account = await getNearAccount();
-      
-           
-          try {
-              let res = await contract.nft_transfer_call(
-                {"receiver_id":""+account,"token_id":""+e,"approval_id":null,"memo":"","msg":""},
-                300000000000000,
-                1,
-          );
-          } catch (error) {
-            //console.error();
-          }
-        } else if (result.isDenied) {
+      if (result.isConfirmed) {
+        //console.log(e);
+        let contract = await getNearContract();
+        let account = await getNearAccount();
 
+
+        try {
+          let res = await contract.nft_transfer_call(
+            { "receiver_id": "" + account, "token_id": "" + e, "approval_id": null, "memo": "", "msg": "" },
+            300000000000000,
+            1,
+          );
+        } catch (error) {
+          //console.error();
         }
-    }) 
+      } else if (result.isDenied) {
+
+      }
+    })
   }
 
   async function getPage(pag) {
@@ -102,7 +117,7 @@ function MisTokens(props) {
       //console.log("pag",pag,"nfts.tokensPerPageNear",nfts.tokensPerPageNear)
       let payload = {
         account_id: account.toString(),
-        from_index: ""+pag.toString(),
+        from_index: "" + pag.toString(),
         limit: nfts.tokensPerPageNear.toString(),
       };
 
@@ -132,8 +147,8 @@ function MisTokens(props) {
   //Hook para el manejo de efectos
   useEffect(() => {
     (async () => {
-      window.localStorage.setItem("Mypage",0);
-     
+      window.localStorage.setItem("Mypage", 0);
+
       if (nfts.blockchain == "0") {
         //Comparamos la red en el combo de metamask con la red de aurora
         await syncNets();
@@ -157,38 +172,64 @@ function MisTokens(props) {
         setNfts({
           ...nfts,
           nfts: copytoks,
-          nPages: Math.ceil(balance / nfts.tokensPerPage)+1,
+          nPages: Math.ceil(balance / nfts.tokensPerPage) + 1,
           owner: account,
         });
       } else {
-        
+
         let contract = await getNearContract();
         let account = await getNearAccount();
         //console.log(account);
         let payload = {
-          account : account,
+          account: account,
           //from_index: nfts.page , 
           //limit: nfts.tokensPerPageNear,
         };
 
-        let nftsArr = await contract.obtener_pagina_by_owner(payload);
-        let balance = await contract.nft_supply_for_owner({
-          account_id: account,
+        // let nftsArr = await contract.obtener_pagina_by_owner(payload);
+        // let balance = await contract.nft_supply_for_owner({
+        //   account_id: account,
+        // });
+
+        var pag = await contract.get_pagination_owner_filters({
+          account: account,
+          tokens: nfts.tokensPerPageNear,
+          //_start_index: Landing.page,
+          _start_index: pagsale,
+          _minprice: 0,
+          _maxprice: 0,
+          _mindate: 0,
+          _maxdate: 0,
+        })
+        let pagNumArr = pag
+        let pagi = pag.toString()
+        setpagCount(pagi)
+        console.log(pagCount)
+        let toks = await contract.obtener_pagina_owner({
+          account: account,
+          chunk: chunksale,
+          tokens: nfts.tokensPerPageNear,
+          //_start_index: Landing.page,
+          _start_index: pagsale,
+          _minprice: 0,
+          _maxprice: 0,
+          _mindate: 0,
+          _maxdate: 0,
         });
         //console.log("extras:",nftsArr  );
         //console.log("balance",balance);
- 
+
         //convertir los datos al formato esperado por la vista
-        nftsArr = nftsArr.map((tok,i) => {
+        let nftsArr = toks.map((tok, i) => {
           //console.log("X->",  tok  )
-         imgs.push(false);
-         fetch("https://ipfs.io/ipfs/"+tok.media).then(request => request.blob()).then(() => {
-           console.log("entro "+imgs.length);
-               imgs[i] = true;
-            });
+          imgs.push(false);
+          fetch("https://ipfs.io/ipfs/" + tok.media).then(request => request.blob()).then(() => {
+            console.log("entro " + imgs.length);
+            imgs[i] = true;
+          });
           return {
             tokenID: tok.token_id,
-            price:  fromYoctoToNear(tok.price),
+            price: fromYoctoToNear(tok.price),
             onSale: tok.on_sale,// tok.metadata.on_sale,
             onAuction: tok.on_auction,
             data: JSON.stringify({
@@ -197,14 +238,14 @@ function MisTokens(props) {
             }),
           };
         });
-        
+
 
         console.log(nftsArr);
         //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
         setNfts({
           ...nfts,
-          nfts: nftsArr.slice(nfts.page*nfts.tokensPerPageNear,(nfts.page+1)*nfts.tokensPerPageNear),
-          nPages: Math.ceil(nftsArr.length / nfts.tokensPerPageNear),
+          nfts: nftsArr,
+          nPages: pagNumArr.length,
           owner: account,
         });
       }
@@ -255,13 +296,16 @@ function MisTokens(props) {
     setNfts({ ...nfts, disabled: false });
   }
 
- 
-  
+
+
 
   return (
     <>
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-24 mx-auto">
+          <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
+            <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
+          </div>
           <div className="flex flex-col text-center w-full mb-20">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
               Mis piezas de arte NFT
@@ -276,7 +320,7 @@ function MisTokens(props) {
                 onClick={() => {
                   sendtonearwallet(nfts.tokenID)
                 }}
-                
+
               >
                 Mostrar tokens en NEAR Wallet
               </button>
@@ -298,18 +342,18 @@ function MisTokens(props) {
                 return (
                   //devolvemos un card por cada token nft del usuario
                   <div className="lg:w-1/3 sm:w-1/2 p-4 sp-6" key={key}>
-                    
+
                     <div className="flex relative">
                       <img
                         alt="gallery"
                         className="absolute inset-0 w-full h-full object-cover object-center"
-                        src={imgs[key] ? load : "https://ipfs.io/ipfs/"+nftData.image}
+                        src={imgs[key] ? load : "https://ipfs.io/ipfs/" + nftData.image}
                       />
                       <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100 ">
                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                           {nftData.title}
                         </h1>
-                        <p className="leading-relaxed">{nftData.description }</p>
+                        <p className="leading-relaxed">{nftData.description}</p>
                         {/* Etiqueta de token en venta */}
                         <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -317,18 +361,17 @@ function MisTokens(props) {
                           <span className="text-gray-500">En venta</span>
                           <span className="ml-auto text-gray-900">
                             <span
-                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                                nft.onSale
+                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.onSale
                                   ? "text-green-100 bg-green-500"
                                   : "text-red-100 bg-red-500"
-                              } rounded-full`}
+                                } rounded-full`}
                             >
                               {nft.onSale ? "Disponible" : "No disponible"}
                             </span>
                           </span>
                         </div>
-                         
-                        <p className="leading-relaxed">{nftData.description }</p>
+
+                        <p className="leading-relaxed">{nftData.description}</p>
                         {/* Etiqueta de token en subasta */}
                         {/* <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -355,39 +398,39 @@ function MisTokens(props) {
                         >{`Adquirido en $${nft.price} ${nfts.currency}`}</h2>
                         {/* Mostramos la opción de revender o quitar del marketplace */}
                         {nft.onSale ? (<>      <button
-                            className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
-                            disabled={nfts.disabled}
-                            onClick={async () => {
-                              await quitarDelMarketplace(nft.tokenID);
-                            }}
-                          >
-                            Quitar a la venta
-                          </button>
-                          </>
-                    
+                          className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                          disabled={nfts.disabled}
+                          onClick={async () => {
+                            await quitarDelMarketplace(nft.tokenID);
+                          }}
+                        >
+                          Quitar a la venta
+                        </button>
+                        </>
+
                         ) : (
                           <>
-                          {!nft.onAuction && <>  <button
-                            className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
-                            onClick={() => {
-                              setModal({
-                                ...modal,
-                                show: true,
-                                tokenId: nft.tokenID,
-                                title: "Revender nft",
-                                currency: nfts.currency,
-                                blockchain: nfts.blockchain,
-                                message:
-                                  "Ingresa el costo al cual quieres poner a la venta este NFT.",
-                                buttonName: "Cancelar",
-                                change: setModal,
-                              });
-                             
-                            }}
-                          >
-                            Poner en venta
-                          </button>
-                          {/* <button
+                            {!nft.onAuction && <>  <button
+                              className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                              onClick={() => {
+                                setModal({
+                                  ...modal,
+                                  show: true,
+                                  tokenId: nft.tokenID,
+                                  title: "Revender nft",
+                                  currency: nfts.currency,
+                                  blockchain: nfts.blockchain,
+                                  message:
+                                    "Ingresa el costo al cual quieres poner a la venta este NFT.",
+                                  buttonName: "Cancelar",
+                                  change: setModal,
+                                });
+
+                              }}
+                            >
+                              Poner en venta
+                            </button>
+                              {/* <button
                             className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             onClick={() => {
                               setModalSub({
@@ -407,13 +450,13 @@ function MisTokens(props) {
                           >
                             Poner en subasta
                           </button> */}
-                         
-                      
-                          </>}
-                        
-                        </>
 
-                        
+
+                            </>}
+
+                          </>
+
+
                         )}
                       </div>
                     </div>
@@ -423,7 +466,8 @@ function MisTokens(props) {
           </div>
 
           <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-            <nav
+            <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+            {/* <nav
               className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
               aria-label="Pagination"
             >
@@ -431,14 +475,13 @@ function MisTokens(props) {
                 return (
                   <a
                     href="#"
-                    className={`bg-white ${
-                      nfts.page == index
+                    className={`bg-white ${nfts.page == index
                         ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
                         : "border-gray-300 text-gray-500 hover:bg-gray-50"
-                    }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
+                      }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                     key={index}
                     onClick={async () => {
-                      window.localStorage.setItem("Mypage",index);
+                      window.localStorage.setItem("Mypage", index);
                       window.location.reload();
                     }}
                   >
@@ -446,7 +489,7 @@ function MisTokens(props) {
                   </a>
                 );
               })}
-            </nav>
+            </nav> */}
           </div>
         </div>
 

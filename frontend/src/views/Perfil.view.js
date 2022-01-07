@@ -12,6 +12,7 @@ import { useParams, useHistory } from "react-router-dom";
 import filtroimg from '../assets/landingSlider/img/filtro.png'
 import countrys from '../utils/countrysList'
 import loading from '../assets/landingSlider/img/loader.gif'
+import Pagination from '@mui/material/Pagination';
 import { Account } from "near-api-js";
 
 
@@ -24,11 +25,16 @@ function LightEcommerceA() {
     pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 30,
+    tokensPerPageNear: 15,
   });
   const [esconder, setesconder] = React.useState(true);
   const [counter, setcounter] = React.useState();
   const [load, setload] = React.useState(true);
+  const [pagsale, setpagsale] = React.useState(0);
+  const [pagCount, setpagCount] = React.useState("");
+  const [chunksale, setchunksale] = React.useState(0);
+  const [page, setpage] = React.useState(1);
+  const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
     country: "null",
@@ -36,6 +42,15 @@ function LightEcommerceA() {
     date: "null",
     price: "null",
   });
+
+  const handleChangePage = (e, value) => {
+    console.log(value)
+    setpage(value)
+    setpagsale(parseInt(pagCount.split(",")[value-1].split("-")[1]))
+    setchunksale(parseInt(pagCount.split(",")[value-1].split("-")[0]))
+    window.scroll(0, 0)
+    settrigger(!trigger)
+  }
 
   const modificarFiltro = (v) => {
     setfiltro(c=>({...c, ...v}))
@@ -92,17 +107,43 @@ function LightEcommerceA() {
         // let pag = await contract.get_ids_onsale({
         //    tokens: Landing.tokensPerPageNear})
         //  window.localStorage.setItem('pagSale',pag)
-        let pagNumArr = [0]
-        let payload = {
+        
+        // let payload = {
+        //   account : (owner.toString().toLowerCase()+".testnet").toString(),
+        //   //from_index: nfts.page, 
+        //   //limit: nfts.tokensPerPageNear,
+        // };
+        // console.log("payload ",payload);
+        // toks = await contract.obtener_pagina_by_creator(payload);
+        var pag = await contract.get_pagination_creator_filters({
           account : (owner.toString().toLowerCase()+".testnet").toString(),
-          //from_index: nfts.page, 
-          //limit: nfts.tokensPerPageNear,
-        };
-        console.log("payload ",payload);
-        toks = await contract.obtener_pagina_by_creator(payload);
+          tokens: Landing.tokensPerPageNear,
+          //_start_index: Landing.page,
+          _start_index: pagsale,
+          _minprice: 0,
+          _maxprice: 0,
+          _mindate: 0,
+          _maxdate: 0,
+        })
+        let pagi= pag.toString()
+        setpagCount(pagi)
+        console.log(pagi)
+        console.log(pagCount)
+        toks = await contract.obtener_pagina_creator({
+          account : (owner.toString().toLowerCase()+".testnet").toString(),
+          chunk: chunksale,
+          tokens: Landing.tokensPerPageNear,
+          //_start_index: Landing.page,
+          _start_index: pagsale,
+          _minprice: 0,
+          _maxprice: 0,
+          _mindate: 0,
+          _maxdate: 0,
+        });
         console.log("toks ",toks);
+        let pagNumArr = pag
         //obtener cuantos tokens estan a la venta
-        onSaleToks = await contract.get_on_sale_toks();
+        
 
         //convertir los datos al formato esperado por la vista
         toks = toks.map((tok) => {
@@ -131,16 +172,18 @@ function LightEcommerceA() {
       }
       setload(c => false);
     })();
-  }, [owner]);
+  }, [trigger]);
   
   return (
     <section className="text-gray-600 body-font">
-      <div className="container px-5 py-4 mx-auto flex flex-wrap flex-col">
+      <div className="container px-5 pt-6 mx-auto flex flex-wrap flex-col">
         <b className="text-xl">{owner.toString().toLowerCase()+".testnet"}</b>
         {/* <p>kublaikollection.eth 0x8486...527e</p> */}
         
       </div>
-      
+      <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
+        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+      </div>
       {/* <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
       )}>
@@ -264,7 +307,8 @@ function LightEcommerceA() {
           }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-          <nav
+        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+          {/* <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
           > 
@@ -316,7 +360,7 @@ function LightEcommerceA() {
                 </a>
               );
             })}
-          </nav>
+          </nav> */}
         </div>
       </div>
     </section>
