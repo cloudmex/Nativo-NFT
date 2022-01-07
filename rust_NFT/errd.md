@@ -138,5 +138,22 @@ near view dev-1640023698418-93584970975929 get_pagination_onsale  '{"tokens":25}
  near call dev-1640023698418-93584970975929 resethash --accountId dokxo.testnet
 
 
-
 near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm --initFunction "migrate" --initArgs "{}" --accountId nativov2.testnet --initGas=300000000000000
+
+
+
+near view nativov2.testnet get_pagination_onsale_filters_v2   '{"tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
+
+//get pagination 4 creator
+near view nativov2.testnet get_pagination_creator_filters   '{"account":"alantest.testnet","tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
+
+
+//get tokens by creator
+near view nativov2.testnet obtener_pagina_creator   '{"account":"alantest.testnet","chunk":0,"tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
+
+//get pagination 4 owner
+near view nativov2.testnet get_pagination_owner_filters   '{"account":"alantest.testnet","tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
+
+
+//get tokens by owner
+near view nativov2.testnet obtener_pagina_owner   '{"account":"alantest.testnet","chunk":0,"tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
