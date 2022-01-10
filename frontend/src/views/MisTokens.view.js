@@ -35,7 +35,7 @@ function MisTokens(props) {
     nfts: [],
     page: parseInt(window.localStorage.getItem("Mypage")),
     tokensPerPage: 9,
-    tokensPerPageNear: 25,
+    tokensPerPageNear: 15,
 
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
