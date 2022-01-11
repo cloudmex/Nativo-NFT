@@ -25,7 +25,7 @@ function LightEcommerceA() {
     pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 15,
+    tokensPerPageNear: 24,
   });
   const [esconder, setesconder] = React.useState(true);
   const [counter, setcounter] = React.useState();

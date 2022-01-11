@@ -35,7 +35,7 @@ function MisTokens(props) {
     nfts: [],
     page: parseInt(window.localStorage.getItem("Mypage")),
     tokensPerPage: 9,
-    tokensPerPageNear: 15,
+    tokensPerPageNear: 24,
 
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
@@ -289,7 +289,7 @@ function MisTokens(props) {
       let contract = await getNearContract();
       let payload = {
         token_id: tokenId,
-        chunk: parseInt(tokenId/660),
+        chunk: parseInt(tokenId/2400),
       };
       let amount = fromNearToYocto(0);
       //console.log(amount);

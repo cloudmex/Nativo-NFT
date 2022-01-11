@@ -98,7 +98,7 @@ function LightEcommerceB(props) {
             ...state,
             tokens: {
               tokenID: toks.token_id,
-              chunk: parseInt(toks.token_id/660),
+              chunk: parseInt(toks.token_id/2400),
               onSale: toks.on_sale,
               price: fromYoctoToNear(toks.price),
               // culture:toks.culture,
