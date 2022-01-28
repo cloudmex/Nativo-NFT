@@ -2,6 +2,14 @@ near call dev-1638228892358-63955043240214 new_default_meta '{"owner_id":"joehan
 
 near call dev-1636747327239-18935385243808 minar '{ "token_owner_id":"dokxo.testnet","token_metadata":"{"title":"nombre del token","description":"descripción","media":"imagenim","media_hash":"imageni"}"}' --accountId dev-1636747327239-18935385243808 --amount 0.1 
 
+
+//////////////////////////////////////
+funciona chido con colleción haciendo el xxc
+
+near call dev-1643329021198-22907018449665 nft_mint_token '{ "contractaddress":"dev-1643331107973-95015694722073", "token_owner_id": "joehank.testnet","colecction":"nativo","token_metadata": { "title": "Será este el bueno?x2", "description": "This is Hola x36", "media": "","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'joehank.testnet'","'price'":"'5'","'status'":"'S'","'on_sale'":'false',"'on_auction'":'false',"'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}}' --accountId joehank.testnet  --amount 0.1 --gas=300000000000000
+
+////////////////////
+
 near call dev-1636751893359-19496702378959 minar '{"token_owner_id": "dev-1636751893359-19496702378959", "token_metadata":'{"title":"nombre del token","description": "descripción","media": "imagenimagenimagenimagenimagenim","media_hash":"imagenimagenimagenimagenimagenim"}}' --accountId dev-1636751893359-19496702378959 --amount 0.1
 
 near call dev-1636747327239-18935385243808 minar "'{"token_owner_id": "dokxo.testnet", "token_metadata": "'{ "title": "nombre del token","description": "descripción","media": "imagenimagenimagenimagenimagenim","media_hash": "imagenimagenimagenimagenimagenim"}}'" --accountId dev-1636747327239-18935385243808 --amount 0.1
@@ -142,7 +150,7 @@ near deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.
 
 
 
-near view nativov2.testnet get_pagination_onsale_filters_v2   '{"tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
+near view nativov3.testnet get_pagination_onsale_filters_v2   '{"tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
 
 //get pagination 4 creator
 near view nativov2.testnet get_pagination_creator_filters   '{"account":"alantest.testnet","tokens":25,"_start_index":0,"_minprice":0,"_maxprice":0,"_mindate":0,"_maxdate":0}' --accountId dokxo.testnet
