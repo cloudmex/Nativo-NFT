@@ -4,6 +4,7 @@ import { useParams  } from "react-router-dom";
 // import { Helmet } from "react-helmet";
 import { isNearReady } from "../utils/near_interaction";
 import { nearSignIn } from "../utils/near_interaction";
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import {
   syncNets,
   getSelectedAccount,
@@ -35,6 +36,7 @@ function LightEcommerceB(props) {
   const { tokenid } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
 
   React.useEffect(() => {
     (async () => {
@@ -69,22 +71,75 @@ function LightEcommerceB(props) {
           //console.log(toks.data);
         }
       } else {
+        //Funciones y variables necesarias para the graph
+        let toksData
+        const queryData = `
+          query($tokenId: String, $collection: String){
+            tokens(where: {tokenId: $tokenId, collection: $collection}) {
+              id
+              collection
+              contract
+              tokenId
+              owner_id
+              title
+              description
+              media
+              creator
+              price
+              status
+              adressbidder
+              highestbidder
+              lowestbidder
+              expires_at
+              starts_at
+              extra
+            }
+          }
+        `
+        //Declaramos el cliente
+        const client = new ApolloClient({
+          uri: APIURL,
+          cache: new InMemoryCache(),
+        })
+
+        await client
+          .query({
+            query: gql(queryData),
+            variables: {
+              tokenId: "19",
+              collection: "hello.testnet-Hola-adios-hoy",
+            }
+          })
+          .then((data) => {
+            console.log("tokens data: ",data.data.tokens[0])
+            toksData = data.data.tokens[0]
+          })
+          .catch((err) => {
+            console.log('Error ferching data: ',err)
+          })
         //instanciar contracto
         let contract = await getNearContract();
         totalSupply = await contract.nft_total_supply();
         //console.log(totalSupply);
 
         //si es mayor que el total de tokens
-        if (parseInt(tokenid) >= parseInt(totalSupply)) {
-          window.location.href = "/galeria";
-        } else {
-          let toks = await contract.get_token({ token_id: tokenid });
-          //console.log("Token")
-          //console.log(toks)
-          if(toks.on_auction){
-            window.location.href = "/auction/"+tokenid;
+        // if (parseInt(tokenid) >= parseInt(totalSupply)) {
+        //   window.location.href = "/galeria";
+        // } else {
+          // let toks = await contract.get_token({ token_id: tokenid });
+          // //console.log("Token")
+          // //console.log(toks)
+          // if(toks.on_auction){
+          //   window.location.href = "/auction/"+tokenid;
+          // }
+          let saleState
+          if(toksData.status != 'S'){
+            saleState = false
           }
-          setbtn(!toks.on_sale);
+          else{
+            saleState = true
+          }
+          setbtn(!saleState);
           // console.log({
           //   tokenID: toks.token_id,
           //   onSale: toks.metadata.on_sale,
@@ -93,30 +148,33 @@ function LightEcommerceB(props) {
           //   country:toks.metadata.country,
           //   creator:toks.metadata.creator,
           // });
-          
+          console.log(toksData)
+          let extra = toksData.extra.split(":")
           setstate({
             ...state,
             tokens: {
-              tokenID: toks.token_id,
-              chunk: parseInt(toks.token_id/2400),
-              onSale: toks.on_sale,
-              price: fromYoctoToNear(toks.price),
+              tokenID: toksData.tokenId,
+              //chunk: parseInt(toks.token_id/2400),
+              onSale: saleState,
+              price: fromYoctoToNear(toksData.price),
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
             },
             jdata: {
-              image: toks.media,
-              title: toks.title,
-              description: toks.description,
-              culture: toks.culture,
-              country: toks.country,
-              creator: toks.creator,
+              image: toksData.media,
+              title: toksData.title,
+              description: toksData.description,
+              culture: extra[0],
+              country: extra[1],
+              creator: toksData.creator,
+              collection: toksData.collection,
+              contract: toksData.contract
             },
-            owner: toks.owner_id,
+            owner: toksData.owner_id,
           });
           //console.log("state", state)
-        }
+        
 
 
       }
@@ -243,6 +301,17 @@ function LightEcommerceB(props) {
             <p className="leading-relaxed mt-2 mb-6 font-mono ">
               {state?.jdata.description}
             </p>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+            >
+              {/* Este sera un link que redireccionara hacia la coleccion */}
+              <span className="text-gray-500">Colección</span>
+              <span className="ml-auto text-gray-900 text-s self-center">
+                {state?.jdata.collection}
+              </span>
+            </div>
+            
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
@@ -315,6 +384,17 @@ function LightEcommerceB(props) {
                 {state?.jdata.creator}
               </span>
             </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Contrato</span>
+              <span className="ml-auto text-gray-900 text-xs self-center">
+                {state?.jdata.contract}
+              </span>
+            </div>
+
+            
 
 
             <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />

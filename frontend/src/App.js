@@ -15,6 +15,7 @@ import AuctionGaleria from "./views/AuctionGaleria.view";
 import Auction from "./views/auction.view";
 import SendAuction from "./views/SendAuction.view";
 import Perfil from "./views/Perfil.view";
+import creCol from "./views/createColl"
 
 import notFound from "./views/notFound.view";
 
@@ -63,6 +64,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
+            <BlockchainProtectedRoute path="/createCollection" component={creCol} />
             <Route path="/galeria" component={Galeria} />
             <Route path="/perfil/:tokenid" component={Perfil} />
             <Route path="/auctions" component={AuctionGaleria} />
