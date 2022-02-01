@@ -21,6 +21,7 @@ import {
 } from "../utils/near_interaction";
 import Modal from "../components/modal.component";
 import flechaiz from '../assets/landingSlider/img/flechaIz.png'
+import ReactHashtag from "react-hashtag";
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
@@ -106,8 +107,8 @@ function LightEcommerceB(props) {
           .query({
             query: gql(queryData),
             variables: {
-              tokenId: "19",
-              collection: "hello.testnet-Hola-adios-hoy",
+              tokenId: "2",
+              collection: "Hola esta es una coleccion",
             }
           })
           .then((data) => {
@@ -165,8 +166,7 @@ function LightEcommerceB(props) {
               image: toksData.media,
               title: toksData.title,
               description: toksData.description,
-              culture: extra[0],
-              country: extra[1],
+              tags: extra[0].split(' '),
               creator: toksData.creator,
               collection: toksData.collection,
               contract: toksData.contract
@@ -301,17 +301,20 @@ function LightEcommerceB(props) {
             <p className="leading-relaxed mt-2 mb-6 font-mono ">
               {state?.jdata.description}
             </p>
-
+            
             <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              {/* Este sera un link que redireccionara hacia la coleccion */}
               <span className="text-gray-500">Colección</span>
-              <span className="ml-auto text-gray-900 text-s self-center">
-                {state?.jdata.collection}
+              <span className="ml-auto text-gray-900">
+                <span
+                  className={`inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
+                >
+                  <a href="/">{state?.jdata.collection}</a>
+                </span>
               </span>
             </div>
-            
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
@@ -320,6 +323,7 @@ function LightEcommerceB(props) {
                 {state?.tokens.tokenID}
               </span>
             </div>
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
@@ -338,34 +342,27 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Cultura</span>
+              <span className="text-gray-500">Tags</span> 
               <span className="ml-auto text-gray-900">
-                <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.culture
-                      ? "text-green-100 bg-green-500"
-                      : "text-red-100 bg-red-500"
-                    } rounded-full`}
-                >
-                  {state?.jdata.culture}
-                </span>
+                {
+                  state?.jdata.tags.length> 0 ? 
+                  state?.jdata.tags.map((element) =>
+                      <span
+                      key={element}
+                      className={`inline-flex items-center justify-center px-2 py-1 ml-2 text-xs font-bold leading-none ${state?.jdata.tags
+                          ? "text-green-100 bg-green-500"
+                          : "text-red-100 bg-red-500"
+                        } rounded-full`}
+                    >
+                      {element}
+                    </span>
+                  ) : null
+                }
+                
               </span>
             </div>
 
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">País de origen</span>
-              <span className="ml-auto text-gray-900">
-                <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.country
-                      ? "text-green-100 bg-green-500"
-                      : "text-red-100 bg-red-500"
-                    } rounded-full`}
-                >
-                  {state?.jdata.country}
-                </span>
-              </span>
-            </div>
+            
 
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -386,10 +383,10 @@ function LightEcommerceB(props) {
             </div>
 
             <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Contrato</span>
-              <span className="ml-auto text-gray-900 text-xs self-center">
+              <span className="ml-auto text-gray-900 text-xs">
                 {state?.jdata.contract}
               </span>
             </div>

@@ -23,7 +23,7 @@ import {
   storage_byte_cost,
 } from "../utils/near_interaction";
 import { Reader, uploadFile } from '../utils/fleek';
-
+import Swal from 'sweetalert2'
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
   const [mint, setmint] = React.useState({
@@ -142,12 +142,9 @@ function LightHeroE(props) {
         .min(0.000000000000000001, "el precio minimo es un wei"),
 
       culture: Yup.string().required(
-        "Escribe el nombre de la cultura pertenenciente "
+        "Escribe al menos un tag para tu NFT "
       ),
 
-      country: Yup.string().required(
-        "Escribe el nombre del pais pertenenciente "
-      ),
 
       image: Yup.string().required("Requerido"),
     }),
@@ -207,7 +204,7 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         let newPayload = {
-          contractaddress: "dev-1643397318707-12565509757416",//(comboCol? values.contractCol : contData),
+          contractaddress: "dev-1643659132538-80320824962807",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           colecction: collTitle,
           token_metadata: {
@@ -215,12 +212,12 @@ function LightHeroE(props) {
             description: values.description,
             media: values.image,
             media_hash: "hashhashhashhashhashhashhashhash",
-            extra: "{'culture':'" + values.culture + "','country':'" + values.country + "','creator':'" + owner + "','price':'" + (fromNearToYocto(values.price))+ "','status': 'S" + "','on_sale':" + combo + ",'on_auction':" + (!combo) + ",'adressbidder':'accountbidder','highestbidder':'" + (!combo ? 0 : "notienealtos") + "','lowestbidder':'" + (!combo ? fromNearToYocto(values.price) : "notienebajos") + "','expires_at':'" + date.getTime() + "','starts_at':'" + dateActual + "'}"
+            extra: "{'tags':'" + values.culture  + "','creator':'" + owner + "','price':'" + (fromNearToYocto(values.price))+ "','status': 'S" + "','on_sale':" + combo + ",'on_auction':" + (!combo) + ",'adressbidder':'accountbidder','highestbidder':'" + (!combo ? 0 : "notienealtos") + "','lowestbidder':'" + (!combo ? fromNearToYocto(values.price) : "notienebajos") + "','expires_at':'" + date.getTime() + "','starts_at':'" + dateActual + "'}"
             //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
         }
         let payloadCol = {
-          contr: "dev-1643397318707-12565509757416",
+          contr: "dev-1643659132538-80320824962807",
           addressowner: owner,
           title: values.titleCol,
           descrip: values.descriptionCol,
@@ -245,11 +242,19 @@ function LightHeroE(props) {
         //     amount,  
         //   )
         // }
-        let tokenresult = contract.market_mint_generic(
+        let tokenresult = await contract.market_mint_generic(
           newPayload,
           300000000000000,
           amount,
         )
+
+        Swal.fire({
+          title: 'Colección creada',
+          text: 'Tu colección ha sido creada',
+          icon: 'success',
+        }).then(function() {
+          window.location.href = "/"
+        })
         //console.log(contract);
         //console.log(payload);
         //console.log(fromYoctoToNear("5700000000000000000000"));
@@ -264,29 +269,7 @@ function LightHeroE(props) {
 
       }
       //if de error
-      if (!token.status)
-        setModal({
-          ...modal,
-          show: true,
-          loading: false,
-          title: "error",
-          message: "intentalo de nuevo",
-          change: setModal,
-          disabled: false,
-        });
-      
-      else
-        setModal({
-          ...modal,
-          show: true,
-          title: "Exito",
-          message: "el nuevo token se ha minado correctamente",
-          loading: false,
-          change: setModal,
-          disabled: false,
-        });
-
-      setmint({ ...mint, onSubmitDisabled: false });
+     
     },
   });
 
@@ -566,7 +549,7 @@ function LightHeroE(props) {
                   htmlFor="culture"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Cultura
+                  Tags
                 </label>{" "}
                 {formik.touched.culture && formik.errors.culture ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -579,30 +562,8 @@ function LightHeroE(props) {
                 type="text"
                 id="culture"
                 name="culture"
+                placeholder="#tag1 #tag2 #tag3..."
                 {...formik.getFieldProps("culture")}
-                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-              />
-
-              <div className="flex justify-between ">
-                <label
-                  htmlFor="country"
-                  className="leading-7 text-sm text-gray-600"
-                >
-                  País{" "}
-                </label>
-                {formik.touched.country && formik.errors.country ? (
-                  <div className="leading-7 text-sm text-red-600">
-                    {" "}
-                    {formik.errors.country}{" "}
-                  </div>
-                ) : null}{" "}
-              </div>
-
-              <input
-                type="text"
-                id="country"
-                name="country"
-                {...formik.getFieldProps("country")}
                 className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
               />
 
@@ -667,9 +628,9 @@ function LightHeroE(props) {
       <>
         <div className="item-center py-10">
           <p className="text-5xl font-semibold pt-20 text-center">No tienes colecciones</p>
-          <p className="pt-10 pb-5 text-center text-2xl">Para poder minar un token en necesario crear una collecion antes</p>
+          <p className="pt-10 pb-5 text-center text-2xl">Para poder minar un token en necesario crear una colección antes</p>
           <div className="width-100 py-10 text-center">
-            <a className="bg-s hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-xl" href="./createCollection">Crear coleccion</a>
+            <a className="bg-s hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-xl" href="./createCollection">Crear colección</a>
           </div>
           
         </div>

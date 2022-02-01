@@ -23,6 +23,7 @@ import {
   storage_byte_cost,
 } from "../utils/near_interaction";
 import { Reader, uploadFile } from '../utils/fleek';
+import Swal from 'sweetalert2'
 
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
@@ -194,15 +195,22 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      contr: "dev-1643397318707-12565509757416",
+      contr: "dev-1643659132538-80320824962807",
       addressowner: owner,
       title: title,
       descrip: desc,
     }
     console.log(desc);
-    let colResult = contract.Add_user_collection(
+    let colResult = await contract.Add_user_collection(
       payloadCol
     )
+    Swal.fire({
+      title: 'Colección creada',
+      text: 'Tu colección ha sido creada',
+      icon: 'success',
+    }).then(function() {
+      window.location.href = "/minar"
+    })
   }
 
   /**
@@ -298,7 +306,7 @@ function LightHeroE(props) {
                   htmlFor="titleCol"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Título de la coleccion
+                  Título de la colección
                 </label>
                 {formik.touched.titleCol && formik.errors.titleCol ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -322,7 +330,7 @@ function LightHeroE(props) {
                   htmlFor="descriptionCol"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Descripción de la coleccion
+                  Descripción de la colección
                 </label>
                 {formik.touched.descriptionCol && formik.errors.descriptionCol ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -355,7 +363,7 @@ function LightHeroE(props) {
                 onClick={() => saveCollection()}
                 className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
               >
-                {combo ? "Crear coleccion" : "Subastar"}
+                {combo ? "Crear colección" : "Subastar"}
               </button>
             </div>
           </div>
