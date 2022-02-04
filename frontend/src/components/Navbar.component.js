@@ -84,8 +84,12 @@ function LightHeaderB(props) {
             setmenu(m => !m);
         }} ></div>
         <nav className={"movil-nav md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center "+(menu ? "esconder-nav" : "")}>
-          <a href="/galeria" className="mr-5 hover:text-gray-900">
+          {/* <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
+          </a> */}
+
+          <a href="/Collections" className="mr-5 hover:text-gray-900">
+            Colecciones
           </a>
           {/* <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
             Galeria V1
