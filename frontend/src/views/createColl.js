@@ -85,7 +85,7 @@ function LightHeroE(props) {
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
-      console.log('Entra')
+      // console.log('Entra')
       //evitar que el usuario pueda volver a hacer click hasta que termine el minado
       setmint({ ...mint, onSubmitDisabled: true });
       let account;
@@ -107,10 +107,10 @@ function LightHeroE(props) {
         disabled: true,
       });
 
-      console.log(JSON.stringify(values))
+      // console.log(JSON.stringify(values))
       const fecha = values.date.split('-')
       let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
-      console.log(dateSTR)
+      // console.log(dateSTR)
       const date = new Date(dateSTR)
       date.setDate(date.getDate())
       date.setHours(values.hrs)
@@ -141,7 +141,7 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         let payloadCol = {
-          contr: "dev-1643397318707-12565509757416",
+          contr: "dev-1643331107973-95015694722073",
           addressowner: owner,
           title: values.titleCol,
           descrip: values.descriptionCol,
@@ -191,16 +191,16 @@ function LightHeroE(props) {
   });
 
   async function saveCollection() {
-    console.log("Hola");
+    // console.log("Hola");
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      contr: "dev-1643659132538-80320824962807",
+      contr: "dev-1643826547560-31521231540224",
       addressowner: owner,
       title: title,
       descrip: desc,
     }
-    console.log(desc);
+    // console.log(desc);
     let colResult = await contract.Add_user_collection(
       payloadCol
     )

@@ -34,7 +34,7 @@ function LightEcommerceB(props) {
   //Esta logeado
   const [stateLogin, setStateLogin] = useState(false);
   //es el parametro de tokenid
-  const { tokenid } = useParams();
+  const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
   const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
@@ -47,32 +47,33 @@ function LightEcommerceB(props) {
 
       if (localStorage.getItem("blockchain") == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-        await syncNets();
+        // await syncNets();
 
-        //obtener cuantos tokens tiene el contrato
-        totalSupply = await getContract().methods.totalSupply().call();
+        // //obtener cuantos tokens tiene el contrato
+        // totalSupply = await getContract().methods.totalSupply().call();
 
-        //si es mayor que el total de tokens
-        if (parseInt(tokenid) >= parseInt(totalSupply)) {
-          window.location.href = "/galeria";
-        } else {
-          //obtener los datos del token que se queire
-          let toks = await getContract().methods.tokensData(tokenid).call();
-          toks.price = fromWEItoEth(toks.price);
-          //obtener el dueño del contrato
-          let owner = await getContract().methods.ownerOf(tokenid).call();
-          //agregar el dueño y los datos del token
-          //console.log(JSON.parse(toks.data));
-          setstate({
-            ...state,
-            tokens: toks,
-            jdata: JSON.parse(toks.data),
-            owner,
-          });
-          //console.log(toks.data);
-        }
+        // //si es mayor que el total de tokens
+        // if (parseInt(tokenid) >= parseInt(totalSupply)) {
+        //   window.location.href = "/galeria";
+        // } else {
+        //   //obtener los datos del token que se queire
+        //   let toks = await getContract().methods.tokensData(tokenid).call();
+        //   toks.price = fromWEItoEth(toks.price);
+        //   //obtener el dueño del contrato
+        //   let owner = await getContract().methods.ownerOf(tokenid).call();
+        //   //agregar el dueño y los datos del token
+        //   //console.log(JSON.parse(toks.data));
+        //   setstate({
+        //     ...state,
+        //     tokens: toks,
+        //     jdata: JSON.parse(toks.data),
+        //     owner,
+        //   });
+        //   //console.log(toks.data);
+        // }
       } else {
         //Funciones y variables necesarias para the graph
+        let info = data.split(":");
         let toksData
         const queryData = `
           query($tokenId: String, $collection: String){
@@ -107,8 +108,8 @@ function LightEcommerceB(props) {
           .query({
             query: gql(queryData),
             variables: {
-              tokenId: "2",
-              collection: "Hola esta es una coleccion",
+              tokenId: info[0],
+              collection: info[1],
             }
           })
           .then((data) => {
@@ -118,9 +119,10 @@ function LightEcommerceB(props) {
           .catch((err) => {
             console.log('Error ferching data: ',err)
           })
+          console.log(toksData)
         //instanciar contracto
         let contract = await getNearContract();
-        totalSupply = await contract.nft_total_supply();
+        // totalSupply = await contract.nft_total_supply();
         //console.log(totalSupply);
 
         //si es mayor que el total de tokens
@@ -310,7 +312,7 @@ function LightEcommerceB(props) {
                 <span
                   className={`inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
                 >
-                  <a href="/">{state?.jdata.collection}</a>
+                  <a href={'/NFTCol/'+state?.jdata.collection+":"+state?.jdata.contract}>{state?.jdata.collection}</a>
                 </span>
               </span>
             </div>

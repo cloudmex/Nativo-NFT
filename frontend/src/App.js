@@ -17,6 +17,7 @@ import SendAuction from "./views/SendAuction.view";
 import Perfil from "./views/Perfil.view";
 import creCol from "./views/createColl"
 import Collections from "./views/collectionGallery"
+import TokensCollection from "./views/tokensCollection"
 
 import notFound from "./views/notFound.view";
 
@@ -68,11 +69,12 @@ class App extends Component {
             <BlockchainProtectedRoute path="/createCollection" component={creCol} />
             <Route path="/galeria" component={Galeria} />
             <Route path="/Collections" component={Collections} />
+            <Route path="/NFTCol/:data" component={TokensCollection} />
             <Route path="/perfil/:tokenid" component={Perfil} />
             <Route path="/auctions" component={AuctionGaleria} />
             <Route path="/auction/:tokenid" component={Auction} />
             <BlockchainProtectedRoute path="/sendauction/:tokenid" component={SendAuction} />
-            <Route path="/detail/:tokenid" component={Detail}/>
+            <Route path="/detail/:data" component={Detail}/>
             <BlockchainProtectedRoute path="/mis_nfts" component={MisNfts} />
             <Route component={notFound} />
           </Switch>

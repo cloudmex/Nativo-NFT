@@ -47,7 +47,7 @@ function LightEcommerceA() {
   const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
 
   const handleChangePage = (e, value) => {
-    console.log(value)
+    // console.log(value)
     setpage(value)
     window.scroll(0, 0)
     settrigger(!trigger)
@@ -57,6 +57,9 @@ function LightEcommerceA() {
     setfiltro(c=>({...c, ...v}))
   }
 
+  const { data } = useParams();
+
+  var tokData
   var colData
   const { tokenid:owner } = useParams();
   React.useEffect(() => {
@@ -116,16 +119,35 @@ function LightEcommerceA() {
         // };
         // console.log("payload ",payload);
         // toks = await contract.obtener_pagina_by_creator(payload);
-
+        let info = data.split(":");
         const queryData = `
-          query{
-            collections {
+          query($title: String, $contract: String){
+            collections(where: {title: $title, contract: $contract}) {
               id
               owner
               title
               tokenCount
               description
               contract
+            }
+            tokens(where: {collection: $title, contract: $contract}) {
+              id
+              collection
+              contract
+              tokenId
+              owner_id
+              title
+              description
+              media
+              creator
+              price
+              status
+              adressbidder
+              highestbidder
+              lowestbidder
+              expires_at
+              starts_at
+              extra
             }
           }
         `
@@ -138,15 +160,21 @@ function LightEcommerceA() {
         await client
           .query({
             query: gql(queryData),
+            variables:{
+              title: info[0],
+              contract: info[1],
+            },
           })
           .then((data) => {
-            console.log("collections data: ",data.data.collections)
-            colData = data.data.collections
+            // console.log("collections data: ",data.data.collections)
+            // console.log("tokens data: ",data.data.tokens)
+            tokData = data.data.tokens
+            colData = data.data.collections[0]
           })
           .catch((err) => {
             console.log('Error ferching data: ',err)
           })
-          console.log(colData)
+          // console.log(tokData)
 
         // var pag = await contract.get_pagination_creator_filters({
         //   account : (owner.toString().toLowerCase()).toString(),
@@ -188,28 +216,33 @@ function LightEcommerceA() {
         // }
 
         //convertir los datos al formato esperado por la vista
-        let col = colData.map((collection) => {
+        let tok = tokData.map((tok) => {
           return {
-            title: collection.title,
-            owner: collection.owner,
-            tokenCount: collection.tokenCount,
-            description: collection.description,
-            contract: collection.contract,   
+            title: tok.title,
+            tokenId: tok.tokenId,
+            media: tok.media,
+            price: tok.price,
+            owner: tok.owner_id
           };
         });
-        console.log(col)
+        // console.log(tok)
 
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
-        let numpage = parseInt(col.length/Landing.tokensPerPageNear)
-        if(col.length%Landing.tokensPerPageNear>0){
+        let numpage = parseInt(tok.length/Landing.tokensPerPageNear)
+        if(tok.length%Landing.tokensPerPageNear>0){
           numpage++
         }
         await setLanding({
           ...Landing,
-          tokens: col.slice(Landing.tokensPerPageNear*(page - 1),Landing.tokensPerPageNear*page),
+          tokens: tok.slice(Landing.tokensPerPageNear*(page - 1),Landing.tokensPerPageNear*page),
           nPages: numpage,
+          titleCol: colData.title,
+          ownerCol: colData.owner,
+          descriptionCol: colData.description,
+          contract: colData.contract,
+          tokenCount: colData.tokenCount
         });
       }
       
@@ -218,7 +251,15 @@ function LightEcommerceA() {
   
   return (
     <section className="text-gray-600 body-font">
-      
+      <div className="container px-5 pt-6 mx-auto flex flex-wrap flex-col text-center">
+        <h1 className="text-4xl font-bold pb-4">{Landing.titleCol}</h1>
+        <p className="text-xl font-bold">Descripción:</p>
+        <p className="text-lg pb-1">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion":Landing.descriptionCol}</p>
+        <p className="text-lg pb-1"><b>Creador:</b> {Landing.ownerCol}</p>
+        <p className="text-lg pb-1"><b>Contrato:</b> {Landing.contract}</p>
+        <p className="text-lg pb-1"><b>Numero de tokens:</b> {Landing.tokenCount}</p>
+        <p className="text-lg pb-1"><b>Costo total de la colección:</b> {Math.round(Math.random() * (100 - 1)) + 1} {Landing.currency}</p>
+      </div> 
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
         <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
       </div>
@@ -305,15 +346,15 @@ function LightEcommerceA() {
               //const tokenData = JSON.parse(token.data);
               return (
                 <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                  <a href={"/detail/"}>
+                  <a href={"/detail/"+element.tokenId+":"+Landing.titleCol}>
                     <div className="token">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
-                       {/* <img
+                       <img
                             alt="ecommerce"
                             className="imgaa object-cover object-center w-full h-full block"
-                            src={`https://ipfs.io/ipfs/${tokenData.image}`}
-                          />  */}
+                            src={`https://ipfs.io/ipfs/${element.media}`}
+                          />  
                
                    
                            
@@ -323,13 +364,12 @@ function LightEcommerceA() {
                         {element.title}
                       </h2>
                       <p className="mt-1 mb-4 ml-2">
-                        {element.description}
+                        { "TokenID: "+element.tokenId+"\n"}
                         <br/>
                         { "Owner: "+element.owner+"\n"}
                         <br/>
-                        { "Contrato: "+element.contract+"\n"}
-                        <br/>
-                        { "Numero de tokens: "+element.tokenCount+"\n"}
+                        {Landing.blockchain != 0 &&
+                              fromYoctoToNear(element.price) + " " + Landing.currency}
                         <br/>
                         {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}

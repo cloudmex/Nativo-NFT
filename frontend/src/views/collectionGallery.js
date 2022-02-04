@@ -47,7 +47,7 @@ function LightEcommerceA() {
   const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
 
   const handleChangePage = (e, value) => {
-    console.log(value)
+    // console.log(value)
     setpage(value)
     window.scroll(0, 0)
     settrigger(!trigger)
@@ -140,13 +140,13 @@ function LightEcommerceA() {
             query: gql(queryData),
           })
           .then((data) => {
-            console.log("collections data: ",data.data.collections)
+            // console.log("collections data: ",data.data.collections)
             colData = data.data.collections
           })
           .catch((err) => {
             console.log('Error ferching data: ',err)
           })
-          console.log(colData)
+          // console.log(colData)
 
         // var pag = await contract.get_pagination_creator_filters({
         //   account : (owner.toString().toLowerCase()).toString(),
@@ -197,7 +197,7 @@ function LightEcommerceA() {
             contract: collection.contract,   
           };
         });
-        console.log(col)
+        // console.log(col)
 
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
@@ -305,7 +305,7 @@ function LightEcommerceA() {
               //const tokenData = JSON.parse(token.data);
               return (
                 <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                  <a href={"/detail/"}>
+                  <a href={"/NFTCol/"+element.title+":"+element.contract}>
                     <div className="token">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
@@ -323,13 +323,15 @@ function LightEcommerceA() {
                         {element.title}
                       </h2>
                       <p className="mt-1 mb-4 ml-2">
-                        {element.description}
+                        {element.description == "" ? "Esta coleccion no tiene una descripcion" : element.description}
                         <br/>
-                        { "Owner: "+element.owner+"\n"}
+                        { "Creador: "+element.owner+"\n"}
                         <br/>
                         { "Contrato: "+element.contract+"\n"}
                         <br/>
                         { "Numero de tokens: "+element.tokenCount+"\n"}
+                        <br/>
+                        { "Costo total de la colección: "+(Math.round(Math.random() * (100 - 1)) + 1)+" "+Landing.currency+"\n"}
                         <br/>
                         {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}

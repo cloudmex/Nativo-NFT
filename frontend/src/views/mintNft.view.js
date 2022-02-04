@@ -76,8 +76,8 @@ function LightHeroE(props) {
     async function obtenerColecciones() {
       ownerAccount = await getNearAccount()
       let contract = await getNearContract();
-      console.log(ownerAccount)
-      console.log(contract.contractId)
+      // console.log(ownerAccount)
+      // console.log(contract.contractId)
       await client
         .query({
           query: gql(queryData),
@@ -86,15 +86,15 @@ function LightHeroE(props) {
           }
         })
         .then((data) => {
-          console.log("collection data: ", data.data.collections)
+          // console.log("collection data: ", data.data.collections)
           if (data.data.collections.length > 0) {
-            console.log('hay colecciones')
+            // console.log('hay colecciones')
             setcollection(true)
             setCollecData(collecData.concat(data.data.collections))
 
           }
           else {
-            console.log('no hay colecciones')
+            // console.log('no hay colecciones')
             setcollection(false)
           }
         })
@@ -131,19 +131,20 @@ function LightHeroE(props) {
         .min(5, "el titulo debe longitud mayor a 5"),
 
       description: Yup.string()
-        .max(300, "Menos de 50 caracteres")
+        .max(1000, "Menos de 1000 caracteres")
         .required("Requerido")
-        .min(30, "la descripción minimo es de 30 caracteres"),
+        .min(5, "la descripción minimo es de 5 caracteres"),
 
       price: Yup.number()
         .required("Requerido")
         .positive("el precio debe ser positivo")
         .moreThan(0, "no existen nft gratis")
-        .min(0.000000000000000001, "el precio minimo es un wei"),
+        .min(0.000000000000000001, "El precio no debe de ser 0"),
 
-      culture: Yup.string().required(
-        "Escribe al menos un tag para tu NFT "
-      ),
+      culture: Yup.string()
+        .required("Requerido"),
+        //.matches("(([A-Za-z0-9]+)\s?)((([A-Za-z0-9]+)\s){1,3})?(([A-Za-z0-9]+))?",'Minimo un tag maximo 5'),
+      
 
 
       image: Yup.string().required("Requerido"),
@@ -170,10 +171,10 @@ function LightHeroE(props) {
         disabled: true,
       });
 
-      console.log(JSON.stringify(values))
+      // console.log(JSON.stringify(values))
       const fecha = values.date.split('-')
       let dateSTR = fecha[1] + '-' + fecha[2] + '-' + fecha[0]
-      console.log(dateSTR)
+      // console.log(dateSTR)
       const date = new Date(dateSTR)
       date.setDate(date.getDate())
       date.setHours(values.hrs)
@@ -222,7 +223,7 @@ function LightHeroE(props) {
           title: values.titleCol,
           descrip: values.descriptionCol,
         }
-        console.log(newPayload)
+        // console.log(newPayload)
         // let payload = {
         //   token_owner_id: owner,
         //   token_metadata: {
@@ -360,7 +361,7 @@ function LightHeroE(props) {
             className={` title-font sm:text-4xl text-3xl  font-medium absolute inset-0  w-full flex flex-col items-center   rounded-lg  tracking-wide uppercase  cursor-pointer justify-center`}
           >
             <div
-              className={`  my-4 title-font sm:text-4xl text-3xl w-full text-center ${mint?.file ? "bg-white" : ""
+              className={` border-solid border-4 py-20 my-4 title-font sm:text-4xl text-3xl w-full text-center ${mint?.file ? "bg-white" : ""
                 }
               `}
             >
@@ -382,7 +383,7 @@ function LightHeroE(props) {
             </div>
           ) : null}
         </div>
-        <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
+        <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center pb-4">
           <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900 text-center">
             Nuevo NFT
           </h1>
@@ -470,6 +471,14 @@ function LightHeroE(props) {
                 </> */}
                 {/* :
                 <> */}
+                <div className="pb-4">
+                <a 
+                className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                href="/createCollection">
+                  Añadir Colección
+                </a>
+                
+                </div>
                   <label
                     htmlFor="title"
                     className="leading-7 text-sm text-gray-600"
@@ -477,7 +486,7 @@ function LightHeroE(props) {
                     Nombre de la coleccion
                   </label>
                   <select onChange={e => {
-                    console.log(collecData.find(element => element.title == e.target.value).contract)
+                    // console.log(collecData.find(element => element.title == e.target.value).contract)
                     setcontData(collecData.find(element => element.title == e.target.value).contract)
                     setcollTitle(e.target.value)
                   }
@@ -562,8 +571,9 @@ function LightHeroE(props) {
                 type="text"
                 id="culture"
                 name="culture"
-                placeholder="#tag1 #tag2 #tag3..."
+                placeholder="tag1 tag2 tag3..."
                 {...formik.getFieldProps("culture")}
+                
                 className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
               />
 
