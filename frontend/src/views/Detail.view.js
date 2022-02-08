@@ -4,6 +4,7 @@ import { useParams  } from "react-router-dom";
 // import { Helmet } from "react-helmet";
 import { isNearReady } from "../utils/near_interaction";
 import { nearSignIn } from "../utils/near_interaction";
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import {
   syncNets,
   getSelectedAccount,
@@ -20,6 +21,7 @@ import {
 } from "../utils/near_interaction";
 import Modal from "../components/modal.component";
 import flechaiz from '../assets/landingSlider/img/flechaIz.png'
+import ReactHashtag from "react-hashtag";
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
@@ -32,9 +34,10 @@ function LightEcommerceB(props) {
   //Esta logeado
   const [stateLogin, setStateLogin] = useState(false);
   //es el parametro de tokenid
-  const { tokenid } = useParams();
+  const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
 
   React.useEffect(() => {
     (async () => {
@@ -44,47 +47,102 @@ function LightEcommerceB(props) {
 
       if (localStorage.getItem("blockchain") == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-        await syncNets();
+        // await syncNets();
 
-        //obtener cuantos tokens tiene el contrato
-        totalSupply = await getContract().methods.totalSupply().call();
+        // //obtener cuantos tokens tiene el contrato
+        // totalSupply = await getContract().methods.totalSupply().call();
 
-        //si es mayor que el total de tokens
-        if (parseInt(tokenid) >= parseInt(totalSupply)) {
-          window.location.href = "/galeria";
-        } else {
-          //obtener los datos del token que se queire
-          let toks = await getContract().methods.tokensData(tokenid).call();
-          toks.price = fromWEItoEth(toks.price);
-          //obtener el dueño del contrato
-          let owner = await getContract().methods.ownerOf(tokenid).call();
-          //agregar el dueño y los datos del token
-          //console.log(JSON.parse(toks.data));
-          setstate({
-            ...state,
-            tokens: toks,
-            jdata: JSON.parse(toks.data),
-            owner,
-          });
-          //console.log(toks.data);
-        }
+        // //si es mayor que el total de tokens
+        // if (parseInt(tokenid) >= parseInt(totalSupply)) {
+        //   window.location.href = "/galeria";
+        // } else {
+        //   //obtener los datos del token que se queire
+        //   let toks = await getContract().methods.tokensData(tokenid).call();
+        //   toks.price = fromWEItoEth(toks.price);
+        //   //obtener el dueño del contrato
+        //   let owner = await getContract().methods.ownerOf(tokenid).call();
+        //   //agregar el dueño y los datos del token
+        //   //console.log(JSON.parse(toks.data));
+        //   setstate({
+        //     ...state,
+        //     tokens: toks,
+        //     jdata: JSON.parse(toks.data),
+        //     owner,
+        //   });
+        //   //console.log(toks.data);
+        // }
       } else {
+        //Funciones y variables necesarias para the graph
+        let info = data.split(":");
+        let toksData
+        const queryData = `
+          query($tokenId: String, $collection: String){
+            tokens(where: {tokenId: $tokenId, collection: $collection}) {
+              id
+              collection
+              contract
+              tokenId
+              owner_id
+              title
+              description
+              media
+              creator
+              price
+              status
+              adressbidder
+              highestbidder
+              lowestbidder
+              expires_at
+              starts_at
+              extra
+            }
+          }
+        `
+        //Declaramos el cliente
+        const client = new ApolloClient({
+          uri: APIURL,
+          cache: new InMemoryCache(),
+        })
+
+        await client
+          .query({
+            query: gql(queryData),
+            variables: {
+              tokenId: info[0],
+              collection: info[1],
+            }
+          })
+          .then((data) => {
+            console.log("tokens data: ",data.data.tokens[0])
+            toksData = data.data.tokens[0]
+          })
+          .catch((err) => {
+            console.log('Error ferching data: ',err)
+          })
+          console.log(toksData)
         //instanciar contracto
         let contract = await getNearContract();
-        totalSupply = await contract.nft_total_supply();
+        // totalSupply = await contract.nft_total_supply();
         //console.log(totalSupply);
 
         //si es mayor que el total de tokens
-        if (parseInt(tokenid) >= parseInt(totalSupply)) {
-          window.location.href = "/galeria";
-        } else {
-          let toks = await contract.get_token({ token_id: tokenid });
-          //console.log("Token")
-          //console.log(toks)
-          if(toks.on_auction){
-            window.location.href = "/auction/"+tokenid;
+        // if (parseInt(tokenid) >= parseInt(totalSupply)) {
+        //   window.location.href = "/galeria";
+        // } else {
+          // let toks = await contract.get_token({ token_id: tokenid });
+          // //console.log("Token")
+          // //console.log(toks)
+          // if(toks.on_auction){
+          //   window.location.href = "/auction/"+tokenid;
+          // }
+          let saleState
+          if(toksData.status != 'S'){
+            saleState = false
           }
-          setbtn(!toks.on_sale);
+          else{
+            saleState = true
+          }
+          setbtn(!saleState);
           // console.log({
           //   tokenID: toks.token_id,
           //   onSale: toks.metadata.on_sale,
@@ -93,30 +151,32 @@ function LightEcommerceB(props) {
           //   country:toks.metadata.country,
           //   creator:toks.metadata.creator,
           // });
-          
+          console.log(toksData)
+          let extra = toksData.extra.split(":")
           setstate({
             ...state,
             tokens: {
-              tokenID: toks.token_id,
-              chunk: parseInt(toks.token_id/2400),
-              onSale: toks.on_sale,
-              price: fromYoctoToNear(toks.price),
+              tokenID: toksData.tokenId,
+              //chunk: parseInt(toks.token_id/2400),
+              onSale: saleState,
+              price: fromYoctoToNear(toksData.price),
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
             },
             jdata: {
-              image: toks.media,
-              title: toks.title,
-              description: toks.description,
-              culture: toks.culture,
-              country: toks.country,
-              creator: toks.creator,
+              image: toksData.media,
+              title: toksData.title,
+              description: toksData.description,
+              tags: extra[0].split(' '),
+              creator: toksData.creator,
+              collection: toksData.collection,
+              contract: toksData.contract
             },
-            owner: toks.owner_id,
+            owner: toksData.owner_id,
           });
           //console.log("state", state)
-        }
+        
 
 
       }
@@ -243,6 +303,20 @@ function LightEcommerceB(props) {
             <p className="leading-relaxed mt-2 mb-6 font-mono ">
               {state?.jdata.description}
             </p>
+            
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Colección</span>
+              <span className="ml-auto text-gray-900">
+                <span
+                  className={`inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
+                >
+                  <a href={'/NFTCol/'+state?.jdata.collection+":"+state?.jdata.contract}>{state?.jdata.collection}</a>
+                </span>
+              </span>
+            </div>
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
@@ -251,6 +325,7 @@ function LightEcommerceB(props) {
                 {state?.tokens.tokenID}
               </span>
             </div>
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
@@ -269,34 +344,27 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Cultura</span>
+              <span className="text-gray-500">Tags</span> 
               <span className="ml-auto text-gray-900">
-                <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.culture
-                      ? "text-green-100 bg-green-500"
-                      : "text-red-100 bg-red-500"
-                    } rounded-full`}
-                >
-                  {state?.jdata.culture}
-                </span>
+                {
+                  state?.jdata.tags.length> 0 ? 
+                  state?.jdata.tags.map((element) =>
+                      <span
+                      key={element}
+                      className={`inline-flex items-center justify-center px-2 py-1 ml-2 text-xs font-bold leading-none ${state?.jdata.tags
+                          ? "text-green-100 bg-green-500"
+                          : "text-red-100 bg-red-500"
+                        } rounded-full`}
+                    >
+                      {element}
+                    </span>
+                  ) : null
+                }
+                
               </span>
             </div>
 
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">País de origen</span>
-              <span className="ml-auto text-gray-900">
-                <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.country
-                      ? "text-green-100 bg-green-500"
-                      : "text-red-100 bg-red-500"
-                    } rounded-full`}
-                >
-                  {state?.jdata.country}
-                </span>
-              </span>
-            </div>
+            
 
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -315,6 +383,17 @@ function LightEcommerceB(props) {
                 {state?.jdata.creator}
               </span>
             </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Contrato</span>
+              <span className="ml-auto text-gray-900 text-xs">
+                {state?.jdata.contract}
+              </span>
+            </div>
+
+            
 
 
             <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
