@@ -255,7 +255,7 @@ impl Contract {
   /// ///////////////////////////////////CREACION DE TOKENS
     #[payable]
     pub fn nft_mint_token(&mut self,token_owner_id: ValidAccountId,colecction:String,token_metadata: TokenMetadata) ->String    {
-        let Contractaccount: AccountId = "dev-1643832395071-52019319291944".parse().unwrap();
+        let Contractaccount: AccountId = "ntv-mint.near".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        
        let token_id: TokenId =self.n_total_tokens.to_string();
@@ -313,7 +313,7 @@ impl Contract {
     
      let p = ext_nft::saveToTheGraph(
         rett.clone(),
-        &"dev-1643831579485-65926926025695".to_string(), //  account_id as a parameter
+        &"nativov2.near".to_string(), //  account_id as a parameter
         env::attached_deposit(), // yocto NEAR to attach
         25_000_000_000_000 // gas to attach
      );
@@ -322,7 +322,7 @@ impl Contract {
     }
     #[payable]
     pub fn nft_mint_token_ext(&mut self,token_owner_id: ValidAccountId,colecction:String,token_metadata: TokenMetadata) ->String     {
-        let Contractaccount: AccountId = "dev-1643832395071-52019319291944".parse().unwrap();
+        let Contractaccount: AccountId = "ntv-mint.near".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        
        let token_id: TokenId =self.n_total_tokens.to_string();
