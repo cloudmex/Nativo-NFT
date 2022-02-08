@@ -1,7 +1,8 @@
 /.vscode
 
 node_modules
-/NFT/node_modules
-/NFT/target
-/blockchain/contract/target
+/blockchain/target
 /blockchain/near-contract-standards-3.2.0/target
+/blockchain-legacy/rust-contract/contract/target
+/blockchain-legacy/rust-contract/near-contract-standards-3.2.0/target
+

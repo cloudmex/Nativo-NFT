@@ -1,6 +1,6 @@
 
 [package]
-name = "non-fungible-token"
+name = "nativo-marketplace"
 version = "1.1.0"
 authors = ["Near Inc <hello@near.org>"]
 edition = "2018"
