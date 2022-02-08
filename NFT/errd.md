@@ -9,7 +9,12 @@ funciona chido con colleción haciendo el xxc
 near call dev-1643329021198-22907018449665 nft_mint_token '{ "contractaddress":"dev-1643331107973-95015694722073", "token_owner_id": "joehank.testnet","colecction":"nativo","token_metadata": { "title": "Será este el bueno?x2", "description": "This is Hola x36", "media": "","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'joehank.testnet'","'price'":"'5'","'status'":"'S'","'on_sale'":'false',"'on_auction'":'false',"'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}}' --accountId joehank.testnet  --amount 0.1 --gas=300000000000000
 
 ////////////////////
+FUNCIONA AUN MAS CHIDO CON TODO Y TAGS
 
+near call dev-1643659132538-80320824962807 nft_mint_token '{ "contractaddress":"dev-1643331107973-95015694722073", "token_owner_id": "joehank.testnet","colecction":"nativo","token_metadata": { "title": "Será este el bueno?x2", "description": "This is Hola x36", "media": "","extra":"{'"'tags'":"'#hola#adios#bye'","'creator'":"'joehank.testnet'","'price'":"'5'","'status'":"'S'","'on_sale'":'false',"'on_auction'":'false',"'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}}' --accountId joehank.testnet  --amount 0.1 --gas=300000000000000
+
+
+///////////////////////////////////////
 near call dev-1636751893359-19496702378959 minar '{"token_owner_id": "dev-1636751893359-19496702378959", "token_metadata":'{"title":"nombre del token","description": "descripción","media": "imagenimagenimagenimagenimagenim","media_hash":"imagenimagenimagenimagenimagenim"}}' --accountId dev-1636751893359-19496702378959 --amount 0.1
 
 near call dev-1636747327239-18935385243808 minar "'{"token_owner_id": "dokxo.testnet", "token_metadata": "'{ "title": "nombre del token","description": "descripción","media": "imagenimagenimagenimagenimagenim","media_hash": "imagenimagenimagenimagenimagenim"}}'" --accountId dev-1636747327239-18935385243808 --amount 0.1
