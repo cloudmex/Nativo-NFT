@@ -225,7 +225,7 @@ function LightEcommerceA() {
             owner: tok.owner_id
           };
         });
-        // console.log(tok)
+        console.log(tok)
 
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
@@ -240,6 +240,7 @@ function LightEcommerceA() {
           nPages: numpage,
           titleCol: colData.title,
           ownerCol: colData.owner,
+          mediaCol: tok[0].media,
           descriptionCol: colData.description,
           contract: colData.contract,
           tokenCount: colData.tokenCount
@@ -251,14 +252,35 @@ function LightEcommerceA() {
   
   return (
     <section className="text-gray-600 body-font">
-      <div className="container px-5 pt-6 mx-auto flex flex-wrap flex-col text-center">
+      <div className="container px-5 pt-6 mx-auto flex flex-wrap flex-col text-center items-center">
+        <img
+          className="object-cover h-48 w-48 rounded-full border-solid border-4 border-slate-700"
+          src={`https://ipfs.io/ipfs/${Landing.mediaCol}`}
+        />
         <h1 className="text-4xl font-bold pb-4">{Landing.titleCol}</h1>
-        <p className="text-xl font-bold">Descripción:</p>
-        <p className="text-lg pb-1">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion":Landing.descriptionCol}</p>
-        <p className="text-lg pb-1"><b>Creador:</b> {Landing.ownerCol}</p>
-        <p className="text-lg pb-1"><b>Contrato:</b> {Landing.contract}</p>
-        <p className="text-lg pb-1"><b>Numero de tokens:</b> {Landing.tokenCount}</p>
-        <p className="text-lg pb-1"><b>Costo total de la colección:</b> {Math.round(Math.random() * (100 - 1)) + 1} {Landing.currency}</p>
+        <p className="text-lg pb-3">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion":Landing.descriptionCol}</p>
+        <div className="grid grid-cols-2 divide-x pb-3 mx-auto">
+          <div>
+            <p className="text-lg pb-1 text-right mr-5"><b>Creador:</b> {Landing.ownerCol}</p>
+          </div>
+          <div>
+            <p className="text-lg pb-1 text-left ml-5"><b>Contrato:</b> {Landing.contract}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-full text-white mx-20 mx-auto text-center">
+        <div className="pl-5">
+          <p className="text-base pb-1"><b>No. de tokens:</b></p>
+          <p className="text-sm pb-1">{Landing.tokenCount}</p>
+        </div>
+        <div>
+          <p className="text-base pb-1"><b>No. de ventas:</b></p>
+          <p className="text-sm pb-1">{Math.round(Math.random() * (100 - 1)) + 1}</p>
+        </div>
+        <div className="pr-5">
+          <p className="text-base pb-1"><b>Vol. de venta:</b></p>
+          <p className="text-sm pb-1">{Math.round(Math.random() * (100 - 1)) + 1} {Landing.currency}</p>
+        </div>
+        </div>
       </div> 
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
         <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>

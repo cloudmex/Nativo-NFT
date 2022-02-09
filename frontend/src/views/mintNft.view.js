@@ -361,7 +361,7 @@ function LightHeroE(props) {
             className={` title-font sm:text-4xl text-3xl  font-medium absolute inset-0  w-full flex flex-col items-center   rounded-lg  tracking-wide uppercase  cursor-pointer justify-center`}
           >
             <div
-              className={` border-solid border-4 py-20 my-4 title-font sm:text-4xl text-3xl w-full text-center ${mint?.file ? "bg-white" : ""
+              className={`my-4 title-font sm:text-4xl text-3xl w-full text-center ${mint?.file ? "text-white" : "bg-white border-solid border-4 py-20"
                 }
               `}
             >
@@ -558,7 +558,7 @@ function LightHeroE(props) {
                   htmlFor="culture"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Tags
+                  Etiquetas
                 </label>{" "}
                 {formik.touched.culture && formik.errors.culture ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -571,7 +571,7 @@ function LightHeroE(props) {
                 type="text"
                 id="culture"
                 name="culture"
-                placeholder="tag1 tag2 tag3..."
+                placeholder="Etiqueta1 Etiqueta2 Etiqueta3..."
                 {...formik.getFieldProps("culture")}
                 
                 className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
