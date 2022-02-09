@@ -3,19 +3,15 @@ use near_contract_standards::non_fungible_token::metadata::{
     NFTContractMetadata, NonFungibleTokenMetadataProvider, TokenMetadata, NFT_METADATA_SPEC,
 };
 
-// use near_contract_standards::non_fungible_token::core::NonFungibleTokenCore;
 use near_contract_standards::non_fungible_token::{Token, TokenId};
 use near_contract_standards::non_fungible_token::NonFungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use std::sync::{Mutex};
 use lazy_static::lazy_static;
 use near_sdk::collections::LazyOption;
-//use std::time::{Duration, Instant};
-//use std::thread::sleep;
-use substring::Substring;
  
-
-
+use substring::Substring;
+use std::collections::HashMap;
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
@@ -34,102 +30,30 @@ pub type Balance = u128;
 
 #[derive(BorshDeserialize, BorshSerialize )]
 pub struct OldContract {
-    tokens: NonFungibleToken,
-    metadata: LazyOption<NFTContractMetadata>,
-    n_total_tokens: u64,
-    n_token_on_sale: u64,
-    n_token_on_auction: u64,
-    n_chunks: u64,
-    tokenHM:HashMap<TokenId, Vec<String>>,
-    tk_chunk:Vec<HashMap<TokenId, Vec<String>>>,
+    num_whitelist: u64,
+    whitelist_contracts:HashMap<u64,String>,
+    market_contract_address:AccountId,
+    market_contract_address_dev:AccountId,
+
 }
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize )]
 pub struct Contract {
-    tokens: NonFungibleToken,
-    metadata: LazyOption<NFTContractMetadata>,
-    n_total_tokens: u64,
-    n_token_on_sale: u64,
-    n_token_on_auction: u64,
-    n_chunks: u64,
-    tokenHM:HashMap<TokenId, Vec<String>>,
-    tk_chunk:Vec<HashMap<TokenId, Vec<String>>>,
-}
- 
-#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Meta {
-    token_id : String,
-    owner_id : String,
-    title : String,
-    description : String,
-    media : String,
-    culture : String,
-    country : String,
-    creator : String,
-    price : String,
-    on_sale: bool, // sale status
-    on_auction: bool, //auction status
-    adressbidder: String,
-    highestbidder: String,
-    lowestbidder: String,
-    expires_at: String,
-    starts_at: String,
-}
-#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Extras {
-    culture : String,
-    country : String,
-    creator : String,
-    price : String,
-    on_sale: bool, // sale status
-    on_auction: bool, //auction status
-    adressbidder: String,
-    highestbidder: String,
-    lowestbidder: String,
-    expires_at: String,
-    starts_at: String,
-}
- 
-#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Thegraphstructure {
-    contract_name:String,
-    colecction:String,
-    token_id : String,
-    owner_id : String,
-    title : String,
-    description : String,
-    media : String,
-    creator : String,
-    price : String,
-    status: String, // sale status
-    adressbidder: String,
-    highestbid: String,
-    lowestbid: String,
-    expires_at: String,
-    starts_at: String,
-    extra:String,
-}
-
-lazy_static! {
-    static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
-    static ref CONV_MAP: HashMap<String, String> = {
-        let mut map = HashMap::new();
-        
-        map
-    };
-   
+    num_whitelist: u64,
+    whitelist_contracts:HashMap<u64,String >,
+    market_contract_address:AccountId,
+    market_contract_address_dev:AccountId,
 
 }
+
+ 
 //aqui van los nombres de los metodos que mandaremos llamar
 #[ext_contract(ext_nft)]
 trait NonFungibleToken {
     // change methods
-    fn nft_mint_token_ext(&mut self,  token_owner_id: ValidAccountId,colecction:String,token_metadata: TokenMetadata);
-    fn nft_mint_token(&mut self,  token_owner_id: ValidAccountId,colecction:String,token_metadata: TokenMetadata);
-    fn nft_buy_token_ext(&mut self,token_id:TokenId);
+    fn nft_mint_token_ext(&mut self,  token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata);
+    fn nft_mint_token(&mut self,  token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata);
+    fn nft_buy_token_ext(&mut self,token_id:TokenId,collection:String);
     // view method
     fn nft_token(&self, token_id: String) -> Option<Token>;
     fn get_on_total_toks(&self) -> u64;
@@ -147,7 +71,7 @@ impl Default for Contract {
       
      let meta =NFTContractMetadata {
          spec: NFT_METADATA_SPEC.to_string(),
-         name: "Nativo NFT".to_string(),
+         name: "Nativo Marketplace".to_string(),
          symbol: "NTV".to_string(),
          icon: Some(DATA_IMAGE_SVG_NEAR_ICON.to_string()),
          base_uri: None,
@@ -155,23 +79,11 @@ impl Default for Contract {
          reference_hash: None,
      };
      Self {
-     
-         tokens:NonFungibleToken::new(
-             StorageKey::NonFungibleToken,
-             env::signer_account_id().try_into().unwrap(),
-             Some(StorageKey::TokenMetadata),
-             Some(StorageKey::Enumeration),
-             Some(StorageKey::Approval),
+         num_whitelist: 0,
+         whitelist_contracts:HashMap::new(),
+         market_contract_address:"nativov2.near".to_string(),
+         market_contract_address_dev:"dev-1644433845094-13612285357489".to_string(),
 
-         ) ,
-         metadata: LazyOption::new(StorageKey::Metadata, Some(&meta)),
-         n_total_tokens: 0,
-         n_token_on_sale: 0,
-         n_token_on_auction: 0,
-         n_chunks: 0,
-         tokenHM:HashMap::new(),
-         tk_chunk:Vec::new(),
-         
      }   }
 }
  
@@ -198,7 +110,7 @@ impl Contract {
             owner_id,
             NFTContractMetadata {
                 spec: NFT_METADATA_SPEC.to_string(),
-                name: "Nativo NFT".to_string(),
+                name: "Nativo Marketplace".to_string(),
                 symbol: "NTV".to_string(),
                 icon: Some(DATA_IMAGE_SVG_NEAR_ICON.to_string()),
                 base_uri: None,
@@ -213,46 +125,14 @@ impl Contract {
         assert!(!env::state_exists(), "Already initialized");
         metadata.assert_valid();
         Self {
-            tokens: NonFungibleToken::new(
-                StorageKey::NonFungibleToken,
-                owner_id,
-                Some(StorageKey::TokenMetadata),
-                Some(StorageKey::Enumeration),
-                Some(StorageKey::Approval),
-            ),
-            metadata: LazyOption::new(StorageKey::Metadata, Some(&metadata)),
-            n_total_tokens: 0,
-            n_token_on_sale: 0,
-            n_token_on_auction: 0,
-            n_chunks: 0,
-            tokenHM:HashMap::new(),
-            tk_chunk:Vec::new(),
-        }
-    }
-    
-    pub fn enum_get_token(&self, owner_id: AccountId, token_id: TokenId) -> Token {
-        let metadata = self
-            .tokens
-            .token_metadata_by_id
-            .as_ref()
-            .unwrap()
-            .get(&token_id);
-        let approved_account_ids = Some(
-            self.tokens
-                .approvals_by_id
-                .as_ref()
-                .unwrap()
-                .get(&token_id)
-                .unwrap_or_default(),
-        );
+            num_whitelist: 0,
+            whitelist_contracts:HashMap::new(),
+            market_contract_address:"nativov2.near".to_string(),
+            market_contract_address_dev:"dev-1644433845094-13612285357489".to_string(),
 
-        Token {
-            token_id,
-            owner_id,
-            metadata,
-            approved_account_ids,
         }
     }
+   
 
 
     pub fn my_method(&self) -> Promise {
@@ -263,16 +143,16 @@ impl Contract {
         )
     }
     #[payable]
-    pub fn market_mint_generic(& mut self,contractaddress: String,token_owner_id: ValidAccountId,colecction:String,token_metadata: TokenMetadata) -> Promise {
+    pub fn market_mint_generic(& mut self,contractaddress: String,token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata) -> Promise {
      let p=ext_nft::nft_mint_token_ext(
             token_owner_id,
-            colecction,
+            collection,
             token_metadata,
             &contractaddress.to_string(), //  account_id as a parameter
             env::attached_deposit(), // yocto NEAR to attach
             30_000_000_000_000 // gas to attach
         )   .then(ext_self::getPromiseResult(
-            &"nativov2.near", // el mismo contrato local
+            &self.market_contract_address_dev.to_string(), // el mismo contrato local
             0, // yocto NEAR a ajuntar al callback
             30_000_000_000_000 // gas a ajuntar al callback
         ));   
@@ -280,14 +160,15 @@ impl Contract {
     p
     }
     #[payable]
-    pub fn market_buy_generic(& mut self,contractaddress: String,token_id: TokenId) -> Promise {
+    pub fn market_buy_generic(& mut self,contractaddress: String,token_id: TokenId,collection:String) -> Promise {
      let p=ext_nft::nft_buy_token_ext(
             token_id,
+            collection,
             &contractaddress.to_string(), //  account_id as a parameter
             env::attached_deposit(), // yocto NEAR to attach
             30_000_000_000_000 // gas to attach
         )   .then(ext_self::getPromiseResult(
-            &"nativov2.near", // el mismo contrato local
+            &self.market_contract_address_dev.to_string(), // el mismo contrato local
             0, // yocto NEAR a ajuntar al callback
             30_000_000_000_000 // gas a ajuntar al callback
         ));   
@@ -322,7 +203,7 @@ impl Contract {
 
                  let p2 = ext_self::saveToTheGraph(
                     value.to_string(),
-                    &"nativov2.near",
+                    &self.market_contract_address_dev.to_string(),
                     0,
                     10_000_000_000_000
                 ); 
@@ -338,11 +219,7 @@ impl Contract {
         let res = str::replace(&info.to_string(),"\"","");
        log!("{}",res);
     }
-    /* pub fn register_NFT(&self, graphdata: Thegraphstructure){
-
-      log!("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",graphdata.contract_name.to_string(),&graphdata.token_id.to_string(),&graphdata.owner_id.to_string(),&graphdata.title.to_string(),&graphdata.description.to_string(),&graphdata.media.to_string(),&graphdata.creator.to_string(),&graphdata.price.to_string(),&graphdata.status.to_string(),&graphdata.adressbidder.to_string(),&graphdata.highestbid.to_string(),&graphdata.lowestbid.to_string(),&graphdata.expires_at.to_string(),&graphdata.starts_at.to_string(),&graphdata.extra.to_string(),&graphdata.colecction.to_string());
-
-     } */
+     
     
   
 ///////////////////////////////////////////////////////
@@ -352,17 +229,13 @@ impl Contract {
     #[init(ignore_state)]
     pub fn migrate() -> Self {
         let old_state: OldContract = env::state_read().expect("failed");
-        log!("old state readed {}", old_state.n_total_tokens);
+       
         Self {
            
-            tokens:old_state.tokens,
-            metadata: old_state.metadata,
-            n_total_tokens:old_state.n_total_tokens,
-            n_token_on_sale: old_state.n_token_on_sale,
-            n_token_on_auction:old_state.n_token_on_auction,
-            n_chunks: old_state.n_chunks,
-            tokenHM:old_state.tokenHM,
-            tk_chunk:old_state.tk_chunk,
+         num_whitelist: 0,
+         whitelist_contracts:HashMap::new(),
+         market_contract_address:"nativov2.near".to_string(),
+         market_contract_address_dev:"dev-1644433845094-13612285357489".to_string(),
 
         }
     }
@@ -376,37 +249,5 @@ impl Contract {
  
  
  
-near_contract_standards::impl_non_fungible_token_core!(Contract, tokens);
-near_contract_standards::impl_non_fungible_token_approval!(Contract, tokens);
-near_contract_standards::impl_non_fungible_token_enumeration!(Contract, tokens);
-
-#[near_bindgen]
-impl NonFungibleTokenMetadataProvider for Contract {
-    fn nft_metadata(&self) -> NFTContractMetadata {
-        self.metadata.get().unwrap()
-    }
-}
-/* 
-#[cfg(test)]
-mod tests {
-    // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use super::*;
-
-   
-
-
-    #[test]
-    fn t_get_tokens_on_sale()  {  
-         let account = "sub.nativov2.testnet".to_string();
-        Promise::new(account).function_call(
-             b"get_on_sale_toks".to_vec(),
-             b"{}".to_vec(),
-             0 as Balance,
-             5_000_000_000_000 as Gas) ;
-        Ok("ok");
-    }
-
-     
-}
-
- */
+ 
+ 
