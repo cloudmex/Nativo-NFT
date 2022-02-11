@@ -47,7 +47,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
   useEffect(() => {
     fechaActual();
     let ownerAccount
@@ -205,9 +205,9 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         let newPayload = {
-          contractaddress: "dev-1643659132538-80320824962807",//(comboCol? values.contractCol : contData),
+          contractaddress: "dev-1644523323613-61099606761670",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
-          colecction: collTitle,
+          collection: collTitle,
           token_metadata: {
             title: values.title,
             description: values.description,
@@ -216,12 +216,6 @@ function LightHeroE(props) {
             extra: "{'tags':'" + values.culture  + "','creator':'" + owner + "','price':'" + (fromNearToYocto(values.price))+ "','status': 'S" + "','on_sale':" + combo + ",'on_auction':" + (!combo) + ",'adressbidder':'accountbidder','highestbidder':'" + (!combo ? 0 : "notienealtos") + "','lowestbidder':'" + (!combo ? fromNearToYocto(values.price) : "notienebajos") + "','expires_at':'" + date.getTime() + "','starts_at':'" + dateActual + "'}"
             //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
-        }
-        let payloadCol = {
-          contr: "dev-1643659132538-80320824962807",
-          addressowner: owner,
-          title: values.titleCol,
-          descrip: values.descriptionCol,
         }
         // console.log(newPayload)
         // let payload = {
@@ -236,6 +230,7 @@ function LightHeroE(props) {
         //   },
         // };
         let amount = fromNearToYocto(0.1);
+        console.log(newPayload)
         // if(comboCol){
         //   let colResult = contract.Add_user_collection(
         //     payloadCol,
@@ -249,13 +244,13 @@ function LightHeroE(props) {
           amount,
         )
 
-        Swal.fire({
-          title: 'Colección creada',
-          text: 'Tu colección ha sido creada',
-          icon: 'success',
-        }).then(function() {
-          window.location.href = "/"
-        })
+        // Swal.fire({
+        //   title: 'Colección creada',
+        //   text: 'Tu colección ha sido creada',
+        //   icon: 'success',
+        // }).then(function() {
+        //   window.location.href = "/"
+        // })
         //console.log(contract);
         //console.log(payload);
         //console.log(fromYoctoToNear("5700000000000000000000"));
@@ -349,10 +344,10 @@ function LightHeroE(props) {
         onSubmit={formik.handleSubmit}
         className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center"
       >
-        <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0 items-center relative">
+        <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0 items-center relative ">
           {mint?.file && (
             <img
-              className="   bg-cover bg-center rounded  "
+              className="   bg-cover bg-center rounded "
               alt="hero"
               src={mint?.file}
             />

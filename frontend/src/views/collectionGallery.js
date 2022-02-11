@@ -44,7 +44,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
 
   const handleChangePage = (e, value) => {
     // console.log(value)
@@ -126,6 +126,9 @@ function LightEcommerceA() {
               tokenCount
               description
               contract
+              mediaIcon
+              saleCount
+              saleVolume
             }
           }
         `
@@ -194,7 +197,10 @@ function LightEcommerceA() {
             owner: collection.owner,
             tokenCount: collection.tokenCount,
             description: collection.description,
-            contract: collection.contract,   
+            contract: collection.contract,
+            media: collection.mediaIcon,
+            saleCount: collection.saleCount,
+            saleVolume: collection.saleVolume,   
           };
         });
         // console.log(col)
@@ -306,32 +312,34 @@ function LightEcommerceA() {
               return (
                 <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
                   <a href={"/NFTCol/"+element.title+":"+element.contract}>
-                    <div className="token">
+                    <div className="token bg-[#f7f4f0]">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
-                       {/* <img
-                            alt="ecommerce"
+                       <img
+                            alt="Icono de la coleccion"
                             className="imgaa object-cover object-center w-full h-full block"
-                            src={`https://ipfs.io/ipfs/${tokenData.image}`}
-                          />  */}
+                            src={`https://ipfs.io/ipfs/${element.media}`}
+                          /> 
                
                    
                            
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 ">
                       <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
                         {element.title}
                       </h2>
                       <p className="mt-1 mb-4 ml-2">
                         {element.description == "" ? "Esta coleccion no tiene una descripcion" : element.description}
                         <br/>
-                        { "Creador: "+element.owner+"\n"}
+                        <b>Creador:</b> {element.owner+"\n"}
                         <br/>
-                        { "Contrato: "+element.contract+"\n"}
+                        <b>Contrato:</b> {element.contract+"\n"}
                         <br/>
-                        { "Numero de tokens: "+element.tokenCount+"\n"}
+                        <b>No. de tokens:</b> {element.tokenCount+"\n"}
                         <br/>
-                        { "Costo total de la colección: "+(Math.round(Math.random() * (100 - 1)) + 1)+" "+Landing.currency+"\n"}
+                        <b>No. de ventas:</b> {element.saleCount+"\n"}
+                        <br/>
+                        <b>Vol. de ventas:</b> {element.saleVolume+" "+Landing.currency+"\n"}
                         <br/>
                         {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}

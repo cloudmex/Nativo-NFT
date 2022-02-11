@@ -53,7 +53,7 @@ function MisTokens(props) {
   // const [imgs, setImgs] = useState([]);
   let imgs = [];
 
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
 
   const handleChangePage = (e, value) => {
     console.log(value)
@@ -377,10 +377,10 @@ function MisTokens(props) {
           </div>
           <div className="flex flex-col text-center w-full mb-20">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 mt-8">
-              Mis piezas de arte NFT
+              Mis NFTs
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              En esta sección aparecen los token nfts que has creado o
+              En esta sección aparecen los token NFTs que has creado o
               adquirido.
             </p>
             <div className="">

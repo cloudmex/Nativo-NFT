@@ -37,7 +37,7 @@ function LightEcommerceB(props) {
   const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
 
   React.useEffect(() => {
     (async () => {

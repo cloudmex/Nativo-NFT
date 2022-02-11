@@ -21,7 +21,7 @@ function LightEcommerceA() {
     theme: "yellow",
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
-    page: parseInt( window.localStorage.getItem("page")),
+    page: parseInt(window.localStorage.getItem("page")),
     pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
@@ -44,7 +44,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
 
   const handleChangePage = (e, value) => {
     // console.log(value)
@@ -54,64 +54,64 @@ function LightEcommerceA() {
   }
 
   const modificarFiltro = (v) => {
-    setfiltro(c=>({...c, ...v}))
+    setfiltro(c => ({ ...c, ...v }))
   }
 
   const { data } = useParams();
 
   var tokData
   var colData
-  const { tokenid:owner } = useParams();
+  const { tokenid: owner } = useParams();
   React.useEffect(() => {
-  // console.log("esto ---> ",owner);
-  
+    // console.log("esto ---> ",owner);
+
     setload(c => true);
     (async () => {
       let toks, onSaleToks;
-      let arr=[];
-      
+      let arr = [];
+
       if (Landing.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-          await syncNets();
-          //obtener cuantos tokens tiene el contrato
-          let totalSupply = await getContract().methods.totalSupply().call();
-          //obtener el numero de tokens a la venta
-          onSaleToks = await getContract().methods.nTokenOnSale.call().call();
+        await syncNets();
+        //obtener cuantos tokens tiene el contrato
+        let totalSupply = await getContract().methods.totalSupply().call();
+        //obtener el numero de tokens a la venta
+        onSaleToks = await getContract().methods.nTokenOnSale.call().call();
 
-            //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
-          for(let i =Landing.page*10; i<(parseInt(Landing.page)+1)*Landing.tokensPerPage ; i++) {
-            //console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
-            //obtiene la informacion de x token
-            let infoe  = await getContract().methods.getItemInfo(i).call();
-            //Valida si está a la venta
-             if(infoe[0].onSale){
-                  //agrega el token al arreglo para mostrar
-                  arr.push(infoe[0]);
-                  }
-                 
-           //Concadena el token encontrado con los tokens que ya se mostraron
-             setLanding({
-              ...Landing,
-              tokens: arr,
-              nPages: Math.ceil(arr.length / Landing.tokensPerPage),
-            });  
-
+        //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
+        for (let i = Landing.page * 10; i < (parseInt(Landing.page) + 1) * Landing.tokensPerPage; i++) {
+          //console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
+          //obtiene la informacion de x token
+          let infoe = await getContract().methods.getItemInfo(i).call();
+          //Valida si está a la venta
+          if (infoe[0].onSale) {
+            //agrega el token al arreglo para mostrar
+            arr.push(infoe[0]);
           }
-           
-     
+
+          //Concadena el token encontrado con los tokens que ya se mostraron
+          setLanding({
+            ...Landing,
+            tokens: arr,
+            nPages: Math.ceil(arr.length / Landing.tokensPerPage),
+          });
+
+        }
+
+
       } else {
         window.contr = await getNearContract();
-      
+
         //instanciar contracto
         let contract = await getNearContract();
         let account = await getNearAccount();
         //console.log("Page",Landing.page)
         //obtener tokens a la venta
-       // //console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
+        // //console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
         // let pag = await contract.get_ids_onsale({
         //    tokens: Landing.tokensPerPageNear})
         //  window.localStorage.setItem('pagSale',pag)
-        
+
         // let payload = {
         //   account : (owner.toString().toLowerCase()+".testnet").toString(),
         //   //from_index: nfts.page, 
@@ -129,6 +129,10 @@ function LightEcommerceA() {
               tokenCount
               description
               contract
+              mediaIcon
+              mediaBanner
+              saleCount
+              saleVolume
             }
             tokens(where: {collection: $title, contract: $contract}) {
               id
@@ -160,7 +164,7 @@ function LightEcommerceA() {
         await client
           .query({
             query: gql(queryData),
-            variables:{
+            variables: {
               title: info[0],
               contract: info[1],
             },
@@ -172,9 +176,9 @@ function LightEcommerceA() {
             colData = data.data.collections[0]
           })
           .catch((err) => {
-            console.log('Error ferching data: ',err)
+            console.log('Error ferching data: ', err)
           })
-          // console.log(tokData)
+        // console.log(tokData)
 
         // var pag = await contract.get_pagination_creator_filters({
         //   account : (owner.toString().toLowerCase()).toString(),
@@ -230,60 +234,70 @@ function LightEcommerceA() {
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
-        let numpage = parseInt(tok.length/Landing.tokensPerPageNear)
-        if(tok.length%Landing.tokensPerPageNear>0){
+        let numpage = parseInt(tok.length / Landing.tokensPerPageNear)
+        if (tok.length % Landing.tokensPerPageNear > 0) {
           numpage++
         }
         await setLanding({
           ...Landing,
-          tokens: tok.slice(Landing.tokensPerPageNear*(page - 1),Landing.tokensPerPageNear*page),
+          tokens: tok.slice(Landing.tokensPerPageNear * (page - 1), Landing.tokensPerPageNear * page),
           nPages: numpage,
           titleCol: colData.title,
           ownerCol: colData.owner,
-          mediaCol: tok[0].media,
+          mediaCol: colData.mediaIcon,
+          bannerCol: colData.mediaBanner,
           descriptionCol: colData.description,
           contract: colData.contract,
-          tokenCount: colData.tokenCount
+          tokenCount: colData.tokenCount,
+          saleCount: colData.saleCount,
+          saleVolume: colData.saleVolume,
         });
       }
-      
+
     })();
   }, [trigger]);
-  
+
   return (
     <section className="text-gray-600 body-font">
-      <div className="container px-5 pt-6 mx-auto flex flex-wrap flex-col text-center items-center">
+      <div className={`container px-5 pt-6 mx-auto flex flex-wrap flex-col text-center items-center `}>
         <img
-          className="object-cover h-48 w-48 rounded-full border-solid border-4 border-slate-700"
+          className="object-cover h-96 w-full rounded-3xl  z-0 opacity-80 blur-sm"
+          src={`https://ipfs.io/ipfs/${Landing.bannerCol}`}
+        />
+        <img
+          className="object-cover h-48 w-48 rounded-3xl border-solid border-4 border-slate-700 z-10 -mt-96"
           src={`https://ipfs.io/ipfs/${Landing.mediaCol}`}
         />
-        <h1 className="text-4xl font-bold pb-4">{Landing.titleCol}</h1>
-        <p className="text-lg pb-3">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion":Landing.descriptionCol}</p>
-        <div className="grid grid-cols-2 divide-x pb-3 mx-auto">
-          <div>
-            <p className="text-lg pb-1 text-right mr-5"><b>Creador:</b> {Landing.ownerCol}</p>
-          </div>
-          <div>
-            <p className="text-lg pb-1 text-left ml-5"><b>Contrato:</b> {Landing.contract}</p>
-          </div>
+        <div className="z-10 -mt-120 w-full text-white">
+          <h1 className="text-5xl font-bold pb-4 opacity-100">{Landing.titleCol}</h1>
+            <p className="text-xl pb-3">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
+            <div className="grid grid-cols-2 divide-x pb-3 mx-auto">
+              <div>
+                <p className="text-xl pb-1 text-right mr-5"><b>Creador:</b> {Landing.ownerCol}</p>
+              </div>
+              <div>
+                <p className="text-xl pb-1 text-left ml-5"><b>Contrato:</b> {Landing.contract}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-full text-white mx-20 mx-auto text-center">
+              <div className="pl-5">
+                <p className="text-lg pb-1"><b>No. de tokens:</b></p>
+                <p className="text-base pb-1">{Landing.tokenCount}</p>
+              </div>
+              <div>
+                <p className="text-lg pb-1"><b>No. de ventas:</b></p>
+                <p className="text-base pb-1">{Landing.saleCount}</p>
+              </div>
+              <div className="pr-5">
+                <p className="text-lg pb-1"><b>Vol. de venta:</b></p>
+                <p className="text-base pb-1">{Landing.saleVolume} {Landing.currency}</p>
+              </div>
+            </div>
         </div>
-        <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-full text-white mx-20 mx-auto text-center">
-        <div className="pl-5">
-          <p className="text-base pb-1"><b>No. de tokens:</b></p>
-          <p className="text-sm pb-1">{Landing.tokenCount}</p>
-        </div>
-        <div>
-          <p className="text-base pb-1"><b>No. de ventas:</b></p>
-          <p className="text-sm pb-1">{Math.round(Math.random() * (100 - 1)) + 1}</p>
-        </div>
-        <div className="pr-5">
-          <p className="text-base pb-1"><b>Vol. de venta:</b></p>
-          <p className="text-sm pb-1">{Math.round(Math.random() * (100 - 1)) + 1} {Landing.currency}</p>
-        </div>
-        </div>
-      </div> 
+
+      </div>
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
-        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
       </div>
       {/* <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
@@ -351,68 +365,70 @@ function LightEcommerceA() {
         </select>
       </div> */}
       <div className="container px-5 py-3 mx-auto ">
-      
+
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
-        
-        <div className={"flex flex-wrap"+(load ? " justify-center" : "")}>
-          
-{/* 
+
+        <div className={"flex flex-wrap" + (load ? " justify-center" : "")}>
+
+          {/* 
           {
             load ?
             <img src={loading} style={{width:"50px"}}/>
             : */}
-            {
-            Landing.tokens.length  > 0 ?
-            Landing.tokens.map((element,key) => {
-              //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
-              //const tokenData = JSON.parse(token.data);
-              return (
-                <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                  <a href={"/detail/"+element.tokenId+":"+Landing.titleCol}>
-                    <div className="token">
-                    <div className="block relative h-48 rounded overflow-hidden">
-                    
-                       <img
+          {
+            Landing.tokens.length > 0 ?
+              Landing.tokens.map((element, key) => {
+                //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
+                //const tokenData = JSON.parse(token.data);
+                return (
+                  <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                    <a 
+                    href={"/detail/" + element.tokenId + ":" + Landing.titleCol}
+                    >
+                      <div className="token bg-[#f7f4f0]">
+                        <div className="block relative h-48 rounded overflow-hidden">
+
+                          <img
                             alt="ecommerce"
                             className="imgaa object-cover object-center w-full h-full block"
                             src={`https://ipfs.io/ipfs/${element.media}`}
-                          />  
-               
-                   
-                           
-                    </div>
-                    <div className="mt-4">
-                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
-                        {element.title}
-                      </h2>
-                      <p className="mt-1 mb-4 ml-2">
-                        { "TokenID: "+element.tokenId+"\n"}
-                        <br/>
-                        { "Owner: "+element.owner+"\n"}
-                        <br/>
-                        {Landing.blockchain != 0 &&
+                          />
+
+
+
+                        </div>
+                        <div className="mt-4">
+                          <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                            {element.title}
+                          </h2>
+                          <p className="mt-1 mb-4 ml-2">
+                            <b>TokenID:</b> {element.tokenId + "\n"}
+                            <br />
+                            <b>Dueño:</b> {element.owner + "\n"}
+                            <br />
+                            {Landing.blockchain != 0 &&
                               fromYoctoToNear(element.price) + " " + Landing.currency}
-                        <br/>
-                        {/* {Landing.blockchain==0 &&
+                            <br />
+                            {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
                               fromYoctoToNear(token.price) + " " + Landing.currency} */}
-                      </p>
-                    </div>
-                    </div>
-                  </a>
-                </div>
-              );
-            })
-            :
-            <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-                    Actualmente no hay tokens NFT disponibles.
-                  </p>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                );
+              })
+              :
+              <p className="lg:w-2/3 mx-auto leading-relaxed text-center mt-20 text-3xl">
+                <b>Aun no hay NFTs en esta colección</b>
+              </p>
           }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+          <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
           {/* <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
