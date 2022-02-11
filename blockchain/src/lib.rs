@@ -51,9 +51,12 @@ pub struct Contract {
 #[ext_contract(ext_nft)]
 trait NonFungibleToken {
     // change methods
-    fn nft_mint_token_ext(&mut self,  token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata);
-    fn nft_mint_token(&mut self,  token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata);
-    fn nft_buy_token_ext(&mut self,token_id:TokenId,collection:String);
+    fn mint_token_ext(&mut self,  token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata);
+    fn mint_token(&mut self,  token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata);
+    fn buy_token_ext(&mut self,token_id:TokenId,collection:String);
+    fn sell_token_ext(&mut self,token_id:TokenId,price:String,collection:String);
+    fn remove_token_ext(&mut self,token_id:TokenId,collection:String);
+
     // view method
     fn nft_token(&self, token_id: String) -> Option<Token>;
     fn get_on_total_toks(&self) -> u64;
@@ -61,8 +64,14 @@ trait NonFungibleToken {
 
 #[ext_contract(ext_self)]
 pub trait MyContract {
-    fn getPromiseResult(&self) -> String;
-    fn saveToTheGraph(&self,info : String);
+    fn getPromiseResult(&self,method:String) -> String;
+    fn saveMintTTG(&self,info : String);
+    fn saveBuyTTG(&self,info : String);
+    fn saveSellTTG(&self,info : String);
+    fn saveRemoveTTG(&self,info : String);
+    fn DontsaveTTG(&self,info : String);
+
+
 
 }
 impl Default for Contract {
@@ -144,7 +153,7 @@ impl Contract {
     }
     #[payable]
     pub fn market_mint_generic(& mut self,contractaddress: String,token_owner_id: ValidAccountId,collection:String,token_metadata: TokenMetadata) -> Promise {
-     let p=ext_nft::nft_mint_token_ext(
+     let p=ext_nft::mint_token_ext(
             token_owner_id,
             collection,
             token_metadata,
@@ -152,6 +161,7 @@ impl Contract {
             env::attached_deposit(), // yocto NEAR to attach
             30_000_000_000_000 // gas to attach
         )   .then(ext_self::getPromiseResult(
+            "mint".to_string(),
             &self.market_contract_address_dev.to_string(), // el mismo contrato local
             0, // yocto NEAR a ajuntar al callback
             30_000_000_000_000 // gas a ajuntar al callback
@@ -161,13 +171,14 @@ impl Contract {
     }
     #[payable]
     pub fn market_buy_generic(& mut self,contractaddress: String,token_id: TokenId,collection:String) -> Promise {
-     let p=ext_nft::nft_buy_token_ext(
+     let p=ext_nft::buy_token_ext(
             token_id,
             collection,
             &contractaddress.to_string(), //  account_id as a parameter
             env::attached_deposit(), // yocto NEAR to attach
             30_000_000_000_000 // gas to attach
         )   .then(ext_self::getPromiseResult(
+            "buy".to_string(),
             &self.market_contract_address_dev.to_string(), // el mismo contrato local
             0, // yocto NEAR a ajuntar al callback
             30_000_000_000_000 // gas a ajuntar al callback
@@ -176,18 +187,47 @@ impl Contract {
     p
     }
     #[payable]
-    pub fn Add_user_collection(&mut self,contr:ValidAccountId,addressowner:ValidAccountId,title:String,descrip:String)  {
-       
-
-        log!("{},{},{},{}",contr,addressowner,title,descrip);
+    pub fn market_sell_generic(& mut self,contractaddress: String,token_id: TokenId,price:String,collection:String) -> Promise {
+     let p=ext_nft::sell_token_ext(
+            token_id,
+            price,
+            collection,
+            &contractaddress.to_string(), //  account_id as a parameter
+            env::attached_deposit(), // yocto NEAR to attach
+            30_000_000_000_000 // gas to attach
+        )   .then(ext_self::getPromiseResult(
+            "sell".to_string(),
+            &self.market_contract_address_dev.to_string(), // el mismo contrato local
+            0, // yocto NEAR a ajuntar al callback
+            30_000_000_000_000 // gas a ajuntar al callback
+        ));   
+        log!("market ends here");
+    p
     }
     #[payable]
-    pub fn saveBuyToTheGraph(&mut self,contr:ValidAccountId,addressowner:ValidAccountId,title:String,descrip:String)  {
-       
-
-        log!("{},{},{},{}",contr,addressowner,title,descrip);
+    pub fn market_remove_generic(& mut self,contractaddress: String,token_id: TokenId,collection:String) -> Promise {
+     let p=ext_nft::remove_token_ext(
+            token_id,
+            collection,
+            &contractaddress.to_string(), //  account_id as a parameter
+            env::attached_deposit(), // yocto NEAR to attach
+            30_000_000_000_000 // gas to attach
+        )   .then(ext_self::getPromiseResult(
+            "remove".to_string(),
+            &self.market_contract_address_dev.to_string(), // el mismo contrato local
+            0, // yocto NEAR a ajuntar al callback
+            30_000_000_000_000 // gas a ajuntar al callback
+        ));   
+        log!("market ends here");
+    p
     }
-    pub fn getPromiseResult(&self )  {
+    //Método para agregar una nueva coleccions
+    #[payable]
+    pub fn Add_user_collection(&mut self,contr:ValidAccountId,addressowner:ValidAccountId,title:String,descrip:String,mediaicon:String,mediabanner:String)  {
+        log!("{},{},{},{},{},{}",contr,addressowner,title,descrip,mediaicon,mediabanner);
+    }
+   // Método de procesamiento para promesa
+    pub fn getPromiseResult(&self,method:String )  {
         assert_eq!(
             env::promise_results_count(),
             1,
@@ -198,15 +238,23 @@ impl Contract {
             PromiseResult::Failed => {log!("falló el contracto externo");()},
             PromiseResult::Successful(result) => {
                 let value = str::from_utf8(&result).unwrap();
-               log!("regreso al market" );
-                //  Contract::getlog2(self,value.to_string());
+                log!("regreso al market" );
+                
+                let a="mint".to_string();
+                let b="buy".to_string();
+                let c="sell".to_string();
+                let d="remove".to_string();
+               
 
-                 let p2 = ext_self::saveToTheGraph(
-                    value.to_string(),
-                    &self.market_contract_address_dev.to_string(),
-                    0,
-                    10_000_000_000_000
-                ); 
+                match method {
+                    a => ext_self::saveMintTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
+                    b => ext_self::saveBuyTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
+                    c => ext_self::saveSellTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
+                    d => ext_self::saveRemoveTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
+
+                    
+                };
+                  
 
                // return value.to_string();
             }
@@ -214,10 +262,26 @@ impl Contract {
         
     }
 
-    
-    pub fn saveToTheGraph(&self ,info :String )   {
+    //Métodos que lanzan un log a the graph
+    pub fn saveMintTTG(&self ,info :String )   {
         let res = str::replace(&info.to_string(),"\"","");
        log!("{}",res);
+    }
+    pub fn saveBuyTTG(&self ,info :String )   {
+        let res = str::replace(&info.to_string(),"\"","");
+       log!("{}",res);
+    }
+    pub fn saveSellTTG(&self ,info :String )   {
+        let res = str::replace(&info.to_string(),"\"","");
+       log!("{}",res);
+    }
+    pub fn saveRemoveTTG(&self ,info :String )   {
+        let res = str::replace(&info.to_string(),"\"","");
+       log!("{}",res);
+    }
+    pub fn DontsaveTTG(&self ,info :String )   {
+         
+       log!("{}",info);
     }
      
     
