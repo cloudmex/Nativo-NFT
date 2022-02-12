@@ -292,6 +292,8 @@ function MisTokens(props) {
             tokenID: tok.tokenId,
             price: fromYoctoToNear(tok.price),
             status: tok.status,
+            collection: tok.collection,
+            contract: tok.contract,
             // onSale: tok.on_sale,// tok.metadata.on_sale,
             // onAuction: tok.on_auction,
             data: JSON.stringify({
@@ -310,9 +312,10 @@ function MisTokens(props) {
 
         // console.log(nftsArr);
         //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
+        let nftsToSend = nftsArr.slice(nfts.tokensPerPageNear*(page - 1),nfts.tokensPerPageNear*page)
         setNfts({
           ...nfts,
-          nfts: nftsArr.slice(nfts.tokensPerPageNear*(page - 1),nfts.tokensPerPageNear*page),
+          nfts: nftsToSend,
           nPages: numpage,
           owner: account,
         });
@@ -325,7 +328,7 @@ function MisTokens(props) {
    * @param tokenId representa el token id del nft a quitar del marketplace
    * @return void
    */
-  async function quitarDelMarketplace(tokenId) {
+  async function quitarDelMarketplace(tokenId,collectionTit,contractSend) {
     setNfts({ ...nfts, disabled: true });
     let quitar;
     if (nfts.blockchain == "0") {
@@ -343,17 +346,25 @@ function MisTokens(props) {
     } else {
       let contract = await getNearContract();
       let payload = {
+        contractaddress: contractSend,
         token_id: tokenId,
-        chunk: parseInt(tokenId/2400),
+        collection: collectionTit,
       };
       let amount = fromNearToYocto(0);
       //console.log(amount);
       //console.log(payload);
-      quitar = await contract.quitar_del_market_place(
+      quitar = await contract.market_remove_generic(
         payload,
         300000000000000, // attached GAS (optional)
         amount
       );
+      Swal.fire({
+        title: 'NFT quitado de la venta',
+        text: 'Se ha quitado un NFT de la venta con exito',
+        icon: 'success',
+      }).then(function() {
+        window.location.href = "/mis_nfts"
+      })
     }
 
     //console.log(quitar);
@@ -384,7 +395,7 @@ function MisTokens(props) {
               adquirido.
             </p>
             <div className="">
-              <button
+              {/* <button
                 className={`sp-4 mt-5 text-white bg-${props.theme}-500 border-0 py-2 font-bold px-7 focus:outline-none hover:bg-${props.theme}-600 rounded text-md `}
                 onClick={() => {
                   sendtonearwallet(nfts.tokenID)
@@ -392,7 +403,7 @@ function MisTokens(props) {
 
               >
                 Mostrar tokens en NEAR Wallet
-              </button>
+              </button> */}
             </div>
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
             {nfts.nfts.length > 0 ? null : (
@@ -410,14 +421,15 @@ function MisTokens(props) {
                 //console.log("Aquiiii",nft);
                 return (
                   //devolvemos un card por cada token nft del usuario
-                  <div className="lg:w-1/3 md:w-1/2 sm:w-1/2 ssmw-1  px-6 my-5" key={key}>
-
-                    <div className="flex relative">
+                  <div className="lg:w-1/3 md:w-1/2 sm:w-1/2 ssmw-1  px-6 my-5 border-gray-200" key={key}>
+                    {console.log(nft.status)}
+                    <div className="flex relative ">
                       <img
                         alt="gallery"
-                        className="absolute inset-0 w-full h-full object-cover object-center"
+                        className="ring ring-gray-200 absolute inset-0 z-0 w-full h-full object-cover object-center "
                         src={imgs[key] ? load : "https://ipfs.io/ipfs/" + nftData.image}
                       />
+                      <h1 className="absolute justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full top-4 left-3 ">{nftData.title}</h1>
                       <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100 ">
                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                           {nftData.title}
@@ -430,12 +442,12 @@ function MisTokens(props) {
                           <span className="text-gray-500">En venta</span>
                           <span className="ml-auto text-gray-900">
                             <span
-                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.status="S"
+                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.status=="S"
                                   ? "text-green-100 bg-green-500"
                                   : "text-red-100 bg-red-500"
                                 } rounded-full`}
                             >
-                              {nft.status="S" ? "Disponible" : "No disponible"}
+                              {nft.status=="S" ? "Disponible" : "No disponible"}
                             </span>
                           </span>
                         </div>
@@ -472,11 +484,11 @@ function MisTokens(props) {
                           >Ver detalle del NFT</a>
                         </div>
                         {/* Mostramos la opción de revender o quitar del marketplace */}
-                        {nft.status="S" ? (<>      <button
+                        {nft.status=="S" ? (<>      <button
                           className={` mt-6 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                           disabled={nfts.disabled}
                           onClick={async () => {
-                            await quitarDelMarketplace(nft.tokenID);
+                            await quitarDelMarketplace(nft.tokenID,nft.collection,nft.contract);
                           }}
                         >
                           Quitar a la venta

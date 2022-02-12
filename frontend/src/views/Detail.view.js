@@ -160,6 +160,8 @@ function LightEcommerceB(props) {
               //chunk: parseInt(toks.token_id/2400),
               onSale: saleState,
               price: fromYoctoToNear(toksData.price),
+              contract: toksData.contract,
+              collection: toksData.collection,
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
@@ -240,10 +242,11 @@ function LightEcommerceB(props) {
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
-      toks = await contract.comprar_nft(
+      toks = await contract.market_buy_generic(
         {
+          contractaddress: state.tokens.contract,
           token_id: state.tokens.tokenID,
-          chunk: state.tokens.chunk,
+          collection: state.tokens.collection,
         },
         300000000000000,
         fromNearToYocto(amount)
@@ -310,7 +313,7 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">Colección</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
+                  className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
                 >
                   <a href={'/NFTCol/'+state?.jdata.collection+":"+state?.jdata.contract}>{state?.jdata.collection}</a>
                 </span>
