@@ -223,8 +223,28 @@ impl Contract {
     }
     //Método para agregar una nueva coleccions
     #[payable]
-    pub fn Add_user_collection(&mut self,contr:ValidAccountId,addressowner:ValidAccountId,title:String,descrip:String,mediaicon:String,mediabanner:String)  {
+    pub fn Add_user_collection(&mut self,contr:AccountId,addressowner:AccountId,title:String,descrip:String,mediaicon:String,mediabanner:String)  {
+        assert_eq!(contr.to_string().is_empty(),false,"the contract address cannot be empty"); 
+        assert_eq!(addressowner.to_string().is_empty(),false,"the owner address cannot be empty"); 
+
+        assert_eq!(title.is_empty(),false,"the title cannot be empty"); 
+        assert_eq!(descrip.is_empty(),false,"the description cannot be empty");  
+        assert_eq!(mediaicon.is_empty(),false,"the media icon link cannot be empty");  
+        assert_eq!(mediabanner.is_empty(),false,"the media banners link  cannot be empty");  
+       
         log!("{},{},{},{},{},{}",contr,addressowner,title,descrip,mediaicon,mediabanner);
+    }
+    pub fn Add_user_collectiontest(& self,contr:AccountId,addressowner:AccountId,title:String,descrip:String,mediaicon:String,mediabanner:String)  {
+      
+        assert_eq!(contr.to_string().is_empty(),false,"the contract address cannot be empty"); 
+        assert_eq!(addressowner.to_string().is_empty(),false,"the owner address cannot be empty"); 
+
+        assert_eq!(title.is_empty(),false,"the title cannot be empty"); 
+        assert_eq!(descrip.is_empty(),false,"the description cannot be empty");  
+        assert_eq!(mediaicon.is_empty(),false,"the media icon link cannot be empty");  
+        assert_eq!(mediabanner.is_empty(),false,"the media banners link  cannot be empty");  
+       
+       log!("{},{},{},{},{},{}",contr,addressowner,title,descrip,mediaicon,mediabanner);
     }
    // Método de procesamiento para promesa
     pub fn getPromiseResult(&self,method:String )  {
@@ -245,16 +265,11 @@ impl Contract {
                 let c="sell".to_string();
                 let d="remove".to_string();
                
-
-                match method {
-                    a => ext_self::saveMintTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
-                    b => ext_self::saveBuyTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
-                    c => ext_self::saveSellTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
-                    d => ext_self::saveRemoveTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000),
-
-                    
-                };
-                  
+                if method == a { log!("se va a minar");ext_self::saveMintTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000);}
+                else if method == b{ log!("se va a comprar"); ext_self::saveBuyTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000);}
+                else if method == c{  log!("se va a vender");ext_self::saveSellTTG(value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000);}
+                else if method == d{ log!("se va a remover");ext_self:: (value.to_string(),&self.market_contract_address_dev.to_string(),0,10_000_000_000_000);}
+                 
 
                // return value.to_string();
             }

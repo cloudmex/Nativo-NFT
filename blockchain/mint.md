@@ -15,7 +15,7 @@ near call dev-1644451200817-81163460651460 mint_token '{ "token_owner_id": "dokx
 
 
 ## Comprar desde el market
-near call dev-1644433845094-13612285357489 market_buy_generic '{"contractaddress":"dev-1644523323613-61099606761670", "token_id": "10","collection":"cars"}' --accountId dokxotest.testnet  --amount .5 --gas=300000000000000
+near call dev-1644433845094-13612285357489 market_buy_generic '{"contractaddress":"dev-1644523323613-61099606761670", "token_id": "22","collection":"prueba"}' --accountId dokxotest.testnet  --amount 2 --gas=300000000000000
 
 ## Comprar desde el minter
 near call dev-1644451200817-81163460651460
@@ -23,16 +23,24 @@ near call dev-1644451200817-81163460651460
  nft_buy_token '{ "token_id": "1","collection":"Hola"}' --accountId dokxo.testnet  --amount 2000000000000000000000000 --gas=300000000000000
 
 ## Vender desde el market
-near call dev-1644433845094-13612285357489 market_sell_generic '{"contractaddress":"dev-1644451200817-81163460651460
-", "token_id": "3","price":"12","collection":"Hola"}' --accountId dokxo.testnet   --gas=300000000000000
+near call dev-1644433845094-13612285357489 market_sell_generic '{"contractaddress":"dev-1644523323613-61099606761670", "token_id": "26","price":"12000000000000000000000000","collection":"aaaaaaaaa"}' --accountId dokxo.testnet   --gas=300000000000000
 
 ## Vender desde el minter
 near call dev-1644451200817-81163460651460
  nft_buy_token '{ "token_id": "1","collection":"Hola"}' --accountId dokxo.testnet  --amount 2000000000000000000000000 --gas=300000000000000
 
 
+## Remover desde el market
+near call dev-1644433845094-13612285357489 market_remove_generic '{"contractaddress":"dev-1644523323613-61099606761670", "token_id": "26","collection":"aaaaaaaaa"}' --accountId dokxotest.testnet   --gas=300000000000000
+
+## Remover desde el minter
+near call dev-1644523323613-61099606761670 nft_remove_token '{ "token_id": "1","collection":"Hola"}' --accountId dokxo.testnet   --gas=300000000000000
+
 ## Obtener informacion de un token desde el minter 
-near view dev-1644451200817-81163460651460
- nft_token '{"token_id":"3","token_owner_id":"dokxo.testnet" }'  --accountId dokxo.testnet
+near view dev-1644523323613-61099606761670 nft_token '{"token_id":"22","token_owner_id":"dokxo.testnet" }'  --accountId dokxo.testnet
+
+
+ ## probar log de the graph with valdiations de
+ near view dev-1644433845094-13612285357489 Add_user_collectiontest '{"contr":"xxxxxxx","addressowner":"xxxxxx","title":"","descrip":"String","mediaicon":"String","mediabanner":"String"}' --accountId dokxo.testnet
  
 
