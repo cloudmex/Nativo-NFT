@@ -77,6 +77,8 @@ export const methodOptions = {
     "get_by_on_sale",
     "market_mint_generic",
     "Add_user_collection",
+    "market_buy_generic",
+    "market_remove_generic",
   ],
 };
 /**

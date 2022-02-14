@@ -170,7 +170,7 @@ function LightEcommerceA() {
             },
           })
           .then((data) => {
-            // console.log("collections data: ",data.data.collections)
+            console.log("collections data: ",data.data.collections)
             // console.log("tokens data: ",data.data.tokens)
             tokData = data.data.tokens
             colData = data.data.collections[0]
@@ -250,7 +250,7 @@ function LightEcommerceA() {
           contract: colData.contract,
           tokenCount: colData.tokenCount,
           saleCount: colData.saleCount,
-          saleVolume: colData.saleVolume,
+          saleVolume: fromYoctoToNear(colData.saleVolume),
         });
       }
 
@@ -269,9 +269,9 @@ function LightEcommerceA() {
           src={`https://ipfs.io/ipfs/${Landing.mediaCol}`}
         />
         <div className="z-10 -mt-120 w-full text-white">
-          <h1 className="text-5xl font-bold pb-4 opacity-100">{Landing.titleCol}</h1>
-            <p className="text-xl pb-3">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
-            <div className="grid grid-cols-2 divide-x pb-3 mx-auto">
+          <h1 className="text-5xl font-bold pb-4 opacity-100 stroke-gray-700">{Landing.titleCol}</h1>
+            <p className="text-xl pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
+            <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
               <div>
                 <p className="text-xl pb-1 text-right mr-5"><b>Creador:</b> {Landing.ownerCol}</p>
               </div>

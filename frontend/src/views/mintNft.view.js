@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import { acceptedFormats, currencys } from "../utils/constraint";
 import Modal from "../components/modal.component";
+import load from "../assets/landingSlider/img/loader.gif";
 import {
   addNetwork,
   fromETHtoWei,
@@ -36,6 +37,7 @@ function LightHeroE(props) {
   const [comboCol, setcomboCol] = useState(true);
   const [contData, setcontData] = useState("")
   const [collTitle,setcollTitle] = useState("")
+  const [loading,setLoading] = useState(true);
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -91,11 +93,12 @@ function LightHeroE(props) {
             // console.log('hay colecciones')
             setcollection(true)
             setCollecData(collecData.concat(data.data.collections))
-
+            setLoading(false)
           }
           else {
             // console.log('no hay colecciones')
             setcollection(false)
+            setLoading(false)
           }
         })
         .catch((err) => {
@@ -103,7 +106,7 @@ function LightHeroE(props) {
         })
     }
     obtenerColecciones()
-
+    
   }, [])
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);
@@ -142,7 +145,8 @@ function LightHeroE(props) {
         .min(0.000000000000000001, "El precio no debe de ser 0"),
 
       culture: Yup.string()
-        .required("Requerido"),
+        .required("Requerido")
+        .max(60, "Menos de 60 caracteres"),
         //.matches("(([A-Za-z0-9]+)\s?)((([A-Za-z0-9]+)\s){1,3})?(([A-Za-z0-9]+))?",'Minimo un tag maximo 5'),
       
 
@@ -163,13 +167,7 @@ function LightHeroE(props) {
       }
 
       //cargamos el modal
-      setModal({
-        ...modal,
-        show: true,
-        title: "cargando",
-        loading: true,
-        disabled: true,
-      });
+      
 
       // console.log(JSON.stringify(values))
       const fecha = values.date.split('-')
@@ -205,7 +203,7 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         let newPayload = {
-          contractaddress: "dev-1644523323613-61099606761670",//(comboCol? values.contractCol : contData),
+          contractaddress: "dev-1644620337328-85201157802158",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection: collTitle,
           token_metadata: {
@@ -231,6 +229,17 @@ function LightHeroE(props) {
         // };
         let amount = fromNearToYocto(0.1);
         console.log(newPayload)
+        if(collTitle == ""){
+          Swal.fire({
+            title: 'Selecciona una colección',
+            text: 'Para minar es necesario seleccionar una colección, selecciona una he intentalo de nuevo',
+            icon: 'error',
+          }).then(function() {
+            setmint({ ...mint, onSubmitDisabled: false });
+            //window.location.href = "/minar"
+          })
+          return
+        }
         // if(comboCol){
         //   let colResult = contract.Add_user_collection(
         //     payloadCol,
@@ -338,6 +347,16 @@ function LightHeroE(props) {
 
   return (
     <section className="text-gray-600 body-font">
+      {loading ?
+      <>
+        <div className="grid grid-cols-1 gap-4 place-content-center items-center">
+          <h1 className="text-5xl font-semibold pt-60 text-center ">Cargando</h1>
+          <h1 className="text-5xl font-semibold pt-10 text-center ">Espere un momento por favor</h1>
+        </div>
+        
+      </>
+      :
+      <>
       {collection ?
       <>
         <form
@@ -379,7 +398,7 @@ function LightHeroE(props) {
           ) : null}
         </div>
         <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center pb-4">
-          <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900 text-center">
+          <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900">
             Nuevo NFT
           </h1>
           <div className="flex w-full md:justify-start justify-center items-end">
@@ -482,8 +501,13 @@ function LightHeroE(props) {
                   </label>
                   <select onChange={e => {
                     // console.log(collecData.find(element => element.title == e.target.value).contract)
-                    setcontData(collecData.find(element => element.title == e.target.value).contract)
-                    setcollTitle(e.target.value)
+                    if(e.target.value=="Tus colecciones"){
+                      setcollTitle("")
+                    }
+                    else{
+                      setcontData(collecData.find(element => element.title == e.target.value).contract)
+                      setcollTitle(e.target.value)
+                    }
                   }
                   }>
                     <option>Tus colecciones</option>
@@ -640,6 +664,8 @@ function LightHeroE(props) {
           
         </div>
       </>}
+      </>}
+      
       
     </section>
   );

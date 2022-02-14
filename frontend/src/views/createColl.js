@@ -191,7 +191,7 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      contr: "dev-1644523323613-61099606761670",
+      contr: "dev-1644620337328-85201157802158",
       addressowner: owner,
       title: title,
       descrip: desc,
@@ -200,6 +200,14 @@ function LightHeroE(props) {
     }
     console.log(payloadCol);
     // console.log(desc);
+    if(title==""||desc==""||mediaIcon==""||mediaBanner==""){
+      Swal.fire({
+        title: 'Datos incompletos',
+        text: 'Para crear una colección es necesario que rellenes todos los campos, verifica que hayas rellenado todos los datos',
+        icon: 'error',
+      })
+      return
+    }
     let colResult = await contract.Add_user_collection(
       payloadCol
     )
@@ -401,7 +409,7 @@ function LightHeroE(props) {
         
         
         <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
-          <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900 text-center">
+          <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900">
             Nueva Colección
           </h1>
           <div className="flex w-full md:justify-start justify-center items-end">

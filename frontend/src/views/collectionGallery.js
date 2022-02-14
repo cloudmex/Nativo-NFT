@@ -200,7 +200,7 @@ function LightEcommerceA() {
             contract: collection.contract,
             media: collection.mediaIcon,
             saleCount: collection.saleCount,
-            saleVolume: collection.saleVolume,   
+            saleVolume: fromYoctoToNear(collection.saleVolume),   
           };
         });
         // console.log(col)
