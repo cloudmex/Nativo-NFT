@@ -1,0 +1,11 @@
+rm: conftest.dSYM: is a directory
+rm: conftest.dSYM: is a directory
+src/hash.sym.o: no symbols
+src/prng.sym.o: no symbols
+src/ticker.sym.o: no symbols
+/Library/Developer/CommandLineTools/usr/bin/ranlib: file: lib/libjemalloc_pic.a(hash.pic.o) has no symbols
+/Library/Developer/CommandLineTools/usr/bin/ranlib: file: lib/libjemalloc_pic.a(prng.pic.o) has no symbols
+/Library/Developer/CommandLineTools/usr/bin/ranlib: file: lib/libjemalloc_pic.a(ticker.pic.o) has no symbols
+/Library/Developer/CommandLineTools/usr/bin/ranlib: file: lib/libjemalloc.a(hash.o) has no symbols
+/Library/Developer/CommandLineTools/usr/bin/ranlib: file: lib/libjemalloc.a(prng.o) has no symbols
+/Library/Developer/CommandLineTools/usr/bin/ranlib: file: lib/libjemalloc.a(ticker.o) has no symbols

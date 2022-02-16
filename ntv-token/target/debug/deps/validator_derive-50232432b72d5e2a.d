@@ -1,0 +1,9 @@
+/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/deps/libvalidator_derive-50232432b72d5e2a.dylib: /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/lib.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/asserts.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/lit.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/quoting.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/validation.rs
+
+/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/deps/validator_derive-50232432b72d5e2a.d: /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/lib.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/asserts.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/lit.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/quoting.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/validation.rs
+
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/lib.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/asserts.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/lit.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/quoting.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/validator_derive-0.10.1/src/validation.rs:

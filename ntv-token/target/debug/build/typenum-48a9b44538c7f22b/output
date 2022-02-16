@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/build/typenum-48a9b44538c7f22b/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/build/typenum-48a9b44538c7f22b/out/op.rs

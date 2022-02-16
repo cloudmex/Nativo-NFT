@@ -1,0 +1,10 @@
+/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/deps/secp256k1-b7234331a67a29ac.rmeta: /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/lib.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/macros.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/constants.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/ecdh.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/ffi.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/key.rs
+
+/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/deps/secp256k1-b7234331a67a29ac.d: /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/lib.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/macros.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/constants.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/ecdh.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/ffi.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/key.rs
+
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/lib.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/macros.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/constants.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/ecdh.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/ffi.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-secp256k1-0.7.0/src/key.rs:

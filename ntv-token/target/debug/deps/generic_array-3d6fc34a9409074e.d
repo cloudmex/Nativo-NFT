@@ -1,0 +1,11 @@
+/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/deps/generic_array-3d6fc34a9409074e.rmeta: /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/lib.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/hex.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/impls.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/arr.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/functional.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/iter.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/sequence.rs
+
+/Users/danielmora/Documents/Cloudmex/Nativo-NFT-Mkt/ntv-token/target/debug/deps/generic_array-3d6fc34a9409074e.d: /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/lib.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/hex.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/impls.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/arr.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/functional.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/iter.rs /Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/sequence.rs
+
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/lib.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/hex.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/impls.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/arr.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/functional.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/iter.rs:
+/Users/danielmora/.cargo/registry/src/github.com-1ecc6299db9ec823/generic-array-0.12.3/src/sequence.rs:
