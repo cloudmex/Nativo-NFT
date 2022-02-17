@@ -504,6 +504,8 @@ function MisTokens(props) {
                                   ...modal,
                                   show: true,
                                   tokenId: nft.tokenID,
+                                  contract: nft.contract,
+                                  collection: nft.collection,
                                   title: "Revender nft",
                                   currency: nfts.currency,
                                   blockchain: nfts.blockchain,

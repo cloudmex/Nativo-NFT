@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name =(process.env.REACT_APP_CONTRACT === undefined ? "dev-1644433845094-13612285357489" : process.env.REACT_APP_CONTRACT);
+export const contract_name =(process.env.REACT_APP_CONTRACT === undefined ? "dev-1645043961189-94216357988452" : process.env.REACT_APP_CONTRACT);
 export const config = {
   testnet: {
     networkId: "testnet",
@@ -79,6 +79,7 @@ export const methodOptions = {
     "Add_user_collection",
     "market_buy_generic",
     "market_remove_generic",
+    "market_sell_generic",
   ],
 };
 /**
