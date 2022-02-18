@@ -121,8 +121,8 @@ function LightEcommerceA() {
         // toks = await contract.obtener_pagina_by_creator(payload);
         let info = data.split(":");
         const queryData = `
-          query($title: String, $contract: String){
-            collections(where: {title: $title, contract: $contract}) {
+          query($title: String, $contract: String, $collectionID: String){
+            collections(where: {title: $title, contract: $contract, collectionID: $collectionID}) {
               id
               owner
               title
@@ -133,10 +133,12 @@ function LightEcommerceA() {
               mediaBanner
               saleCount
               saleVolume
+              collectionID
             }
-            tokens(where: {collection: $title, contract: $contract}) {
+            tokens(where: {collection: $title, contract: $contract, collectionID: $collectionID}) {
               id
               collection
+              collectionID
               contract
               tokenId
               owner_id
@@ -167,10 +169,11 @@ function LightEcommerceA() {
             variables: {
               title: info[0],
               contract: info[1],
+              collectionID: info[2]
             },
           })
           .then((data) => {
-            console.log("collections data: ",data.data.collections)
+            console.log("collections data: ", data.data.collections)
             // console.log("tokens data: ",data.data.tokens)
             tokData = data.data.tokens
             colData = data.data.collections[0]
@@ -251,6 +254,7 @@ function LightEcommerceA() {
           tokenCount: colData.tokenCount,
           saleCount: colData.saleCount,
           saleVolume: fromYoctoToNear(colData.saleVolume),
+          colID: colData.collectionID
         });
       }
 
@@ -261,7 +265,7 @@ function LightEcommerceA() {
     <section className="text-gray-600 body-font">
       <div className={`container px-5 pt-6 mx-auto flex flex-wrap flex-col text-center items-center `}>
         <img
-          className="object-cover h-96 w-full rounded-3xl  z-0 opacity-80 blur-sm"
+          className="object-cover h-96 w-full rounded-3xl  z-0 opacity-80 brightness-[.75] blur-sm"
           src={`https://ipfs.io/ipfs/${Landing.bannerCol}`}
         />
         <img
@@ -269,30 +273,32 @@ function LightEcommerceA() {
           src={`https://ipfs.io/ipfs/${Landing.mediaCol}`}
         />
         <div className="z-10 -mt-120 w-full text-white">
-          <h1 className="text-5xl font-bold pb-4 opacity-100 stroke-gray-700">{Landing.titleCol}</h1>
-            <p className="text-xl pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
+          <div className="bg-white lg:mx-20 mx-5 text-black mt-4 pt-2 rounded-t-2xl bg-opacity-80">
+            <h1 className="lg:text-5xl text-3xl font-bold pb-4 opacity-100 stroke-gray-700">{Landing.titleCol}</h1>
+            <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
             <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
               <div>
-                <p className="text-xl pb-1 text-right mr-5"><b>Creador:</b> {Landing.ownerCol}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>{Landing.ownerCol}</p>
               </div>
               <div>
-                <p className="text-xl pb-1 text-left ml-5"><b>Contrato:</b> {Landing.contract}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>{Landing.contract}</p>
               </div>
             </div>
-            <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-full text-white mx-20 mx-auto text-center">
-              <div className="pl-5">
-                <p className="text-lg pb-1"><b>No. de tokens:</b></p>
-                <p className="text-base pb-1">{Landing.tokenCount}</p>
-              </div>
-              <div>
-                <p className="text-lg pb-1"><b>No. de ventas:</b></p>
-                <p className="text-base pb-1">{Landing.saleCount}</p>
-              </div>
-              <div className="pr-5">
-                <p className="text-lg pb-1"><b>Vol. de venta:</b></p>
-                <p className="text-base pb-1">{Landing.saleVolume} {Landing.currency}</p>
-              </div>
+          </div>
+          <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-b-2xl text-white lg:mx-20 mx-5 mx-auto text-center">
+            <div className="pl-5">
+              <p className="lg:text-lg text-base pb-1"><b>No. de tokens:</b></p>
+              <p className="lg:text-base text-sm pb-1">{Landing.tokenCount}</p>
             </div>
+            <div>
+              <p className="lg:text-lg text-base pb-1"><b>No. de ventas:</b></p>
+              <p className="lg:text-base text-sm pb-1">{Landing.saleCount}</p>
+            </div>
+            <div className="pr-5">
+              <p className="lg:text-lg text-base pb-1"><b>Vol. de venta:</b></p>
+              <p className="lg:text-base text-sm pb-1">{Landing.saleVolume} {Landing.currency}</p>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -382,8 +388,8 @@ function LightEcommerceA() {
                 //const tokenData = JSON.parse(token.data);
                 return (
                   <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                    <a 
-                    href={"/detail/" + element.tokenId + ":" + Landing.titleCol}
+                    <a
+                      href={"/detail/" + element.tokenId + ":" + Landing.titleCol + ":" + Landing.colID}
                     >
                       <div className="token bg-[#f7f4f0]">
                         <div className="block relative h-48 rounded overflow-hidden">

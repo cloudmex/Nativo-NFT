@@ -76,10 +76,11 @@ function LightEcommerceB(props) {
         let info = data.split(":");
         let toksData
         const queryData = `
-          query($tokenId: String, $collection: String){
-            tokens(where: {tokenId: $tokenId, collection: $collection}) {
+          query($tokenId: String, $collection: String, $collectionID: String){
+            tokens(where: {tokenId: $tokenId, collection: $collection, collectionID: $collectionID}) {
               id
               collection
+              collectionID
               contract
               tokenId
               owner_id
@@ -110,6 +111,7 @@ function LightEcommerceB(props) {
             variables: {
               tokenId: info[0],
               collection: info[1],
+              collectionID: info[2],
             }
           })
           .then((data) => {
@@ -162,6 +164,7 @@ function LightEcommerceB(props) {
               price: fromYoctoToNear(toksData.price),
               contract: toksData.contract,
               collection: toksData.collection,
+              collectionID: toksData.collectionID
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
@@ -173,7 +176,8 @@ function LightEcommerceB(props) {
               tags: extra[0].split(' '),
               creator: toksData.creator,
               collection: toksData.collection,
-              contract: toksData.contract
+              contract: toksData.contract,
+              collectionID: toksData.collectionID
             },
             owner: toksData.owner_id,
           });
@@ -244,9 +248,10 @@ function LightEcommerceB(props) {
       //obtener tokens a la venta
       toks = await contract.market_buy_generic(
         {
-          contractaddress: state.tokens.contract,
+          address_contract: state.tokens.contract,
           token_id: state.tokens.tokenID,
           collection: state.tokens.collection,
+          collection_id: state.tokens.collectionID
         },
         300000000000000,
         fromNearToYocto(amount)
@@ -315,7 +320,7 @@ function LightEcommerceB(props) {
                 <span
                   className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
                 >
-                  <a href={'/NFTCol/'+state?.jdata.collection+":"+state?.jdata.contract}>{state?.jdata.collection}</a>
+                  <a href={'/NFTCol/'+state?.jdata.collection+":"+state?.jdata.contract+":"+state?.jdata.collectionID}>{state?.jdata.collection}</a>
                 </span>
               </span>
             </div>

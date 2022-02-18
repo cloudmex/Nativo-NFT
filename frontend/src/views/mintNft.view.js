@@ -37,6 +37,7 @@ function LightHeroE(props) {
   const [comboCol, setcomboCol] = useState(true);
   const [contData, setcontData] = useState("")
   const [collTitle,setcollTitle] = useState("")
+  const [colID, setColID] = useState("")
   const [loading,setLoading] = useState(true);
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
@@ -67,6 +68,7 @@ function LightHeroE(props) {
               title
               description
               tokenCount
+              collectionID
             }
           }
         `
@@ -88,7 +90,7 @@ function LightHeroE(props) {
           }
         })
         .then((data) => {
-          // console.log("collection data: ", data.data.collections)
+          console.log("collection data: ", data.data.collections)
           if (data.data.collections.length > 0) {
             // console.log('hay colecciones')
             setcollection(true)
@@ -203,8 +205,9 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         let newPayload = {
-          contractaddress: "dev-1644620337328-85201157802158",//(comboCol? values.contractCol : contData),
+          address_contract: "dev-1645131307264-12534700376687",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
+          collection_id: colID,
           collection: collTitle,
           token_metadata: {
             title: values.title,
@@ -506,6 +509,7 @@ function LightHeroE(props) {
                     }
                     else{
                       setcontData(collecData.find(element => element.title == e.target.value).contract)
+                      setColID(collecData.find(element => element.title == e.target.value).collectionID)
                       setcollTitle(e.target.value)
                     }
                   }

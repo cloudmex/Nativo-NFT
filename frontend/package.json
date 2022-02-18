@@ -25,6 +25,7 @@
     "react-hashtag": "^2.1.2",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.2.0",
+    "react-images-upload": "^1.2.7",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.0",
     "react-slick": "^0.28.1",
