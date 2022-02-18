@@ -216,14 +216,14 @@ function LightHeroE(props) {
         icon: 'error',
       })
       return
-    } else if(title.length < 10){
+    } else if (title.length < 10) {
       Swal.fire({
         title: 'Titulo de la colección muy corto',
         text: 'El titulo de la coleccion debe de tener minimo 10 caracteres',
         icon: 'error',
       })
       return
-    } else if(desc.length < 30){
+    } else if (desc.length < 30) {
       Swal.fire({
         title: 'Descripción de la colección muy corta',
         text: 'La descripción de la colección debe de tener minimo 30 caracteres',
@@ -279,6 +279,7 @@ function LightHeroE(props) {
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
           setMediaIcon(hash)
+          console.log(hash)
         })
 
       };
@@ -306,6 +307,8 @@ function LightHeroE(props) {
      } */
   }
 
+
+
   function imageChangeBanner(picture) {
     let data = picture.pop()
     const { file, reader } = Reader2(data);
@@ -315,15 +318,16 @@ function LightHeroE(props) {
 
       //una vez que cargue el arhcivo lo mandamos a ipfs
       //una vez que cargue el arhcivo lo mandamos a ipfs
-
       //una vez que cargue
       reader.onloadend = function () {
         //subimos la imagen a ipfs
+        console.log(this)
         uploadFile2(file.name, reader.result).then(({ hash }) => {
           // //console.log(result);
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
           setMediaBanner(hash)
+          console.log(hash)
         })
 
       };
@@ -372,7 +376,7 @@ function LightHeroE(props) {
           <h1 className=" w-full title-font sm:text-4xl text-3xl mb-6 font-medium text-gray-900 text-center">
             Nueva Colección
           </h1>
-          <div className="items-center px-6 lg:px-96">
+          <div className="items-center px-6 xl:px-96">
             <div className="flex flex-col items-center bg-slate-200 bg-opacity-70 rounded-2xl border-4 border-slate-400 mb-4">
               <div className="w-full px-6 mb-6">
                 <div className="flex justify-between">
@@ -395,6 +399,7 @@ function LightHeroE(props) {
                   name="titleCol"
                   {...formik.getFieldProps("titleCol")}
                   value={title}
+                  placeholder="Min. 10 Caracteres"
                   onChange={e => { setTitle(e.target.value) }}
                   className={`  w-full bg-white  rounded   focus:bg-opacity-60  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                 />
@@ -417,6 +422,7 @@ function LightHeroE(props) {
                   id="titleCol"
                   name="titleCol"
                   {...formik.getFieldProps("titleCol")}
+                  placeholder="Min. 30 Caracteres"
                   value={desc}
                   onChange={e => { setDesc(e.target.value) }}
                   className={`  w-full bg-white  rounded   focus:bg-opacity-60  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
@@ -471,7 +477,7 @@ function LightHeroE(props) {
             <p className="font-semibold">Vista previa de la colección en la parte inferior</p>
             <button
               onClick={() => saveCollection()}
-              className={` mt-4 mb-4 w-1/4 text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+              className={` mt-4 mb-4 text-white bg-${props.theme}-500 border-0 py-2 lg:px-6 px-2 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
             >
               {combo ? "Crear colección" : "Subastar"}
             </button>
@@ -488,30 +494,30 @@ function LightHeroE(props) {
               src={mediaIcon == "" ? banner : `https://ipfs.io/ipfs/${mediaIcon}`}
             />
             <div className="z-10 -mt-120 w-full text-white">
-              <div className="bg-white mx-20 text-black mt-4 pt-2 rounded-t-2xl opacity-80">
-                <h1 className="text-5xl font-bold pb-4 opacity-100 stroke-gray-700">{title == "" ? "Titulo de la coleccion" : title}</h1>
-                <p className="text-xl pb-3 stroke-gray-700">{desc == "" ? "Escribe la descripcion de tu coleccion" : desc}</p>
+              <div className="bg-white lg:mx-20 mx-5 text-black mt-4 pt-2 rounded-t-2xl bg-opacity-80">
+                <h1 className="lg:text-5xl text-3xl font-bold pb-4 opacity-100 stroke-gray-700">{title == "" ? "Titulo de la coleccion" : title}</h1>
+                <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{desc == "" ? "Escribe la descripcion de tu coleccion" : desc}</p>
                 <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
                   <div>
-                    <p className="text-xl pb-1 text-right mr-5"><b>Creador:</b> Tu cuenta</p>
+                    <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>Tu cuenta</p>
                   </div>
                   <div>
-                    <p className="text-xl pb-1 text-left ml-5"><b>Contrato:</b> Este es tu contrato</p>
+                    <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>Este es tu contrato</p>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-b-2xl text-white mx-20 mx-auto text-center">
+              <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-b-2xl text-white lg:mx-20 mx-5 mx-auto text-center">
                 <div className="pl-5">
-                  <p className="text-lg pb-1"><b>No. de tokens:</b></p>
-                  <p className="text-base pb-1">0</p>
+                  <p className="lg:text-lg text-base pb-1"><b>No. de tokens:</b></p>
+                  <p className="lg:text-base text-sm pb-1">0</p>
                 </div>
                 <div>
-                  <p className="text-lg pb-1"><b>No. de ventas:</b></p>
-                  <p className="text-base pb-1">0</p>
+                  <p className="lg:text-lg text-base pb-1"><b>No. de ventas:</b></p>
+                  <p className="lg:text-base text-sm pb-1">0</p>
                 </div>
                 <div className="pr-5">
-                  <p className="text-lg pb-1"><b>Vol. de venta:</b></p>
-                  <p className="text-base pb-1">0 {currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
+                  <p className="lg:text-lg text-base pb-1"><b>Vol. de venta:</b></p>
+                  <p className="lg:text-base text-sm pb-1">0 {currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
                 </div>
               </div>
             </div>

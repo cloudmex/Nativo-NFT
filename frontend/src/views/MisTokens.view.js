@@ -303,7 +303,8 @@ function MisTokens(props) {
               image: tok.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
               description: tok.description,
               creator: tok.creator,
-              titleCol: tok.collection
+              titleCol: tok.collection,
+              collectionID: tok.collectionID,
             }),
           };
         });
@@ -482,7 +483,7 @@ function MisTokens(props) {
                         >{`Costo: ${nft.price} ${nfts.currency}`}</h2>
                         <div className="text-center">
                           <a 
-                            href={"/detail/"+nft.tokenID+":"+nftData.titleCol}
+                            href={"/detail/"+nft.tokenID+":"+nftData.titleCol+":"+nftData.collectionID}
                             className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-4 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`} 
                           >Ver detalle del NFT</a>
                         </div>

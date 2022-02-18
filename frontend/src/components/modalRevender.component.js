@@ -34,7 +34,7 @@ export default function ModalRevender(props) {
     }),
     //Metodo para el boton revender del formulario
     onSubmit: async (values) => {
-      setstate({ disabled: true });
+      //setstate({ disabled: true });
       let revender;
       if (props.blockchain == "0") {
         //nos aseguramos que sigamos en la red de aurora
