@@ -49,10 +49,11 @@ export default function ModalRevender(props) {
       } else {
         let contract = await getNearContract();
         let payload = {
-          contractaddress: props.contract,
+          address_contract: props.contract,
           token_id: props.tokenId,
           price: fromNearToYocto(values.price),
           collection: props.collection,
+          collection_id: props.collectionID,
         };
         let amount = fromNearToYocto(0);
         //console.log(amount);

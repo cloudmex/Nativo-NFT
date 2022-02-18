@@ -80,6 +80,7 @@ function LightEcommerceB(props) {
             tokens(where: {tokenId: $tokenId, collection: $collection}) {
               id
               collection
+              collectionID
               contract
               tokenId
               owner_id
@@ -162,6 +163,7 @@ function LightEcommerceB(props) {
               price: fromYoctoToNear(toksData.price),
               contract: toksData.contract,
               collection: toksData.collection,
+              collectionID: toksData.collectionID
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
@@ -244,9 +246,10 @@ function LightEcommerceB(props) {
       //obtener tokens a la venta
       toks = await contract.market_buy_generic(
         {
-          contractaddress: state.tokens.contract,
+          address_contract: state.tokens.contract,
           token_id: state.tokens.tokenID,
           collection: state.tokens.collection,
+          collection_id: state.tokens.collectionID
         },
         300000000000000,
         fromNearToYocto(amount)

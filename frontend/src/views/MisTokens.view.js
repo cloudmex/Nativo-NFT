@@ -197,6 +197,7 @@ function MisTokens(props) {
             tokens(where: {owner_id: $title}) {
               id
               collection
+              collectionID
               contract
               tokenId
               owner_id
@@ -294,6 +295,7 @@ function MisTokens(props) {
             status: tok.status,
             collection: tok.collection,
             contract: tok.contract,
+            collectionID: tok.collectionID,
             // onSale: tok.on_sale,// tok.metadata.on_sale,
             // onAuction: tok.on_auction,
             data: JSON.stringify({
@@ -328,7 +330,7 @@ function MisTokens(props) {
    * @param tokenId representa el token id del nft a quitar del marketplace
    * @return void
    */
-  async function quitarDelMarketplace(tokenId,collectionTit,contractSend) {
+  async function quitarDelMarketplace(tokenId,collectionTit,contractSend,collectionId) {
     setNfts({ ...nfts, disabled: true });
     let quitar;
     if (nfts.blockchain == "0") {
@@ -346,9 +348,10 @@ function MisTokens(props) {
     } else {
       let contract = await getNearContract();
       let payload = {
-        contractaddress: contractSend,
+        address_contract: contractSend,
         token_id: tokenId,
         collection: collectionTit,
+        collection_id: collectionId
       };
       let amount = fromNearToYocto(0);
       //console.log(amount);
@@ -488,7 +491,7 @@ function MisTokens(props) {
                           className={` mt-6 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                           disabled={nfts.disabled}
                           onClick={async () => {
-                            await quitarDelMarketplace(nft.tokenID,nft.collection,nft.contract);
+                            await quitarDelMarketplace(nft.tokenID,nft.collection,nft.contract,nft.collectionID);
                           }}
                         >
                           Quitar a la venta
@@ -506,6 +509,7 @@ function MisTokens(props) {
                                   tokenId: nft.tokenID,
                                   contract: nft.contract,
                                   collection: nft.collection,
+                                  collectionID: nft.collectionID,
                                   title: "Revender nft",
                                   currency: nfts.currency,
                                   blockchain: nfts.blockchain,

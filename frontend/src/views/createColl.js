@@ -200,8 +200,8 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      contr: "dev-1644620337328-85201157802158",
-      addressowner: owner,
+      address_contract: "dev-1645131307264-12534700376687",
+      address_collection_owner: owner,
       title: title,
       descrip: desc,
       mediaicon: mediaIcon,
@@ -216,9 +216,26 @@ function LightHeroE(props) {
         icon: 'error',
       })
       return
+    } else if(title.length < 10){
+      Swal.fire({
+        title: 'Titulo de la colección muy corto',
+        text: 'El titulo de la coleccion debe de tener minimo 10 caracteres',
+        icon: 'error',
+      })
+      return
+    } else if(desc.length < 30){
+      Swal.fire({
+        title: 'Descripción de la colección muy corta',
+        text: 'La descripción de la colección debe de tener minimo 30 caracteres',
+        icon: 'error',
+      })
+      return
     }
-    let colResult = await contract.Add_user_collection(
-      payloadCol
+    let amount = fromNearToYocto(0.1);
+    let colResult = await contract.add_user_collection(
+      payloadCol,
+      300000000000000,
+      amount,
     )
     Swal.fire({
       title: 'Colección creada',
@@ -416,12 +433,12 @@ function LightHeroE(props) {
                       withIcon={false}
                       buttonText="Seleccionar imagen"
                       onChange={imageChangeIcon}
-                      imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                      maxFileSize={10485760}
+                      imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                      maxFileSize={5242880}
                       singleImage={true}
                       withLabel={true}
-                      label="Maximo 10mb, formatos aceptados .jpg, .gif, .png"
-                      fileSizeError="El tamaño no puede superar los 10mb"
+                      label="Maximo 5mb, formatos aceptados .jpg, .gif, .png"
+                      fileSizeError="El tamaño no puede superar los 5mb"
                       fileTypeError="Tipo de archivo no soportado"
                     />
                   </div>
@@ -436,7 +453,7 @@ function LightHeroE(props) {
                       withIcon={false}
                       buttonText="Seleccionar imagen"
                       onChange={imageChangeBanner}
-                      imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                      imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
                       maxFileSize={10485760}
                       singleImage={true}
                       withLabel={true}
