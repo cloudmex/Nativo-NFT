@@ -52,6 +52,11 @@ function LightHeroE(props) {
   let collectionData
   const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
   useEffect(() => {
+    const valores = window.location.search;
+    const values = new URLSearchParams(valores)
+    if(values.has('transactionHashes')){
+      window.location.href ="/Collections"
+    }
     fechaActual();
     let ownerAccount
     async function getOwner() {

@@ -42,6 +42,7 @@ function LightHeroE(props) {
     imageChangeIcon(picture)
   }
 
+  
   const [combo, setcombo] = useState(true);
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
@@ -62,6 +63,14 @@ function LightHeroE(props) {
 
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);
+
+  useEffect(() => {
+    const valores = window.location.search;
+    const values = new URLSearchParams(valores)
+    if(values.has('transactionHashes')){
+      window.location.href ="/minar"
+    }
+  },[])
 
   const formik = useFormik({
     initialValues: {
