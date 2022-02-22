@@ -281,7 +281,7 @@ function LightEcommerceA() {
                 <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>{Landing.ownerCol}</p>
               </div>
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>{Landing.contract}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>{Landing.contract}</p>
               </div>
             </div>
           </div>

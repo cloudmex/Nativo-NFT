@@ -64,6 +64,7 @@ export default function ModalRevender(props) {
             title: 'Terminos y condiciones no aceptados',
             text: 'Para poder revender tu NFT es necesario que aceptes los terminos y condiciones',
             icon: 'error',
+            confirmButtonColor: '#E79211'
           })
           return
         }
