@@ -237,6 +237,7 @@ function LightHeroE(props) {
             title: 'Selecciona una colección',
             text: 'Para minar es necesario seleccionar una colección, selecciona una he intentalo de nuevo',
             icon: 'error',
+            confirmButtonColor: '#E79211'
           }).then(function() {
             setmint({ ...mint, onSubmitDisabled: false });
             //window.location.href = "/minar"
@@ -308,6 +309,7 @@ function LightHeroE(props) {
           // //console.log(result);
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
+          console.log(hash)
         })
 
       };

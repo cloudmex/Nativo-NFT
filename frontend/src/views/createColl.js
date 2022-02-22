@@ -214,6 +214,7 @@ function LightHeroE(props) {
         title: 'Datos incompletos',
         text: 'Para crear una colección es necesario que rellenes todos los campos, verifica que hayas rellenado todos los datos',
         icon: 'error',
+        confirmButtonColor: '#E79211'
       })
       return
     } else if (title.length < 10) {
@@ -221,6 +222,7 @@ function LightHeroE(props) {
         title: 'Titulo de la colección muy corto',
         text: 'El titulo de la coleccion debe de tener minimo 10 caracteres',
         icon: 'error',
+        confirmButtonColor: '#E79211'
       })
       return
     } else if (desc.length < 30) {
@@ -228,6 +230,7 @@ function LightHeroE(props) {
         title: 'Descripción de la colección muy corta',
         text: 'La descripción de la colección debe de tener minimo 30 caracteres',
         icon: 'error',
+        confirmButtonColor: '#E79211'
       })
       return
     }
@@ -502,7 +505,7 @@ function LightHeroE(props) {
                     <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>Tu cuenta</p>
                   </div>
                   <div>
-                    <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>Este es tu contrato</p>
+                    <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>Este es tu contrato</p>
                   </div>
                 </div>
               </div>

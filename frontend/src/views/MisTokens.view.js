@@ -366,6 +366,7 @@ function MisTokens(props) {
         title: 'NFT quitado de la venta',
         text: 'Se ha quitado un NFT de la venta con exito',
         icon: 'success',
+        confirmButtonColor: '#E79211'
       }).then(function() {
         window.location.href = "/mis_nfts"
       })
