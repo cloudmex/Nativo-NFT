@@ -54,6 +54,8 @@ trait NonFungibleToken {
         token_metadata: TokenMetadata,
     );
     fn buy_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String);
+    fn bid_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String);
+    
     fn sell_token_ext(&mut self, token_id: TokenId, price: String,collection_id: String, collection: String);
     fn remove_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String);
     // view method
@@ -68,6 +70,8 @@ pub trait MyContract {
     fn save_buy_ttg(&self, info: String);
     fn save_sell_ttg(&self, info: String);
     fn save_remove_ttg(&self, info: String);
+    fn save_bid_ttg(&self, info: String);
+
     fn dontsave_ttg(&self, info: String);
 }
 
@@ -194,6 +198,39 @@ impl Contract {
         )
         .then(ext_self::get_promise_result(
             "buy".to_string(),
+            &self.market_contract_address_dev.to_string(), // el mismo contrato local
+            0,                                             // yocto NEAR a ajuntar al callback
+            30_000_000_000_000,                            // gas a ajuntar al callback
+        ));
+        log!("market ends here");
+        p
+    }
+    #[payable]
+    pub fn market_bid_generic(
+        &mut self,
+        address_contract: String,
+        token_id: TokenId,
+        collection_id: String,
+        collection: String,
+    ) -> Promise {
+        let contract_exist = self.whitelist_contracts.get(&address_contract.clone());
+        if contract_exist.is_none() {
+            panic!(
+                "This address {} is not approved to buy tokens!",
+                address_contract.clone()
+            );
+        }
+
+        let p = ext_nft::bid_token_ext(
+            token_id,
+            collection_id,
+            collection,
+            &address_contract.to_string(), //  account_id as a parameter
+            env::attached_deposit(),       // yocto NEAR to attach
+            30_000_000_000_000,            // gas to attach
+        )
+        .then(ext_self::get_promise_result(
+            "bid".to_string(),
             &self.market_contract_address_dev.to_string(), // el mismo contrato local
             0,                                             // yocto NEAR a ajuntar al callback
             30_000_000_000_000,                            // gas a ajuntar al callback
@@ -410,8 +447,9 @@ impl Contract {
 
                 let a = "mint".to_string();
                 let b = "buy".to_string();
-                let c = "sell".to_string();
-                let d = "remove".to_string();
+                let c = "bid".to_string();
+                let d = "sell".to_string();
+                let e = "remove".to_string();
 
                 if method == a {
                     log!("se va a minar");
@@ -429,7 +467,15 @@ impl Contract {
                         0,
                         10_000_000_000_000,
                     );
-                } else if method == c {
+                }else if method == c {
+                    log!("se va a ofertar");
+                    ext_self::save_bid_ttg(
+                        value.to_string(),
+                        &self.market_contract_address_dev.to_string(),
+                        0,
+                        10_000_000_000_000,
+                    );
+                } else if method == d {
                     log!("se va a vender");
                     ext_self::save_sell_ttg(
                         value.to_string(),
@@ -437,7 +483,7 @@ impl Contract {
                         0,
                         10_000_000_000_000,
                     );
-                } else if method == d {
+                } else if method == e {
                     log!("se va a remover");
                     ext_self::save_remove_ttg(
                         value.to_string(),
@@ -449,7 +495,6 @@ impl Contract {
             }
         }
     }
-
     //Métodos que lanzan un log a the graph
     pub fn save_mint_ttg(&self, info: String) {
         
@@ -460,6 +505,13 @@ impl Contract {
         log!("{}", res);
     }
     pub fn save_buy_ttg(&self, info: String) {
+        // validate if the contract already exist,dont create a new one
+        self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
+
+        let res = str::replace(&info.to_string(), "\"", "");
+        log!("{}", res);
+    }
+    pub fn save_bid_ttg(&self, info: String) {
         // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
 

@@ -42,6 +42,8 @@ Asegurate de tener instalado la herramienta `near-cli`, esta sera utilizada para
 ## Comprar un token NFT
 `near call dev-1645131376413-69111001778844 market_buy_generic '{"address_contract":"<direccion del contrato minero>", "token_id": "3","collection":"Hola"}' --accountId <direccion del comprador>  --amount <precio en nears> --gas=300000000000000`
 
+## Ofertar un token NFT
+`near call dev-1645131376413-69111001778844 market_bid_generic '{"address_contract":"dev-1645215283232-83708320064039", "token_id": "3","collection_id":"Hola","collection":"Hola"}' --accountId dokxo.testnet  --amount 0.1 --gas=300000000000000`
 ## Vender un token NFT
 `near call dev-1645131376413-69111001778844 revender '{"token_id": "0","price": "0"}' --accountId <tu nearId>`
 
