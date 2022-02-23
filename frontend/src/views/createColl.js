@@ -209,7 +209,7 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      address_contract: "dev-1645131307264-12534700376687",
+      address_contract: "dev-1645632654382-28045928413066",
       address_collection_owner: owner,
       title: title,
       descrip: desc,
