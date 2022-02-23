@@ -412,9 +412,11 @@ function MisTokens(props) {
             </div>
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
             {nfts.nfts.length > 0 ? null : (
-              <p className="lg:w-2/3 mx-auto leading-relaxed text-base mt-8">
-                Actualmente no tienes tokens en tu pertenencia.
-              </p>
+              <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
+                <div class="flex flex-col justify-center">
+                  <h1 class="text-center">Aún no tienes NFTs... Crea o adquiere uno para comenzar</h1>
+                </div>
+              </div>
             )}
           </div>
           <div className="flex flex-wrap -m-9 mb-6">
