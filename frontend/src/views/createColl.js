@@ -42,6 +42,7 @@ function LightHeroE(props) {
     imageChangeIcon(picture)
   }
 
+  
   const [combo, setcombo] = useState(true);
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
@@ -62,6 +63,14 @@ function LightHeroE(props) {
 
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);
+
+  useEffect(() => {
+    const valores = window.location.search;
+    const values = new URLSearchParams(valores)
+    if(values.has('transactionHashes')){
+      window.location.href ="/minar"
+    }
+  },[])
 
   const formik = useFormik({
     initialValues: {
@@ -200,7 +209,7 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      address_contract: "dev-1645131307264-12534700376687",
+      address_contract: "dev-1645632654382-28045928413066",
       address_collection_owner: owner,
       title: title,
       descrip: desc,

@@ -52,6 +52,11 @@ function LightHeroE(props) {
   let collectionData
   const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
   useEffect(() => {
+    const valores = window.location.search;
+    const values = new URLSearchParams(valores)
+    if(values.has('transactionHashes')){
+      window.location.href ="/Collections"
+    }
     fechaActual();
     let ownerAccount
     async function getOwner() {
@@ -205,7 +210,7 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         let newPayload = {
-          address_contract: "dev-1645131307264-12534700376687",//(comboCol? values.contractCol : contData),
+          address_contract: "dev-1645632654382-28045928413066",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection_id: colID,
           collection: collTitle,
