@@ -70,13 +70,13 @@ function LightHeaderB(props) {
   }
 
   return (
-    <header className="text-gray-600 body-font shadow-sm">
-      <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center movil-header">
+    <header className="text-gray-600 body-font shadow-sm sticky top-0 z-50 bg-[#ffffff]">
+      <div className=" flex flex-wrap px-5 py-2 flex-col md:flex-row items-center movil-header">
         <a
           href="/"
           className="movil-logo"
         >
-         <img  src={nativoLogo} className="d-inline-block align-top " alt="logo"   width="200px"/>
+         <img  src={nativoLogo} className="d-inline-block align-top " alt="logo"   width="120px"/>
 
          
         </a>
