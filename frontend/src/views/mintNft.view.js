@@ -55,7 +55,7 @@ function LightHeroE(props) {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
     if(values.has('transactionHashes')){
-      window.location.href ="/Collections"
+      window.location.href ="/mis_nfts"
     }
     fechaActual();
     let ownerAccount
@@ -148,8 +148,8 @@ function LightHeroE(props) {
       price: Yup.number()
         .required("Requerido")
         .positive("el precio debe ser positivo")
-        .moreThan(0, "no existen nft gratis")
-        .min(0.000000000000000001, "El precio no debe de ser 0"),
+        .moreThan(0.09999999999999, "El precio minimo para el NFT es de 0.1")
+        .min(0.1, "El precio no debe de ser menor 0.1"),
 
       culture: Yup.string()
         .required("Requerido")
@@ -209,6 +209,7 @@ function LightHeroE(props) {
         });
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
+        console.log(fromNearToYocto(values.price))
         let newPayload = {
           address_contract: "dev-1645632654382-28045928413066",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
@@ -578,6 +579,8 @@ function LightHeroE(props) {
                 type="number"
                 id="price"
                 name="price"
+                min="0.1"
+                step="0.1"
                 className={`border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out-${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                 {...formik.getFieldProps("price")}
               />
