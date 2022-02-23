@@ -48,6 +48,10 @@ function LightHeroE(props) {
   const [desc, setDesc] = useState("")
   const [mediaIcon, setMediaIcon] = useState("")
   const [mediaBanner, setMediaBanner] = useState("")
+  const [txtBttnIcon, setTxtBttnIcon] = useState("Seleccionar imagen")
+  const [txtBttnBanner, setTxtBttnBanner] = useState("Seleccionar imagen")
+  
+  
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -272,6 +276,7 @@ function LightHeroE(props) {
    *
    */
   function imageChangeIcon(picture) {
+    setTxtBttnIcon("Cargando")
     let data = picture.pop()
     const { file, reader } = Reader2(data);
     console.log(data)
@@ -291,7 +296,7 @@ function LightHeroE(props) {
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
           setMediaIcon(hash)
-          console.log(hash)
+          setTxtBttnIcon("Cambiar imagen")
         })
 
       };
@@ -322,6 +327,7 @@ function LightHeroE(props) {
 
 
   function imageChangeBanner(picture) {
+    setTxtBttnBanner("Cargando")
     let data = picture.pop()
     const { file, reader } = Reader2(data);
     if (file) {
@@ -339,7 +345,7 @@ function LightHeroE(props) {
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
           setMediaBanner(hash)
-          console.log(hash)
+          setTxtBttnBanner("Cambiar imagen")
         })
 
       };
@@ -449,7 +455,7 @@ function LightHeroE(props) {
                   <div className="lg:w-4/5 w-full">
                     <ImageUploader
                       withIcon={false}
-                      buttonText="Seleccionar imagen"
+                      buttonText={txtBttnIcon}
                       onChange={imageChangeIcon}
                       imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
                       maxFileSize={5242880}
@@ -469,7 +475,7 @@ function LightHeroE(props) {
                   <div className="lg:w-4/5 w-full">
                     <ImageUploader
                       withIcon={false}
-                      buttonText="Seleccionar imagen"
+                      buttonText={txtBttnBanner}
                       onChange={imageChangeBanner}
                       imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
                       maxFileSize={10485760}
@@ -493,6 +499,7 @@ function LightHeroE(props) {
             >
               {combo ? "Crear colección" : "Subastar"}
             </button>
+            <p className="font-semibold">Tu imagen puede durar un poco de tiempo en mostrarse</p>
           </div>
         </div>
         <div className="">
