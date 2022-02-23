@@ -59,7 +59,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo3'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
 
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);

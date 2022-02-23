@@ -53,7 +53,7 @@ function MisTokens(props) {
   // const [imgs, setImgs] = useState([]);
   let imgs = [];
 
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
 
   const handleChangePage = (e, value) => {
     console.log(value)
