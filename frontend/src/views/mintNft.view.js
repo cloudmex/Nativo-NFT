@@ -50,7 +50,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativo'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
   useEffect(() => {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
