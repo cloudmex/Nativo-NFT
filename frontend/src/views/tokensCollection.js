@@ -428,9 +428,11 @@ function LightEcommerceA() {
                 );
               })
               :
-              <p className="lg:w-2/3 mx-auto leading-relaxed text-center mt-20 text-3xl">
-                <b>Aun no hay NFTs en esta colección</b>
-              </p>
+              <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
+                <div class="flex flex-col justify-center">
+                  <h1 class="text-center">Aún no hay NFTs en esta colección</h1>
+                </div>
+              </div>
           }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
