@@ -15,7 +15,7 @@ function LightHeroE(props) {
             Crecemos junto a la comunidad de artistas NFT.
           </h1>
           <p className="mb-8 leading-relaxed">
-            ¡Nos actualizamos! Ahora puedes recibir pagos de regalías y subastar tus NFT’s.
+            ¡Nos actualizamos! Ahora puedes recibir pagos de regalías de tus NFT’s.
           </p>
 
           <div className="flex  justify-between">
