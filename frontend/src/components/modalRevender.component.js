@@ -26,9 +26,9 @@ export default function ModalRevender(props) {
     validationSchema: Yup.object({
       price: Yup.number()
         .required("Requerido")
-        .positive("El precio debe ser mayor a 0")
-        .moreThan(0, "No hay tokens gratis")
-        .min(0.000000000000000001, "el precio minimo es un near"),
+        .positive("El precio debe ser positivo")
+        .moreThan(0.09999999999999, "El precio minimo para el NFT es de 0.1")
+        .min(0.1, "El precio no debe de ser menor 0.1"),
       terms: Yup.bool()
         .required("Requerido")
     }),
@@ -132,6 +132,8 @@ export default function ModalRevender(props) {
                       type="number"
                       id="price"
                       name="price"
+                      min="0.1"
+                      step="0.1"
                       className={`border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out-${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                       {...formik.getFieldProps("price")}
                     />
