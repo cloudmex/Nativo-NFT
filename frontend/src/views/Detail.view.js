@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useParams  } from "react-router-dom";
+import { useParams, useHistory  } from "react-router-dom";
 // import { Helmet } from "react-helmet";
 import { isNearReady } from "../utils/near_interaction";
 import { nearSignIn } from "../utils/near_interaction";
@@ -285,18 +285,23 @@ function LightEcommerceB(props) {
       setstate({ ...state, btnDisabled: false });
     }
   }
+
+  let history = useHistory();
+  const goToPreviousPath = () => {
+      history.goBack();
+  }
   return (
     <>
     <section className="text-gray-600 body-font overflow-hidden">
-      <div className="container px-5 py-8 mx-auto">
-      <a
-        href="/galeria"
-        className="regresar"
-      >
-        <img 
-          src={flechaiz}
-        />
-      </a>
+        <div className="container px-5 py-8 mx-auto">
+          <div
+            className="regresar"
+          >
+            <img onClick={() => goToPreviousPath()}
+            className="hover:cursor-pointer"
+              src={flechaiz}
+            />
+          </div>
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <img
             alt="ecommerce"
