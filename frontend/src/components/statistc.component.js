@@ -1,31 +1,29 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import nativoLogo from "../assets/img/nativologocrop.png"
+import arteNativo from '../assets/img/arte nativo.png'
 function LightStatisicC(props) {
   return (
-    <section className="text-gray-600 body-font">
-      <div className="container px-5 py-24 mx-auto ">
-        <div className="flex flex-col text-center w-full mb-20">
-          <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
-            Información acerca de las culturas nativas en América Latina
-          </h1>
-        </div>
-        <div className="flex justify-center -m-4 text-center sp-1">
-          <div className="flex p-4 md:w-1/4 sm:w-1/2 w-full sp">
-            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg sp-3">
-              <h2 className="title-font font-medium text-3xl text-gray-900">
-                522
-              </h2>
-              <p className="leading-relaxed">Número actual de culturas nativas en América Latina.</p>
-            </div>
+    <section className="text-gray-600 body-font bg-gray-100">
+      <div className="container px-5 lg:py-20 py:12 mx-auto ">
+        <div className="grid lg:grid-cols-2 grid-cols-1 w-full mb-20 place-items-center text-center">
+          <div className="w-full">
+            <img className="lg:px-32 px-4 mb-4" src={nativoLogo}/>
           </div>
-          <div className="flex p-4 md:w-1/4 sm:w-1/2 w-full sp">
-            <div className="border-2 border-gray-200 px-4 py-6 rounded-lg sp-3">
-              <h2 className="title-font font-medium text-3xl text-gray-900">
-                8 %
-              </h2>
-              <p className="leading-relaxed">Porcentaje de la población que forma parte de alguna cultura nativa.</p>
-            </div>
+          <div className="w-full grid-cols-1 lg:px-10 px-4">
+            <h1 className="lg:text-3xl text-xl font-medium text-gray-900 w-full mb-4">Acerca de nosotros</h1>
+            <p className="lg:text-xl text-base w-full">Nativo NFT es un mercado de NFT's montado sobre NEAR protocol. Actualmente se encuentra en beta pública</p>
+          </div>
+        </div>
+        <div className="grid lg:grid-cols-2 grid-cols-1 w-full mb-20 place-items-center text-center">
+          <div className="w-full grid-cols-1 lg:px-10 px-4">
+            <h1 className="lg:text-3xl text-xl font-medium text-gray-900 w-full mb-4">Nativo DAO</h1>
+            <p className="lg:text-xl text-base w-full">Nuestro roadmap tiene contemplado el lanzamiento de un DAO para gobernanza el cual pueda utilizar los tokens de gobernanza $NTV para el manejo del protocolo de Nativo NFT.
+En un primer momento este DAO estará controlado por miembros del equipo fundador, y desde donde se podrán realizar actualizaciones al smart contract.
+</p>
+          </div>
+          <div className="w-full">
+            <img className="lg:px-32 px-4 mb-4" src={arteNativo}/>
           </div>
         </div>
       </div>

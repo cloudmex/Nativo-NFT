@@ -15,6 +15,7 @@ export default function Landing() {
     <>
       <Hero />
       <Steps theme={Landing.theme} />
+      <Statisct theme={Landing.theme} />
     </>
   );
 }

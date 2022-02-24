@@ -15,14 +15,24 @@ function LightHeaderB(props) {
   });
   const [buscar, setbuscar] = useState("");
   const [menu, setmenu] = useState(true);
+  const [Beta, setBeta] = useState(true);
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
 
+
+  const closeBeta = () => {
+    window.localStorage.setItem("beta","beta");
+      setBeta(false);
+  }
+  
   useEffect(() => {
     if(state.dropdown == 'Blockchain'){
       changeBlockchain(2);
+      if(!window.localStorage.getItem("beta")){
+        setBeta(true);
+      }
     }
     /*  (async () => {
       const { keyStores, connect, WalletConnection } = nearAPI;
@@ -70,6 +80,8 @@ function LightHeaderB(props) {
   }
 
   return (
+    <>
+    
     <header className="text-gray-600 body-font shadow-sm sticky top-0 z-50 bg-[#ffffff]">
       <div className=" flex flex-wrap px-5 py-2 flex-col md:flex-row items-center movil-header">
         <a
@@ -229,7 +241,13 @@ function LightHeaderB(props) {
           )}
         </Menu>
       </div>
+      
     </header>
+    <div className={`beta ${Beta ? "h-auto": ""}`}>
+    <p>Esta es una versión beta pública - Úselo bajo su propio riesgo - Código no auditado</p>
+      <img src="x.png" title="Cerrar" onClick={e=>closeBeta()}/>
+    </div>
+    </>
   );
 }
 
