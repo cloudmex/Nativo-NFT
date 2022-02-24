@@ -95,18 +95,18 @@ function LightHeaderB(props) {
             Galeria V1
           </a> */}
           <a href="/minar" className="mr-5 hover:text-gray-900">
-            Minar
+            Crear
           </a>
           {/* <a href="/auctions" className="mr-5 hover:text-gray-900">
             Subastas
           </a> */}
           <a href="/mis_nfts" className="mr-5 hover:text-gray-900">
-            Mis Nfts
+            Mis NFTs
           </a>
         </nav>
         
       
-        <form className={"flex flex-wrap mr-7"} 
+        <form className={"flex flex-wrap mr-7 hidden"} 
           onSubmit={e=>{
             e.preventDefault();
             window.location.href ="/perfil/"+buscar;
@@ -175,8 +175,8 @@ function LightHeaderB(props) {
                           href="#"
                           className={classNames(
                             active
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
+                              ? "bg-gray-100 text-gray-900 hidden"
+                              : "text-gray-700 hidden",
                             "block px-2 py-2 text-sm text-center"
                           )}
                         >
