@@ -88,19 +88,19 @@ function LightHeaderB(props) {
             Galeria
           </a> */}
 
-          <a href="/Collections" className="mr-5 hover:text-gray-900">
+          <a href="/Collections" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
             Colecciones
           </a>
           {/* <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
             Galeria V1
           </a> */}
-          <a href="/minar" className="mr-5 hover:text-gray-900">
+          <a href="/minar" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
             Crear
           </a>
           {/* <a href="/auctions" className="mr-5 hover:text-gray-900">
             Subastas
           </a> */}
-          <a href="/mis_nfts" className="mr-5 hover:text-gray-900">
+          <a href="/mis_nfts" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
             Mis NFTs
           </a>
         </nav>
@@ -127,14 +127,14 @@ function LightHeaderB(props) {
                   </button>
                 </form> 
 
-        <Menu as="div" className="relative inline-block text-left">
+        <Menu as="div" className="relative inline-block text-left w-full md:w-auto">
         
           {({ open }) => (
             <>
             
               <div className="flex flex-nowrap ">
                
-                <Menu.Button className=" inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-yellow-500">
+                <Menu.Button className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-yellow-500">
                   {state.dropdown}
                   <ChevronDownIcon
                     className="-mr-1 ml-2 h-5 w-5"
@@ -158,7 +158,7 @@ function LightHeaderB(props) {
                 
                 <Menu.Items
                   static
-                  className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white outline-none"
+                  className="w-full md:w-[120px] origin-top-right absolute right-0 mt-2  rounded-md shadow-lg bg-white outline-none"
                 >
                   
                   <div className="py-1">
@@ -176,7 +176,7 @@ function LightHeaderB(props) {
                           className={classNames(
                             active
                               ? "bg-gray-100 text-gray-900 hidden"
-                              : "text-gray-700 hidden",
+                              : "text-gray-700 -ml-[25px] hidden",
                             "block px-2 py-2 text-sm text-center"
                           )}
                         >
@@ -195,7 +195,7 @@ function LightHeaderB(props) {
                           className={classNames(
                             active
                               ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
+                              : "text-gray-700 -ml-[25px]",
                             "block px-2 py-2 text-sm text-center"
                           )}
                         >
@@ -214,7 +214,7 @@ function LightHeaderB(props) {
                           className={classNames(
                             active
                               ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
+                              : "text-gray-700 -ml-[25px]",
                             "block px-2 py-2 text-sm text-center"
                           )}
                         >
