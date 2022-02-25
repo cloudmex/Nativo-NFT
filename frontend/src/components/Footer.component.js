@@ -5,7 +5,7 @@ import nativoLogo from '../assets/img/nativologocrop.png'
 
 function LightFooterB(props) {
   return (
-    <footer className="text-gray-600 body-font bg-gray-100">
+    <footer className="text-gray-600 body-font bg-gray-100 border-t border-grey-darkest">
       <div className="container px-5 pt-20 pb-12 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
         <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left mt-10 md:-mt-10 ">
           <a
