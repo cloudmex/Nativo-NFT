@@ -1,45 +1,56 @@
-# 👨‍👩‍👦‍👦 Marketplace de arte de comunidades latinas
 
-Este proyecto tiene como eje central el comercializar arte digital proveniente de comunidades indígenas en toda américa latina, haciendo uso de los tokens NFT (Non Fungibles Tokens) de la tecnología blockchain para encapsular el valor de la historia que cada pieza pueda contar.
-Actualmente existen alrededor de 522 pueblos indígenas en américa latina cada una con historia, tradiciones, cultura y arte única, misma que puede ser transmitida a todo el mundo mediante una red descentralizada creando y compartiendo contenido único y coleccionable.
+# Nativo NFT - Readme
 
-De manera técnica esta dApp permite las funcionalidades de un Marketplace (Minar un NFT, Vender, Comprar, Revender, Listar tokens y quitar de la venta) tanto en un contrato construido en Solidity para Aurora EVM (Ethereum Virtual Machine) y uno en Rust para NEAR con las mismas funcionalidades. A su vez con una interfaz de usuario que nos da la opción de elegir entre NEAR o Aurora para interactuar con estos contratos del marketplace. 
+
+Nativo NFT es un mercado secundario y primario de NFTs creado sobre NEAR Protocol que permite a sus usuarios crear, vender y revender los NFTs que definan.
+
+
+![Logo](https://v2.nativonft.app/static/media/nativologocrop.15afa4d2.png)
+
+
+## Mercado primario![Logo](https://img.icons8.com/ios-filled/25/000000/small-business.png)
+
+- Nativo NFT permite a sus usuarios minar sus propios NFT a través de su DApp para que puedan volverlos parte de su colección.
+
+Puedes acceder al mercado primero con tu cuenta NEAR en www.nativonft.app`
+## Mercado secundario (Nativo minter)![Logo](https://img.icons8.com/ios-filled/25/000000/small-business.png)
+La V2 de Nativo NFT está pensado en crecer sus posibilidades al resto de los usuarios. Usando el repositorio de Nativo Minter tendrás acceso a los métodos estandarizados que utilizamos en el mercado de Nativo NFT para :
+### Creación de colecciones ![Logo](https://img.icons8.com/material-rounded/24/000000/stack-of-photos.png)
+- Cada NFT en Nativo debe de existir dentro de una colección, lo que le permitirá a los NFTs estar agrupados con pares similares.
+
+![Logo](https://ipfs.io/ipfs/bafybeiayfvpqqkje73q44bdxxosyjpw2t7c7tolujhrugb64mlkcirtch4)
+
+## Pago de regalías  ![Logo](https://img.icons8.com/wired/25/000000/mobile-payment.png)
+
+Las regalías son el mecanismo en que un creador de NFT’s sigue ganando por sus obras aun cuando ya no es poseedor de estas. Pronto esto será posible en Nativo NFT.
+
+De primer momento se considera que sea el 10% sobre la venta la que irá al creador, pero aún estamos considerando si vale la pena tener implementado un mecanismo de distribución a multiples cuentas cómo lo marcan los estándares de NEAR. Dinos tú que opinas en nuestro servidor de Discord.
+
+
+## Nativo DAO
+
+Nuestro roadmap tiene contemplado el lanzamiento de un DAO para gobernanza el cual pueda utilizar los tokens de gobernanza $NTV para el manejo del protocolo de Nativo NFT.
+En un primer momento este DAO estará controlado por miembros del equipo fundador, y desde donde se podrán realizar actualizaciones al smart contract.La DAO será creada sobre Astro DAO.
+
+## Nativo Token ($NTV) de gobernanza
+
+### Especificaciones técnicas
+ - Suministro máximo: 100,000,000 de $NTV.
+ - Token deflacionario
+ - Nombre del token: Nativo token
+ - Ticker: $NTV
+ - Estándar del token: NEP-141
+ - Versión del documento: V 1.0
+
+## The Graph, detrás de la indexación de los NFT’s
+
+
+![Logo](https://thegraph.com/en/images/landing/blog-posts/the-graph-network.jpg
+)
+
+
+
+The Graph es un indexador que da soporte a NEAR Protocol para poder monitorear las transacciones que están pasando dentro de la red. Cuando estás desarrollando sobre blockchain resulta un problema tener que consultar grandes cantidades de información al mismo tiempo, los indexadores permiten tener una capa de búsqueda con la información ordenada para que pueda ser consultada de manera ágil. De esta manera logras tener una experiencia dinámica y fluida a la par de seguir estando respaldado por el blockchain. En Nativo NFT utilizamos indexadores para ordenar los cientos de NFT’s esperados a ser minados una vez lanzada a mainnet la versión 2.0.
+ 
 
  
-## 📚 ¿Como esta estructurado el proyecto?
-
-El proyecto consta de 4 partes: 
-1. La construcción de un smart contract que hace posible la interacción con la blockchain. En esta ocasión utilizando la `EVM (Ethereum Virtual Machine) de NEAR llamada Aurora`, esta nos da la compatibilidad con la red de ethereum dentro del protocolo de NEAR. (`Corresponde al directorio blockchain`)
-2. El desarrollo de la interfaz de usuario (frontend) amigable que permita consumir el smart contract a través de la wallet de [MetaMask]. (`Corresponde al directorio frontend`)
-3. La construcción de un smart contract utilizando el lenguaje de programación Rust para la network de NEAR. Este contrato tiene la misma funcionalidad de marketplace que el contrato para la EVM Aurora. (`Dentro del directorio rust-contract en el directorio blockchain`)
-4. Integrar `near-api-js` en el frontend para consumir el contrato de Rust en NEAR. (`Dentro al directorio frontend`)
- 
-## Documentación de cada parte del proyecto 
-
-[Contrato en solidity para Aurora EVM]
-
-[Contrato en Rust para NEAR]
-
-[Frontend]
-
-## 🎥 Avances del proyecto 
-
-Dentro de los avances del desarrollo de este proyecto se encuentran multiples listas de reproducción que sirven como apoyo para aquellos que busquen continuar con el crecimiento de esta dApp aportando nuevas funcionalidades o siemplemente para conocer como fue el proceso de crear e implementar este proyecto utilizando NEAR y Aurora. En el canal en YouTube de [NEAR Hispano] se encuentran las diversas listas de reproducción.
-
-Avance diario de desarrollo del proyecto:
-https://www.youtube.com/watch?v=9J2xkT_tFHk&list=PLixWO0N_iFTMGU3M5KHpuMqhpdMKzw88f
-
-Primer demo de las funcionalidades del proyecto (solo Aurora EVM):
-https://www.youtube.com/watch?v=9PfxYtO0HK4&list=PLixWO0N_iFTOoCXL_rcyDowvxaO8BKAUD
-
-Demo final de las funcionalidades del proyecto (Implementación de contrato en Rust y Aurora):
-https://www.youtube.com/playlist?list=PLixWO0N_iFTNtlOFTYYVmjd_R5m4W1YV-
-
-Comparación de rendimiento de las redes Aurora, NEAR y Ropsten:
-https://www.youtube.com/playlist?list=PLixWO0N_iFTPr5LSe6s1RZfEw6yXPWV7p
-
-[MetaMask]: https://metamask.io/
-[NEAR Hispano]: https://www.youtube.com/channel/UCGJRj-rzdgow2nIAZ_pTkbQ
-[Contrato en solidity para Aurora EVM]: https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/blockchain/README.md
-[Contrato en Rust para NEAR]: https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/blockchain/rust-contract/README.md
-[Frontend]: https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/frontend/README.md

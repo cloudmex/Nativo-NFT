@@ -539,6 +539,9 @@ impl Contract {
         log!("{}", info);
     }
 
+    pub fn prueba_remota(&self)-> String {
+        "respuesta desde nativo marketplace".to_string()
+    }
     ///////////////////////////////////////////////////////
     /// //////////////////METODOS DE MIGRACIÖN
     #[private]
