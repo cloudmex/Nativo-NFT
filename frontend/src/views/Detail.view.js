@@ -76,8 +76,8 @@ function LightEcommerceB(props) {
         let info = data.split(":");
         let toksData
         const queryData = `
-          query($tokenId: String, $collection: String, $collectionID: String){
-            tokens(where: {tokenId: $tokenId, collection: $collection, collectionID: $collectionID}) {
+          query($tokenId: String, $collectionID: String){
+            tokens(where: {tokenId: $tokenId, collectionID: $collectionID}) {
               id
               collection
               collectionID
@@ -110,8 +110,7 @@ function LightEcommerceB(props) {
             query: gql(queryData),
             variables: {
               tokenId: info[0],
-              collection: info[1],
-              collectionID: info[2],
+              collectionID: info[1],
             }
           })
           .then((data) => {
@@ -325,7 +324,7 @@ function LightEcommerceB(props) {
                 <span
                   className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
                 >
-                  <a href={'/NFTCol/'+state?.jdata.collection+":"+state?.jdata.contract+":"+state?.jdata.collectionID}>{state?.jdata.collection}</a>
+                  <a href={'/NFTCol/'+state?.jdata.collectionID}>{state?.jdata.collection}</a>
                 </span>
               </span>
             </div>

@@ -121,8 +121,8 @@ function LightEcommerceA() {
         // toks = await contract.obtener_pagina_by_creator(payload);
         let info = data.split(":");
         const queryData = `
-          query($title: String, $contract: String, $collectionID: String){
-            collections(where: {title: $title, contract: $contract, collectionID: $collectionID}) {
+          query($contract: String, $collectionID: String){
+            collections(where: {collectionID: $collectionID}) {
               id
               owner
               title
@@ -135,7 +135,7 @@ function LightEcommerceA() {
               saleVolume
               collectionID
             }
-            tokens(where: {collection: $title, contract: $contract, collectionID: $collectionID}) {
+            tokens(where: {collectionID: $collectionID}) {
               id
               collection
               collectionID
@@ -167,9 +167,7 @@ function LightEcommerceA() {
           .query({
             query: gql(queryData),
             variables: {
-              title: info[0],
-              contract: info[1],
-              collectionID: info[2]
+              collectionID: data
             },
           })
           .then((data) => {
@@ -389,7 +387,7 @@ function LightEcommerceA() {
                 return (
                   <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
                     <a
-                      href={"/detail/" + element.tokenId + ":" + Landing.titleCol + ":" + Landing.colID}
+                      href={"/detail/" + element.tokenId + ":" + Landing.colID}
                     >
                       <div className="token bg-[#f7f4f0]">
                         <div className="block relative h-48 rounded overflow-hidden">
