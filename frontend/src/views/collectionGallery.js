@@ -313,7 +313,7 @@ function LightEcommerceA() {
               //const tokenData = JSON.parse(token.data);
               return (
                 <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                  <a href={"/NFTCol/"+element.collectionID}>
+                  <a href={"/collection/"+element.collectionID}>
                     <div className="token bg-[#f7f4f0]">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
