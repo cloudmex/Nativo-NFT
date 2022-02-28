@@ -55,7 +55,7 @@ function LightHeroE(props) {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
     if(values.has('transactionHashes')){
-      window.location.href ="/mis_nfts"
+      window.location.href ="/mynfts"
     }
     fechaActual();
     let ownerAccount
@@ -499,7 +499,7 @@ function LightHeroE(props) {
                 <div className="pb-4">
                 <a 
                 className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
-                href="/createCollection">
+                href="/createcollection">
                   Añadir Colección
                 </a>
                 
@@ -673,7 +673,7 @@ function LightHeroE(props) {
           <p className="text-5xl font-semibold pt-20 text-center">No tienes colecciones</p>
           <p className="pt-10 pb-5 text-center text-2xl">Para poder minar un token en necesario crear una colección antes</p>
           <div className="width-100 py-10 text-center">
-            <a className="bg-s hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-xl" href="./createCollection">Crear colección</a>
+            <a className="bg-s hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-xl" href="./createcollection">Crear colección</a>
           </div>
           
         </div>

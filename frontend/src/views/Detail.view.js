@@ -324,7 +324,7 @@ function LightEcommerceB(props) {
                 <span
                   className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
                 >
-                  <a href={'/NFTCol/'+state?.jdata.collectionID}>{state?.jdata.collection}</a>
+                  <a href={'/collection/'+state?.jdata.collectionID}>{state?.jdata.collection}</a>
                 </span>
               </span>
             </div>

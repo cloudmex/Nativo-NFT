@@ -368,7 +368,7 @@ function MisTokens(props) {
         icon: 'success',
         confirmButtonColor: '#E79211'
       }).then(function() {
-        window.location.href = "/mis_nfts"
+        window.location.href = "/mynfts"
       })
     }
 
@@ -486,7 +486,7 @@ function MisTokens(props) {
                         >{`Costo: ${nft.price} ${nfts.currency}`}</h2>
                         <div className="text-center">
                           <a 
-                            href={"/detail/"+nft.tokenID+":"+nftData.titleCol+":"+nftData.collectionID}
+                            href={"/detail/"+nft.tokenID+":"+nftData.collectionID}
                             className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-4 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`} 
                           >Ver detalle del NFT</a>
                         </div>

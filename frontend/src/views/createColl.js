@@ -72,7 +72,7 @@ function LightHeroE(props) {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
     if(values.has('transactionHashes')){
-      window.location.href ="/minar"
+      window.location.href ="/create"
     }
   },[])
 
@@ -258,7 +258,7 @@ function LightHeroE(props) {
       text: 'Tu colección ha sido creada',
       icon: 'success',
     }).then(function () {
-      window.location.href = "/minar"
+      window.location.href = "/create"
     })
   }
 
