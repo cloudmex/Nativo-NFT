@@ -215,8 +215,8 @@ function LightHeroE(props) {
     let payloadCol = {
       address_contract: "dev-1645632654382-28045928413066",
       address_collection_owner: owner,
-      title: title,
-      descrip: desc,
+      title: title.replace(/,/gi," "),
+      descrip: desc.replace(/,/gi," "),
       mediaicon: mediaIcon,
       mediabanner: mediaBanner,
     }

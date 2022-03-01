@@ -162,7 +162,7 @@ function LightHeroE(props) {
     }),
     onSubmit: async (values) => {
       //evitar que el usuario pueda volver a hacer click hasta que termine el minado
-      setmint({ ...mint, onSubmitDisabled: true });
+      // setmint({ ...mint, onSubmitDisabled: true });
       let account;
       if (mint.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
@@ -210,17 +210,18 @@ function LightHeroE(props) {
         const dateActual = (data.header.timestamp) / 1000000;
         const owner = await getNearAccount()
         console.log(fromNearToYocto(values.price))
+        console.log(values.title.replace(/,/gi," "))
         let newPayload = {
           address_contract: "dev-1645632654382-28045928413066",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection_id: colID,
           collection: collTitle,
           token_metadata: {
-            title: values.title,
-            description: values.description,
+            title: values.title.replace(/,/gi," "),
+            description: values.description.replace(/,/gi," "),
             media: values.image,
             media_hash: "hashhashhashhashhashhashhashhash",
-            extra: "{'tags':'" + values.culture  + "','creator':'" + owner + "','price':'" + (fromNearToYocto(values.price))+ "','status': 'S" + "','on_sale':" + combo + ",'on_auction':" + (!combo) + ",'adressbidder':'accountbidder','highestbidder':'" + (!combo ? 0 : "notienealtos") + "','lowestbidder':'" + (!combo ? fromNearToYocto(values.price) : "notienebajos") + "','expires_at':'" + date.getTime() + "','starts_at':'" + dateActual + "'}"
+            extra: "{'tags':'" + values.culture.replace(/,/gi," ")  + "','creator':'" + owner + "','price':'" + (fromNearToYocto(values.price))+ "','status': 'S" + "','on_sale':" + combo + ",'on_auction':" + (!combo) + ",'adressbidder':'accountbidder','highestbidder':'" + (!combo ? 0 : "notienealtos") + "','lowestbidder':'" + (!combo ? fromNearToYocto(values.price) : "notienebajos") + "','expires_at':'" + date.getTime() + "','starts_at':'" + dateActual + "'}"
             //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
         }
@@ -257,11 +258,11 @@ function LightHeroE(props) {
         //     amount,  
         //   )
         // }
-        let tokenresult = await contract.market_mint_generic(
-          newPayload,
-          300000000000000,
-          amount,
-        )
+        // let tokenresult = await contract.market_mint_generic(
+        //   newPayload,
+        //   300000000000000,
+        //   amount,
+        // )
 
         // Swal.fire({
         //   title: 'Colección creada',
