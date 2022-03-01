@@ -22,6 +22,7 @@ import {
 import Modal from "../components/modal.component";
 import flechaiz from '../assets/landingSlider/img/flechaIz.png'
 import ReactHashtag from "react-hashtag";
+import OfferModal from "../components/offerModal.component";
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
@@ -285,10 +286,28 @@ function LightEcommerceB(props) {
     }
   }
 
+  async function makeAnOffer() {
+    setOfferModal({
+      show: true,
+        title: "Hacer una oferta",
+        message: "Haz una oferta atractiva para obtener este token",
+        loading: false,
+        disabled: false,
+        change: setOfferModal,
+        buttonName: 'X',
+        tokenId: 'hardcoded'
+    })
+  }
+
   let history = useHistory();
   const goToPreviousPath = () => {
       history.goBack();
   }
+
+  //setting state for the offer modal
+  const [offerModal, setOfferModal] = useState({
+    show: false,
+  });
   return (
     <>
     <section className="text-gray-600 body-font overflow-hidden">
@@ -415,8 +434,8 @@ function LightEcommerceB(props) {
             <meta property="og:image" content={`https://ipfs.io/ipfs/${state?.jdata.image}`} />
 
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
-            <div className="flex">
-              <span className="title-font font-medium text-2xl text-gray-900">
+            <div className="flex flex-col">
+              <span className="title-font font-medium text-2xl text-gray-900 text-center w-full">
               {
                   btn ?
                   ""
@@ -428,15 +447,27 @@ function LightEcommerceB(props) {
                       btn ? 
                         ""
                       :
-                            <button
-                            className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                            disabled={btn}
-                            onClick={async () => {
-                              comprar();
-                            }}
-                            >
-                              Comprar
-                            </button>
+                    <div className="flex flex-row flex-wrap justify-around mt-3 text-center">
+                      <button
+                      className={`w-full m-2 lg:w-40 content-center justify-center text-center font-bold text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                      disabled={btn}
+                      onClick={async () => {
+                        comprar();
+                      }}
+                    >
+                      Comprar
+                    </button>
+                      <button
+                        className={`w-full m-2 lg:w-40 justify-center flex  text-center font-bold text-${props.theme}-500 bg-white-500 border-2 border-${props.theme}-500 py-2 px-6  hover:text-white hover:bg-${props.theme}-500 border-0 rounded`}
+                        disabled={btn}
+                        onClick={async () => {
+                          makeAnOffer();
+                        }}
+                      >
+                        Ofertar
+                      </button>
+                    </div>
+                            
                           :            
                           <button
                           className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
@@ -460,6 +491,7 @@ function LightEcommerceB(props) {
         </div>
       </div>
       <Modal {...modal} />
+      <OfferModal {...offerModal} />
     </section>
     </>
   );
