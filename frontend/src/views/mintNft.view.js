@@ -162,7 +162,7 @@ function LightHeroE(props) {
     }),
     onSubmit: async (values) => {
       //evitar que el usuario pueda volver a hacer click hasta que termine el minado
-      // setmint({ ...mint, onSubmitDisabled: true });
+      setmint({ ...mint, onSubmitDisabled: true });
       let account;
       if (mint.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
@@ -258,11 +258,11 @@ function LightHeroE(props) {
         //     amount,  
         //   )
         // }
-        // let tokenresult = await contract.market_mint_generic(
-        //   newPayload,
-        //   300000000000000,
-        //   amount,
-        // )
+        let tokenresult = await contract.market_mint_generic(
+          newPayload,
+          300000000000000,
+          amount,
+        )
 
         // Swal.fire({
         //   title: 'Colección creada',
