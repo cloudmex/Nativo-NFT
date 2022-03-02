@@ -470,7 +470,7 @@ function LightEcommerceB(props) {
                             
                           :            
                           <button
-                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                          className={`flex ml-auto mt-2 text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
                           style={
                             btn
                             ?
@@ -488,7 +488,109 @@ function LightEcommerceB(props) {
               }
             </div>
           </div>
+            <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
+              <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Ofertas Realizadas</div>
+              
+
+              <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
+                <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Ofertante</div>
+                <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
+                <div className="w-4/12 lg:w-2/12 text-center text-lg font-bold">
+                  <div className="w-8/12 text-gray-500">Fecha</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className="h-[250px] overflow-scroll">
+              {
+                <div className={`w-full flex flex-row flex-wrap justify-between py-2 border-b-4 border-gray-50 h-auto bg-gray-200`}>
+                  <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                  <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                  <div className="w-4/12 lg:w-2/12 text-center flex flex-row">
+                    <div className="w-8/12 text-gray-500">02/03/2022</div>
+                  </div>
+                  <div className="w-full lg:w-2/12 flex flex-row flex-wrap justify-around">
+                      <button className="w-4/12 lg:w-6/12 text-sm leading-none text-green-100 bg-green-500 rounded-full  p-[10px]  md:h-full flex flex-row justify-center"><span className="m-auto">Aceptar</span></button>
+                      <button className="w-4/12 lg:w-6/12 text-sm leading-none text-green-100 bg-red-500 rounded-full p-[10px]  md:h-full flex flex-row justify-center"><span className="m-auto">Rechazar</span></button>
+                  </div>
+                </div>
+              }   
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
+                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
+                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
+                  <div className="w-8/12">02/03/2022</div>
+                </div>
+                <div className="lg:w-2/12 ">
+                </div>
+              </div>
+              </div>
+            </div>
         </div>
+
       </div>
       <Modal {...modal} />
       <OfferModal {...offerModal} />
