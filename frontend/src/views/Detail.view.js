@@ -43,6 +43,8 @@ function LightEcommerceB(props) {
   React.useEffect(() => {
     (async () => {
       setStateLogin(await isNearReady());
+      let ownerAccount = await getNearAccount();
+      console.log(ownerAccount);
 
       let totalSupply;
 
