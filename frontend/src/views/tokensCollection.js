@@ -35,6 +35,9 @@ function LightEcommerceA() {
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [ini, setini] = React.useState(true);
+  const [firstID, setFirstID] = React.useState("");
+  const [lastID, setLastID] = React.useState("");
+  const [statePage, setStatePage] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -53,18 +56,32 @@ function LightEcommerceA() {
     settrigger(!trigger)
   }
 
+  const handleBackPage = () => {
+    // console.log("Back")
+    window.scroll(0, 0)
+    setStatePage(false)
+    settrigger(!trigger)
+  }
+
+  const handleForwardPage = () => {
+    // console.log("Forward")
+    window.scroll(0, 0)
+    setStatePage(true)
+    settrigger(!trigger)
+  }
+
   const modificarFiltro = (v) => {
     setfiltro(c => ({ ...c, ...v }))
   }
 
   const { data } = useParams();
 
-  var tokData
-  var colData
+  
   const { tokenid: owner } = useParams();
   React.useEffect(() => {
     // console.log("esto ---> ",owner);
-
+    let tokData
+    let colData
     setload(c => true);
     (async () => {
       let toks, onSaleToks;
@@ -119,9 +136,10 @@ function LightEcommerceA() {
         // };
         // console.log("payload ",payload);
         // toks = await contract.obtener_pagina_by_creator(payload);
-        let info = data.split(":");
-        const queryData = `
-          query($collectionID: String, $first: Int, $skip: Int){
+        let info = data.split(":")
+        if (statePage) {
+          const queryData = `
+          query($collectionID: String, $first: Int, $tokenID: String){
             collections(where: {collectionID: $collectionID}) {
               id
               owner
@@ -135,7 +153,7 @@ function LightEcommerceA() {
               saleVolume
               collectionID
             }
-            tokens(first: $first, skip: $skip, where: {collectionID: $collectionID}) {
+            tokens(first: $first, orderBy: tokenId, orderDirection: asc, where: {collectionID: $collectionID , tokenId_gt: $tokenID}) {
               id
               collection
               collectionID
@@ -157,30 +175,113 @@ function LightEcommerceA() {
             }
           }
         `
-        //Declaramos el cliente
-        const client = new ApolloClient({
-          uri: APIURL,
-          cache: new InMemoryCache(),
-        })
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+          })
 
-        await client
-          .query({
-            query: gql(queryData),
-            variables: {
-              collectionID: data,
-              first: Landing.tokensPerPageNear,
-              skip: Landing.tokensPerPageNear*(page-1)
-            },
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                collectionID: data,
+                first: Landing.tokensPerPageNear,
+                tokenID: lastID
+              },
+            })
+            .then((data) => {
+              console.log("collections data: ", data.data.collections)
+              // console.log("tokens data: ",data.data.tokens)
+              tokData = data.data.tokens
+              colData = data.data.collections[0]
+              setFirstID(data.data.tokens[0].tokenId)
+              setLastID(data.data.tokens[data.data.tokens.length - 1].tokenId)
+            })
+            .catch((err) => {
+              tokData=0
+              //console.log('Error ferching data: ', err)
+            })
+        }
+        else {
+          const queryData = `
+          query($collectionID: String,$first: Int, $tokenID: String){
+            collections(where: {collectionID: $collectionID}) {
+              id
+              owner
+              title
+              tokenCount
+              description
+              contract
+              mediaIcon
+              mediaBanner
+              saleCount
+              saleVolume
+              collectionID
+            }
+            tokens(first: $first, orderBy: tokenId, orderDirection: desc, where: {collectionID: $collectionID , tokenId_lt: $tokenID}) {
+              id
+              collection
+              collectionID
+              contract
+              tokenId
+              owner_id
+              title
+              description
+              media
+              creator
+              price
+              status
+              adressbidder
+              highestbidder
+              lowestbidder
+              expires_at
+              starts_at
+              extra
+            }
+          }
+        `
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
           })
-          .then((data) => {
-            console.log("collections data: ", data.data.collections)
-            // console.log("tokens data: ",data.data.tokens)
-            tokData = data.data.tokens
-            colData = data.data.collections[0]
-          })
-          .catch((err) => {
-            console.log('Error ferching data: ', err)
-          })
+
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                collectionID: data,
+                first: Landing.tokensPerPageNear,
+                tokenID: firstID
+              },
+            })
+            .then((data) => {
+              console.log("collections data: ", data.data.collections)
+              // console.log("tokens data: ",data.data.tokens)
+              tokData = data.data.tokens
+              colData = data.data.collections[0]
+              setFirstID(data.data.tokens[data.data.tokens.length - 1].tokenId)
+              setLastID(data.data.tokens[0].tokenId)
+            })
+            .catch((err) => {
+              tokData=0
+              //console.log('Error ferching data: ', err)
+            })
+        }
+        if(tokData==0){
+          return
+        }
+        // if (firstLoad) {
+        //   setInitID(tokData[0].tokenId)
+        //   // console.log("Se añade init ID")
+        //   setFirstLoad(false)
+        // }
+        // setCountTok(countTok + tokData.length)
+        // if (countTok + tokData.length == colData.tokenCount) {
+        //   setFinalID(tokData[tokData.length - 1].tokenId)
+        // }
+
         // console.log(tokData)
 
         // var pag = await contract.get_pagination_creator_filters({
@@ -233,7 +334,9 @@ function LightEcommerceA() {
           };
         });
         //console.log(tok)
-
+        if (!statePage) {
+          tok = tok.reverse()
+        }
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
@@ -278,10 +381,10 @@ function LightEcommerceA() {
             <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
             <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>{Landing.ownerCol}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br />{Landing.ownerCol}</p>
               </div>
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>{Landing.contract}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br />{Landing.contract}</p>
               </div>
             </div>
           </div>
@@ -303,7 +406,13 @@ function LightEcommerceA() {
 
       </div>
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
-        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+          onClick={() => handleBackPage()}
+        >{"<"}</button>
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+          onClick={() => handleForwardPage()}
+        >{">"}</button>
+        {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
       </div>
       {/* <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
@@ -436,7 +545,13 @@ function LightEcommerceA() {
           }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-          <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
+          {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+            onClick={() => handleBackPage()}
+          >{"<"}</button>
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+            onClick={() => handleForwardPage()}
+          >{">"}</button>
           {/* <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
