@@ -193,8 +193,8 @@ function MisTokens(props) {
         };
         let toks
         const queryData = `
-          query($title: String, $contract: String){
-            tokens(where: {owner_id: $title}) {
+          query($owner: String){
+            tokens(first: $first, skip: $skip, where: {owner_id: $owner}) {
               id
               collection
               collectionID
@@ -226,7 +226,9 @@ function MisTokens(props) {
           .query({
             query: gql(queryData),
             variables:{
-              title: account,
+              owner: account,
+              first: nfts.tokensPerPageNear,
+              skip: nfts.tokensPerPageNear*(page-1)
             },
           })
           .then((data) => {
@@ -239,9 +241,9 @@ function MisTokens(props) {
             console.log('Error ferching data: ',err)
           })
         // let nftsArr = await contract.obtener_pagina_by_owner(payload);
-        // let balance = await contract.nft_supply_for_owner({
-        //   account_id: account,
-        // });
+        let balance = await contract.nft_supply_for_owner({
+          account_id: account,
+        });
 
         // var pag = await contract.get_pagination_owner_filters({
         //   account: account,
@@ -308,14 +310,14 @@ function MisTokens(props) {
             }),
           };
         });
-        let numpage = parseInt(nftsArr.length/nfts.tokensPerPageNear)
-        if(nftsArr.length%nfts.tokensPerPageNear>0){
+        let numpage = parseInt(balance/nfts.tokensPerPageNear)
+        if(balance%nfts.tokensPerPageNear>0){
           numpage++
         }
 
         // console.log(nftsArr);
         //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
-        let nftsToSend = nftsArr.slice(nfts.tokensPerPageNear*(page - 1),nfts.tokensPerPageNear*page)
+        let nftsToSend = nftsArr//.slice(nfts.tokensPerPageNear*(page - 1),nfts.tokensPerPageNear*page)
         setNfts({
           ...nfts,
           nfts: nftsToSend,

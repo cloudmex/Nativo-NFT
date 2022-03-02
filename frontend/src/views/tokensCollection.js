@@ -47,7 +47,7 @@ function LightEcommerceA() {
   const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
 
   const handleChangePage = (e, value) => {
-    // console.log(value)
+    //console.log(value)
     setpage(value)
     window.scroll(0, 0)
     settrigger(!trigger)
@@ -121,7 +121,7 @@ function LightEcommerceA() {
         // toks = await contract.obtener_pagina_by_creator(payload);
         let info = data.split(":");
         const queryData = `
-          query($contract: String, $collectionID: String){
+          query($collectionID: String, $first: Int, $skip: Int){
             collections(where: {collectionID: $collectionID}) {
               id
               owner
@@ -135,7 +135,7 @@ function LightEcommerceA() {
               saleVolume
               collectionID
             }
-            tokens(where: {collectionID: $collectionID}) {
+            tokens(first: $first, skip: $skip, where: {collectionID: $collectionID}) {
               id
               collection
               collectionID
@@ -167,7 +167,9 @@ function LightEcommerceA() {
           .query({
             query: gql(queryData),
             variables: {
-              collectionID: data
+              collectionID: data,
+              first: Landing.tokensPerPageNear,
+              skip: Landing.tokensPerPageNear*(page-1)
             },
           })
           .then((data) => {
@@ -230,18 +232,18 @@ function LightEcommerceA() {
             owner: tok.owner_id
           };
         });
-        console.log(tok)
+        //console.log(tok)
 
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
-        let numpage = parseInt(tok.length / Landing.tokensPerPageNear)
-        if (tok.length % Landing.tokensPerPageNear > 0) {
+        let numpage = parseInt(colData.tokenCount / Landing.tokensPerPageNear)
+        if (colData.tokenCount % Landing.tokensPerPageNear > 0) {
           numpage++
         }
         await setLanding({
           ...Landing,
-          tokens: tok.slice(Landing.tokensPerPageNear * (page - 1), Landing.tokensPerPageNear * page),
+          tokens: tok,
           nPages: numpage,
           titleCol: colData.title,
           ownerCol: colData.owner,
@@ -426,9 +428,9 @@ function LightEcommerceA() {
                 );
               })
               :
-              <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
-                <div class="flex flex-col justify-center">
-                  <h1 class="text-center">Aún no hay NFTs en esta colección</h1>
+              <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
+                <div className="flex flex-col justify-center">
+                  <h1 className="text-center">Aún no hay NFTs en esta colección</h1>
                 </div>
               </div>
           }

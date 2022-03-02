@@ -116,10 +116,13 @@ function LightEcommerceA() {
         // };
         // console.log("payload ",payload);
         // toks = await contract.obtener_pagina_by_creator(payload);
-
+        let collectionCount=0
         const queryData = `
-          query{
-            collections {
+          query($first: Int, $skip: Int){
+            contracts {
+              collectionCount
+            }
+            collections (first: $first, skip: $skip){
               id
               owner
               title
@@ -142,9 +145,16 @@ function LightEcommerceA() {
         await client
           .query({
             query: gql(queryData),
+            variables: {
+              first: Landing.tokensPerPageNear,
+              skip: Landing.tokensPerPageNear*(page-1)
+            },
           })
           .then((data) => {
             // console.log("collections data: ",data.data.collections)
+            data.data.contracts.forEach(e => {
+              collectionCount += e.collectionCount
+            })
             colData = data.data.collections
           })
           .catch((err) => {
@@ -192,6 +202,7 @@ function LightEcommerceA() {
         // }
 
         //convertir los datos al formato esperado por la vista
+        console.log(collectionCount)
         let col = colData.map((collection) => {
           return {
             title: collection.title,
@@ -205,18 +216,18 @@ function LightEcommerceA() {
             collectionID: collection.collectionID 
           };
         });
-        // console.log(col)
+        //console.log(col)
 
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
-        let numpage = parseInt(col.length/Landing.tokensPerPageNear)
-        if(col.length%Landing.tokensPerPageNear>0){
+        let numpage = parseInt(collectionCount/Landing.tokensPerPageNear)
+        if(collectionCount%Landing.tokensPerPageNear>0){
           numpage++
         }
         await setLanding({
           ...Landing,
-          tokens: col.slice(Landing.tokensPerPageNear*(page - 1),Landing.tokensPerPageNear*page),
+          tokens: col,
           nPages: numpage,
         });
       }
