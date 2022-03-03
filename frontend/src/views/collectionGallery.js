@@ -21,7 +21,7 @@ function LightEcommerceA() {
     theme: "yellow",
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
-    page: parseInt( window.localStorage.getItem("page")),
+    page: parseInt(window.localStorage.getItem("page")),
     pag: window.localStorage.getItem("pagSale"),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
@@ -35,6 +35,9 @@ function LightEcommerceA() {
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [ini, setini] = React.useState(true);
+  const [firstID, setFirstID] = React.useState("");
+  const [lastID, setLastID] = React.useState("");
+  const [statePage, setStatePage] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -44,7 +47,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
 
   const handleChangePage = (e, value) => {
     // console.log(value)
@@ -53,62 +56,76 @@ function LightEcommerceA() {
     settrigger(!trigger)
   }
 
+  const handleBackPage = () => {
+    console.log("Back")
+    window.scroll(0, 0)
+    setStatePage(false)
+    settrigger(!trigger)
+  }
+
+  const handleForwardPage = () => {
+    console.log("Forward")
+    window.scroll(0, 0)
+    setStatePage(true)
+    settrigger(!trigger)
+  }
+
   const modificarFiltro = (v) => {
-    setfiltro(c=>({...c, ...v}))
+    setfiltro(c => ({ ...c, ...v }))
   }
 
   var colData
-  const { tokenid:owner } = useParams();
+  const { tokenid: owner } = useParams();
   React.useEffect(() => {
-  // console.log("esto ---> ",owner);
-  
+    // console.log("esto ---> ",owner);
+
     setload(c => true);
     (async () => {
       let toks, onSaleToks;
-      let arr=[];
-      
+      let arr = [];
+
       if (Landing.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-          await syncNets();
-          //obtener cuantos tokens tiene el contrato
-          let totalSupply = await getContract().methods.totalSupply().call();
-          //obtener el numero de tokens a la venta
-          onSaleToks = await getContract().methods.nTokenOnSale.call().call();
+        await syncNets();
+        //obtener cuantos tokens tiene el contrato
+        let totalSupply = await getContract().methods.totalSupply().call();
+        //obtener el numero de tokens a la venta
+        onSaleToks = await getContract().methods.nTokenOnSale.call().call();
 
-            //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
-          for(let i =Landing.page*10; i<(parseInt(Landing.page)+1)*Landing.tokensPerPage ; i++) {
-            //console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
-            //obtiene la informacion de x token
-            let infoe  = await getContract().methods.getItemInfo(i).call();
-            //Valida si está a la venta
-             if(infoe[0].onSale){
-                  //agrega el token al arreglo para mostrar
-                  arr.push(infoe[0]);
-                  }
-                 
-           //Concadena el token encontrado con los tokens que ya se mostraron
-             setLanding({
-              ...Landing,
-              tokens: arr,
-              nPages: Math.ceil(arr.length / Landing.tokensPerPage),
-            });  
-
+        //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
+        for (let i = Landing.page * 10; i < (parseInt(Landing.page) + 1) * Landing.tokensPerPage; i++) {
+          //console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
+          //obtiene la informacion de x token
+          let infoe = await getContract().methods.getItemInfo(i).call();
+          //Valida si está a la venta
+          if (infoe[0].onSale) {
+            //agrega el token al arreglo para mostrar
+            arr.push(infoe[0]);
           }
-           
-     
+
+          //Concadena el token encontrado con los tokens que ya se mostraron
+          setLanding({
+            ...Landing,
+            tokens: arr,
+            nPages: Math.ceil(arr.length / Landing.tokensPerPage),
+          });
+
+        }
+
+
       } else {
         window.contr = await getNearContract();
-      
+
         //instanciar contracto
         let contract = await getNearContract();
         let account = await getNearAccount();
         //console.log("Page",Landing.page)
         //obtener tokens a la venta
-       // //console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
+        // //console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
         // let pag = await contract.get_ids_onsale({
         //    tokens: Landing.tokensPerPageNear})
         //  window.localStorage.setItem('pagSale',pag)
-        
+
         // let payload = {
         //   account : (owner.toString().toLowerCase()+".testnet").toString(),
         //   //from_index: nfts.page, 
@@ -116,13 +133,10 @@ function LightEcommerceA() {
         // };
         // console.log("payload ",payload);
         // toks = await contract.obtener_pagina_by_creator(payload);
-        let collectionCount=0
-        const queryData = `
-          query($first: Int, $skip: Int){
-            contracts {
-              collectionCount
-            }
-            collections (first: $first, skip: $skip){
+        if (statePage) {
+          const queryData = `
+          query($first: Int, $collectionID: String){
+            collections (first: $first, orderBy: collectionID, orderDirection: asc, where: {collectionID_gt: $collectionID}) {
               id
               owner
               title
@@ -136,31 +150,80 @@ function LightEcommerceA() {
             }
           }
         `
-        //Declaramos el cliente
-        const client = new ApolloClient({
-          uri: APIURL,
-          cache: new InMemoryCache(),
-        })
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+          })
 
-        await client
-          .query({
-            query: gql(queryData),
-            variables: {
-              first: Landing.tokensPerPageNear,
-              skip: Landing.tokensPerPageNear*(page-1)
-            },
-          })
-          .then((data) => {
-            // console.log("collections data: ",data.data.collections)
-            data.data.contracts.forEach(e => {
-              collectionCount += e.collectionCount
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                first: Landing.tokensPerPageNear,
+                collectionID: lastID
+              },
             })
-            colData = data.data.collections
+            .then((data) => {
+              // console.log("collections data: ",data.data.collections)
+              //console.log("tokens data: ", data.data.tokens)
+              colData = data.data.collections
+              setFirstID(data.data.collections[0].collectionID)
+              setLastID(data.data.collections[data.data.collections.length - 1].collectionID)
+              // colData = data.data.collections[0]
+            })
+            .catch((err) => {
+              //console.log('Error ferching data: ', err)
+              colData = 0
+            })
+        }
+        else {
+          const queryData = `
+          query($first: Int, $collectionID: String){
+            collections (first: $first, orderBy: collectionID, orderDirection: desc, where: {collectionID_lt: $collectionID}) {
+              id
+              owner
+              title
+              tokenCount
+              description
+              contract
+              mediaIcon
+              saleCount
+              saleVolume
+              collectionID
+            }
+          }
+        `
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
           })
-          .catch((err) => {
-            console.log('Error ferching data: ',err)
-          })
-          // console.log(colData)
+
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                first: Landing.tokensPerPageNear,
+                collectionID: firstID
+              },
+            })
+            .then((data) => {
+              // console.log("collections data: ",data.data.collections)
+              colData = data.data.collections
+              setFirstID(data.data.collections[data.data.collections.length - 1].collectionID)
+              setLastID(data.data.collections[0].collectionID)
+              // colData = data.data.collections[0]
+            })
+            .catch((err) => {
+              //console.log('Error ferching data: ', err)
+              colData = 0
+            })
+        }
+        if (colData == 0) {
+          return
+        }
+        // console.log(colData)
 
         // var pag = await contract.get_pagination_creator_filters({
         //   account : (owner.toString().toLowerCase()).toString(),
@@ -202,7 +265,7 @@ function LightEcommerceA() {
         // }
 
         //convertir los datos al formato esperado por la vista
-        console.log(collectionCount)
+        //console.log(collectionCount)
         let col = colData.map((collection) => {
           return {
             title: collection.title,
@@ -212,34 +275,44 @@ function LightEcommerceA() {
             contract: collection.contract,
             media: collection.mediaIcon,
             saleCount: collection.saleCount,
-            saleVolume: fromYoctoToNear(collection.saleVolume),  
-            collectionID: collection.collectionID 
+            saleVolume: fromYoctoToNear(collection.saleVolume),
+            collectionID: collection.collectionID
           };
         });
+
+        if (!statePage) {
+          col = col.reverse()
+        }
         //console.log(col)
 
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
-        let numpage = parseInt(collectionCount/Landing.tokensPerPageNear)
-        if(collectionCount%Landing.tokensPerPageNear>0){
-          numpage++
-        }
+        // let numpage = parseInt(collectionCount / Landing.tokensPerPageNear)
+        // if (collectionCount % Landing.tokensPerPageNear > 0) {
+        //   numpage++
+        // }
         await setLanding({
           ...Landing,
           tokens: col,
-          nPages: numpage,
+          nPages: 0,
         });
       }
-      
+
     })();
   }, [trigger]);
-  
+
   return (
     <section className="text-gray-600 body-font">
-      
+
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
-        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+          onClick={() => handleBackPage()}
+        >{"<"}</button>
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+          onClick={() => handleForwardPage()}
+        >{">"}</button>
+        {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/> */}
       </div>
       {/* <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
@@ -307,66 +380,66 @@ function LightEcommerceA() {
         </select>
       </div> */}
       <div className="container px-5 py-3 mx-auto ">
-      
+
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
-        
-        <div className={"flex flex-wrap"+(load ? " justify-center" : "")}>
-          
-{/* 
+
+        <div className={"flex flex-wrap" + (load ? " justify-center" : "")}>
+
+          {/* 
           {
             load ?
             <img src={loading} style={{width:"50px"}}/>
             : */}
-            {
-            Landing.tokens.length  > 0 ?
-            Landing.tokens.map((element,key) => {
-              //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
-              //const tokenData = JSON.parse(token.data);
-              return (
-                <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
-                  <a href={"/collection/"+element.collectionID}>
-                    <div className="token bg-[#f7f4f0]">
-                    <div className="block relative h-48 rounded overflow-hidden">
-                    
-                       <img
+          {
+            Landing.tokens.length > 0 ?
+              Landing.tokens.map((element, key) => {
+                //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
+                //const tokenData = JSON.parse(token.data);
+                return (
+                  <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                    <a href={"/collection/" + element.collectionID}>
+                      <div className="token bg-[#f7f4f0]">
+                        <div className="block relative h-48 rounded overflow-hidden">
+
+                          <img
                             alt="Icono de la coleccion"
                             className="imgaa object-cover object-center w-full h-full block"
                             src={`https://ipfs.io/ipfs/${element.media}`}
-                          /> 
-               
-                   
-                           
-                    </div>
-                    <div className="mt-4 ">
-                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
-                        {element.title}
-                      </h2>
-                      <p className="mt-1 mb-4 ml-2">
-                        {element.description == "" ? "Esta coleccion no tiene una descripcion" : element.description}
-                        <br/>
-                        <b>Creador:</b> {element.owner+"\n"}
-                        <br/>
-                        <b>Contrato:</b> {element.contract+"\n"}
-                        <br/>
-                        <b>No. de tokens:</b> {element.tokenCount+"\n"}
-                        <br/>
-                        <b>No. de ventas:</b> {element.saleCount+"\n"}
-                        <br/>
-                        <b>Vol. de ventas:</b> {element.saleVolume+" "+Landing.currency+"\n"}
-                        <br/>
-                        {/* {Landing.blockchain==0 &&
+                          />
+
+
+
+                        </div>
+                        <div className="mt-4 ">
+                          <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                            {element.title}
+                          </h2>
+                          <p className="mt-1 mb-4 ml-2">
+                            {element.description == "" ? "Esta coleccion no tiene una descripcion" : element.description}
+                            <br />
+                            <b>Creador:</b> {element.owner + "\n"}
+                            <br />
+                            <b>Contrato:</b> {element.contract + "\n"}
+                            <br />
+                            <b>No. de tokens:</b> {element.tokenCount + "\n"}
+                            <br />
+                            <b>No. de ventas:</b> {element.saleCount + "\n"}
+                            <br />
+                            <b>Vol. de ventas:</b> {element.saleVolume + " " + Landing.currency + "\n"}
+                            <br />
+                            {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
                               fromYoctoToNear(token.price) + " " + Landing.currency} */}
-                      </p>
-                    </div>
-                    </div>
-                  </a>
-                </div>
-              );
-            })
-            :
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                );
+              })
+              :
               <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
                 <div class="flex flex-col justify-center">
                   <h1 class="text-center">Actualmente no hay colecciones disponibles</h1>
@@ -375,7 +448,13 @@ function LightEcommerceA() {
           }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+            onClick={() => handleBackPage()}
+          >{"<"}</button>
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+            onClick={() => handleForwardPage()}
+          >{">"}</button>
+          {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
           {/* <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
