@@ -32,8 +32,8 @@ function MisTokens(props) {
   const [page, setpage] = React.useState(1);
   const [trigger, settrigger] = React.useState(true);
   const [ini, setini] = React.useState(true);
-  const [firstID, setFirstID] = React.useState("");
-  const [lastID, setLastID] = React.useState("");
+  const [firstID, setFirstID] = React.useState(-1);
+  const [lastID, setLastID] = React.useState(-1);
   const [statePage, setStatePage] = React.useState(true)
   const [firstLoad, setFirstLoad] = React.useState(true)
   const [nfts, setNfts] = useState({
@@ -57,7 +57,7 @@ function MisTokens(props) {
   // const [imgs, setImgs] = useState([]);
   let imgs = [];
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   const handleChangePage = (e, value) => {
     console.log(value)
@@ -212,7 +212,7 @@ function MisTokens(props) {
         let toks
         if (statePage) {
           const queryData = `
-          query($owner: String, $first: Int, $tokenID: String){
+          query($owner: String, $first: Int, $tokenID: Int){
             tokens(first: $first, orderBy: tokenId, orderDirection: asc, where: {owner_id: $owner, tokenId_gt: $tokenID}) {
               id
               collection
@@ -266,7 +266,7 @@ function MisTokens(props) {
         }
         else {
           const queryData = `
-          query($owner: String, $first: Int, $tokenID: String){
+          query($owner: String, $first: Int, $tokenID: Int){
             tokens(first: $first, orderBy: tokenId, orderDirection: desc, where: {owner_id: $owner, tokenId_lt: $tokenID}) {
               id
               collection

@@ -35,8 +35,8 @@ function LightEcommerceA() {
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [ini, setini] = React.useState(true);
-  const [firstID, setFirstID] = React.useState("");
-  const [lastID, setLastID] = React.useState("");
+  const [firstID, setFirstID] = React.useState(-1);
+  const [lastID, setLastID] = React.useState(-1);
   const [statePage, setStatePage] = React.useState(true)
   const [firstLoad, setFirstLoad] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
@@ -48,7 +48,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   const handleChangePage = (e, value) => {
     //console.log(value)
@@ -140,7 +140,7 @@ function LightEcommerceA() {
         let info = data.split(":")
         if (statePage) {
           const queryData = `
-          query($collectionID: String, $first: Int, $tokenID: String){
+          query($collectionID: String, $first: Int, $tokenID: Int){
             collections(where: {collectionID: $collectionID}) {
               id
               owner
@@ -193,7 +193,7 @@ function LightEcommerceA() {
             })
             .then((data) => {
               console.log("collections data: ", data.data.collections)
-              // console.log("tokens data: ",data.data.tokens)
+              console.log("tokens data: ",data.data.tokens)
               tokData = data.data.tokens
               colData = data.data.collections[0]
               setFirstID(data.data.tokens[0].tokenId)
@@ -202,12 +202,12 @@ function LightEcommerceA() {
             })
             .catch((err) => {
               tokData=0
-              //console.log('Error ferching data: ', err)
+              console.log('Error ferching data: ', err)
             })
         }
         else {
           const queryData = `
-          query($collectionID: String,$first: Int, $tokenID: String){
+          query($collectionID: String,$first: Int, $tokenID: Int){
             collections(where: {collectionID: $collectionID}) {
               id
               owner

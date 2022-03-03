@@ -35,8 +35,8 @@ function LightEcommerceA() {
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [ini, setini] = React.useState(true);
-  const [firstID, setFirstID] = React.useState("");
-  const [lastID, setLastID] = React.useState("");
+  const [firstID, setFirstID] = React.useState(-1);
+  const [lastID, setLastID] = React.useState(-1);
   const [statePage, setStatePage] = React.useState(true)
   const [firstLoad, setFirstLoad] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
@@ -48,7 +48,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   const handleChangePage = (e, value) => {
     // console.log(value)
@@ -136,7 +136,7 @@ function LightEcommerceA() {
         // toks = await contract.obtener_pagina_by_creator(payload);
         if (statePage) {
           const queryData = `
-          query($first: Int, $collectionID: String){
+          query($first: Int, $collectionID: Int){
             collections (first: $first, orderBy: collectionID, orderDirection: asc, where: {collectionID_gt: $collectionID}) {
               id
               owner
@@ -181,7 +181,7 @@ function LightEcommerceA() {
         }
         else {
           const queryData = `
-          query($first: Int, $collectionID: String){
+          query($first: Int, $collectionID: Int){
             collections (first: $first, orderBy: collectionID, orderDirection: desc, where: {collectionID_lt: $collectionID}) {
               id
               owner
@@ -448,9 +448,9 @@ function LightEcommerceA() {
                 );
               })
               :
-              <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
-                <div class="flex flex-col justify-center">
-                  <h1 class="text-center">Actualmente no hay colecciones disponibles</h1>
+              <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
+                <div className="flex flex-col justify-center">
+                  <h1 className="text-center">Actualmente no hay colecciones disponibles</h1>
                 </div>
               </div>
           }
