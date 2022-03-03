@@ -38,6 +38,7 @@ function LightEcommerceA() {
   const [firstID, setFirstID] = React.useState("");
   const [lastID, setLastID] = React.useState("");
   const [statePage, setStatePage] = React.useState(true)
+  const [firstLoad, setFirstLoad] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -197,6 +198,7 @@ function LightEcommerceA() {
               colData = data.data.collections[0]
               setFirstID(data.data.tokens[0].tokenId)
               setLastID(data.data.tokens[data.data.tokens.length - 1].tokenId)
+              setpage(page+1)
             })
             .catch((err) => {
               tokData=0
@@ -263,6 +265,7 @@ function LightEcommerceA() {
               colData = data.data.collections[0]
               setFirstID(data.data.tokens[data.data.tokens.length - 1].tokenId)
               setLastID(data.data.tokens[0].tokenId)
+              setpage(page-1)
             })
             .catch((err) => {
               tokData=0
@@ -271,6 +274,10 @@ function LightEcommerceA() {
         }
         if(tokData==0){
           return
+        }
+        if(firstLoad){
+          setpage(1)
+          setFirstLoad(false)
         }
         // if (firstLoad) {
         //   setInitID(tokData[0].tokenId)
@@ -409,7 +416,8 @@ function LightEcommerceA() {
         <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
           onClick={() => handleBackPage()}
         >{"<"}</button>
-        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+        <p>{page}</p>
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
           onClick={() => handleForwardPage()}
         >{">"}</button>
         {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
@@ -547,9 +555,10 @@ function LightEcommerceA() {
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
           {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
           <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
-            onClick={() => handleBackPage()}
+          onClick={() => handleBackPage()}
           >{"<"}</button>
-          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+          <p>{page}</p>
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
             onClick={() => handleForwardPage()}
           >{">"}</button>
           {/* <nav

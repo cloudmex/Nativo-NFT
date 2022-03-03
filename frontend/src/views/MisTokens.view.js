@@ -35,6 +35,7 @@ function MisTokens(props) {
   const [firstID, setFirstID] = React.useState("");
   const [lastID, setLastID] = React.useState("");
   const [statePage, setStatePage] = React.useState(true)
+  const [firstLoad, setFirstLoad] = React.useState(true)
   const [nfts, setNfts] = useState({
     nfts: [],
     page: parseInt(window.localStorage.getItem("Mypage")),
@@ -255,6 +256,7 @@ function MisTokens(props) {
               toks = data.data.tokens
               setFirstID(data.data.tokens[0].tokenId)
               setLastID(data.data.tokens[data.data.tokens.length - 1].tokenId)
+              setpage(page+1)
               // colData = data.data.collections[0]
             })
             .catch((err) => {
@@ -308,6 +310,7 @@ function MisTokens(props) {
               toks = data.data.tokens
               setFirstID(data.data.tokens[data.data.tokens.length - 1].tokenId)
               setLastID(data.data.tokens[0].tokenId)
+              setpage(page-1)
               // colData = data.data.collections[0]
             })
             .catch((err) => {
@@ -318,7 +321,10 @@ function MisTokens(props) {
         if (toks == 0) {
           return
         }
-        
+        if(firstLoad){
+          setpage(1)
+          setFirstLoad(false)
+        }
 
         
         // let nftsArr = await contract.obtener_pagina_by_owner(payload);
@@ -472,7 +478,8 @@ function MisTokens(props) {
             <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
               onClick={() => handleBackPage()}
             >{"<"}</button>
-            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+            <p>{page}</p>
+            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
               onClick={() => handleForwardPage()}
             >{">"}</button>
             {/* <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
@@ -652,7 +659,8 @@ function MisTokens(props) {
             <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
               onClick={() => handleBackPage()}
             >{"<"}</button>
-            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4"
+            <p>{page}</p>
+            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
               onClick={() => handleForwardPage()}
             >{">"}</button>
             {/* <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
