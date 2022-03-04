@@ -63,7 +63,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);
@@ -213,7 +213,7 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      address_contract: "dev-1645632654382-28045928413066",
+      address_contract: "dev-1646411564157-86083887856580",
       address_collection_owner: owner,
       title: title,
       descrip: desc,

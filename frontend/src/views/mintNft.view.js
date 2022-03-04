@@ -50,7 +50,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
   useEffect(() => {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
@@ -211,7 +211,7 @@ function LightHeroE(props) {
         const owner = await getNearAccount()
         console.log(fromNearToYocto(values.price))
         let newPayload = {
-          address_contract: "dev-1645632654382-28045928413066",//(comboCol? values.contractCol : contData),
+          address_contract: "dev-1646411564157-86083887856580",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection_id: colID,
           collection: collTitle,
