@@ -89,13 +89,14 @@ export async function nearSignIn(URL) {
   (process.env.REACT_APP_NEAR_ENV == "mainnet" ? window.near = await connect(config.mainnet) : window.near = await connect(config.testnet))
   //window.near = await connect(config.testnet);
   window.wallet = new WalletConnection(window.near, "latina");
-
+  console.log(URL)
   window.wallet.requestSignIn(
     contract_name, // contract requesting access
     "Latin-Art", // optional,
     URL, //EXITO
     URL // FRACASO
   );
+  console.log(URL)
 }
 
 export async function isNearReady() {
