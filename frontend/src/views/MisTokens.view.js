@@ -254,8 +254,8 @@ function MisTokens(props) {
               // console.log("collections data: ",data.data.collections)
               console.log("tokens data: ", data.data.tokens)
               toks = data.data.tokens
-              setFirstID(data.data.tokens[0].tokenId)
-              setLastID(data.data.tokens[data.data.tokens.length - 1].tokenId)
+              setFirstID(parseInt(data.data.tokens[0].tokenId))
+              setLastID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
               setpage(page+1)
               // colData = data.data.collections[0]
             })
@@ -308,8 +308,8 @@ function MisTokens(props) {
               // console.log("collections data: ",data.data.collections)
               console.log("tokens data: ", data.data.tokens)
               toks = data.data.tokens
-              setFirstID(data.data.tokens[data.data.tokens.length - 1].tokenId)
-              setLastID(data.data.tokens[0].tokenId)
+              setFirstID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
+              setLastID(parseInt(data.data.tokens[0].tokenId))
               setpage(page-1)
               // colData = data.data.collections[0]
             })

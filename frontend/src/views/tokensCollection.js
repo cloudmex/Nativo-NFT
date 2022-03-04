@@ -196,8 +196,8 @@ function LightEcommerceA() {
               console.log("tokens data: ",data.data.tokens)
               tokData = data.data.tokens
               colData = data.data.collections[0]
-              setFirstID(data.data.tokens[0].tokenId)
-              setLastID(data.data.tokens[data.data.tokens.length - 1].tokenId)
+              setFirstID(parseInt(data.data.tokens[0].tokenId))
+              setLastID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
               setpage(page+1)
             })
             .catch((err) => {
@@ -263,8 +263,8 @@ function LightEcommerceA() {
               // console.log("tokens data: ",data.data.tokens)
               tokData = data.data.tokens
               colData = data.data.collections[0]
-              setFirstID(data.data.tokens[data.data.tokens.length - 1].tokenId)
-              setLastID(data.data.tokens[0].tokenId)
+              setFirstID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
+              setLastID(parseInt(data.data.tokens[0].tokenId))
               setpage(page-1)
             })
             .catch((err) => {

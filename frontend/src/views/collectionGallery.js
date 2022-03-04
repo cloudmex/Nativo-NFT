@@ -137,7 +137,7 @@ function LightEcommerceA() {
         if (statePage) {
           const queryData = `
           query($first: Int, $collectionID: Int){
-            collections (first: $first, orderBy: collectionID, orderDirection: asc, where: {collectionID_gt: $collectionID}) {
+            collections (first: $first, orderBy: collectionID, orderDirection: asc, where: {tokenCount_gt: 0,collectionID_gt: $collectionID}) {
               id
               owner
               title
@@ -169,8 +169,8 @@ function LightEcommerceA() {
               // console.log("collections data: ",data.data.collections)
               //console.log("tokens data: ", data.data.tokens)
               colData = data.data.collections
-              setFirstID(data.data.collections[0].collectionID)
-              setLastID(data.data.collections[data.data.collections.length - 1].collectionID)
+              setFirstID(parseInt(data.data.collections[0].collectionID))
+              setLastID(parseInt(data.data.collections[data.data.collections.length - 1].collectionID))
               setpage(page+1)
               // colData = data.data.collections[0]
             })
@@ -182,7 +182,7 @@ function LightEcommerceA() {
         else {
           const queryData = `
           query($first: Int, $collectionID: Int){
-            collections (first: $first, orderBy: collectionID, orderDirection: desc, where: {collectionID_lt: $collectionID}) {
+            collections (first: $first, orderBy: collectionID, orderDirection: desc, where: {tokenCount_gt: 0,collectionID_lt: $collectionID}) {
               id
               owner
               title
@@ -213,8 +213,8 @@ function LightEcommerceA() {
             .then((data) => {
               // console.log("collections data: ",data.data.collections)
               colData = data.data.collections
-              setFirstID(data.data.collections[data.data.collections.length - 1].collectionID)
-              setLastID(data.data.collections[0].collectionID)
+              setFirstID(parseInt(data.data.collections[data.data.collections.length - 1].collectionID))
+              setLastID(parseInt(data.data.collections[0].collectionID))
               setpage(page-1)
               // colData = data.data.collections[0]
             })
