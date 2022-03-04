@@ -516,8 +516,9 @@ function LightHeroE(props) {
                       setcollTitle("")
                     }
                     else{
-                      setcontData(collecData.find(element => element.title == e.target.value).contract)
-                      setColID(collecData.find(element => element.title == e.target.value).collectionID)
+                      console.log(e.target.value)
+                      setcontData(collecData.find(element => element.title.trim() == e.target.value).contract)
+                      setColID(collecData.find(element => element.title.trim() == e.target.value).collectionID)
                       setcollTitle(e.target.value)
                     }
                   }

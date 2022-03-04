@@ -215,14 +215,14 @@ function LightHeroE(props) {
     let payloadCol = {
       address_contract: "dev-1646411564157-86083887856580",
       address_collection_owner: owner,
-      title: title,
+      title: title.trim(),
       descrip: desc,
       mediaicon: mediaIcon,
       mediabanner: mediaBanner,
     }
     console.log(payloadCol);
     // console.log(desc);
-    if (title == "" || desc == "" || mediaIcon == "" || mediaBanner == "") {
+    if (title.trim() == "" || desc == "" || mediaIcon == "" || mediaBanner == "") {
       Swal.fire({
         title: 'Datos incompletos',
         text: 'Para crear una colección es necesario que rellenes todos los campos, verifica que hayas rellenado todos los datos',
@@ -230,7 +230,7 @@ function LightHeroE(props) {
         confirmButtonColor: '#E79211'
       })
       return
-    } else if (title.length < 10) {
+    } else if (title.trim().length < 10) {
       Swal.fire({
         title: 'Titulo de la colección muy corto',
         text: 'El titulo de la coleccion debe de tener minimo 10 caracteres',
