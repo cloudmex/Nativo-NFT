@@ -10,19 +10,24 @@ near_sdk::setup_alloc!();
 pub type Balance = u128;
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct OldContract {
+    contract_owner:AccountId,
     num_whitelist: u64,
     num_collections: u64,
+
     whitelist_contracts: HashMap<AccountId, ExternalContract>,
+    whitelist_collections: HashMap<String, DataCollection>,
     market_contract_address: AccountId,
     market_contract_address_dev: AccountId,
 }
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
+    contract_owner:AccountId,
     num_whitelist: u64,
     num_collections: u64,
 
     whitelist_contracts: HashMap<AccountId, ExternalContract>,
+    whitelist_collections: HashMap<String, DataCollection>,
     market_contract_address: AccountId,
     market_contract_address_dev: AccountId,
 }
@@ -33,7 +38,16 @@ pub struct ExternalContract {
     owner_id: AccountId,
     contract_name: String,
 }
-
+//structure for whitelist information
+#[derive(BorshDeserialize, BorshSerialize)]
+pub struct DataCollection {
+    contract_address:AccountId,
+    owner_id: AccountId,
+    title: String,
+    description:String,
+    icon_media: String,
+    banner_media:String,
+}
 
 //aqui van los nombres de los metodos que mandaremos llamar
 #[ext_contract(ext_nft)]
@@ -83,10 +97,12 @@ impl Default for Contract {
         };
         let def_hash = HashMap::from([("ntv-mint.near".to_string(), def_contract)]);
         Self {
+            contract_owner:env::signer_account_id(),
             num_whitelist: 0,
             num_collections: 0,
 
             whitelist_contracts: def_hash,
+            whitelist_collections:HashMap::new(),
             market_contract_address: env::current_account_id(),
             market_contract_address_dev: env::current_account_id(),
         }
@@ -106,10 +122,12 @@ impl Contract {
         };
         let def_hash = HashMap::from([("ntv-mint.near".to_string(), def_contract)]);
         Self {
+            contract_owner:env::signer_account_id(),
             num_whitelist: 0,
             num_collections: 0,
 
             whitelist_contracts: def_hash,
+            whitelist_collections:HashMap::new(),
             market_contract_address: env::current_account_id(),
             market_contract_address_dev: env::current_account_id(),
         }
@@ -124,19 +142,21 @@ impl Contract {
         };
         let def_hash = HashMap::from([("ntv-mint.near".to_string(), def_contract)]);
         Self {
+            contract_owner:env::signer_account_id(),
             num_whitelist: 0,
             num_collections: 0,
 
             whitelist_contracts: def_hash,
+            whitelist_collections:HashMap::new(),
             market_contract_address: env::current_account_id(),
             market_contract_address_dev: env::current_account_id(),
         }
     }
     pub fn get_market_contract(&self) {
         log!(
-            "{},{}",
-            env::current_account_id(),
-            self.market_contract_address_dev
+            "market contract : {}, owner_contract : {}",
+             self.market_contract_address_dev,
+             self.contract_owner
         );
     }
     #[payable]
@@ -316,51 +336,42 @@ impl Contract {
         mediabanner: String,
     ) {
         //validate that info isnt empty
-        assert_eq!(
-            address_contract.to_string().is_empty(),
-            false,
-            "the contract address cannot be empty"
-        );
-        assert_eq!(
-            address_collection_owner.to_string().is_empty(),
-            false,
-            "the owner address cannot be empty"
-        );
+        assert_eq!(address_contract.to_string().is_empty(),false,"the contract address cannot be empty");
+        assert_eq!(address_collection_owner.clone().to_string().is_empty(),false,"the owner address cannot be empty");
         assert_eq!(title.is_empty(), false, "the title cannot be empty");
         assert_eq!(descrip.is_empty(), false, "the description cannot be empty");
-        assert_eq!(
-            mediaicon.is_empty(),
-            false,
-            "the media icon link cannot be empty"
-        );
-        assert_eq!(
-            mediabanner.is_empty(),
-            false,
-            "the media banners link  cannot be empty"
-        );
+        assert_eq!(mediaicon.is_empty(),false,"the media icon link cannot be empty");
+        assert_eq!(mediabanner.is_empty(),false,"the media banners link  cannot be empty");
         //validate the amount send is correct
         let amount = env::attached_deposit();
-        assert_eq!(
-            "100000000000000000000000"
-                .to_string()
-                .parse::<u128>()
-                .unwrap(),
-            amount,
-            "Cantidad incorrecta,verifica el costo exacto!"
-        );
+        assert_eq!("100000000000000000000000".to_string().parse::<u128>().unwrap(),amount,"Cantidad incorrecta,verifica el costo exacto!");
         //validate that the address_contract  exist in the white lists
-
         let contract_exist = self.whitelist_contracts.get(&address_contract.clone());
         if contract_exist.is_none() {
-            panic!(
-                "This address {} is not approved to create collections!",
-                address_contract.clone()
-            );
+            panic!("This address {} is not approved to create collections!",address_contract.clone());
         }
-
+        //validate that the collection doesnt exits in the whitelist_collections
+        let unique_id_collecion= address_contract.clone()+&address_collection_owner.clone()+&self.num_collections.clone().to_string();
+        let collection_exist=self.whitelist_collections.get(&unique_id_collecion.clone());
+        if !collection_exist.is_none() {
+            panic!("This collection {} already exist in the contract!",title.clone());
+        }
+        else {
+            let new_col= DataCollection {
+            contract_address:address_contract.clone(),
+            owner_id: address_collection_owner.clone(),
+            title: title.clone(),
+            description:descrip.clone(),
+            icon_media: mediaicon.clone(),
+            banner_media:mediabanner.clone(),
+            };
+        self.whitelist_collections
+        .insert(unique_id_collecion, new_col);
+        
+        
         log!(
             "{},{},{},{},{},{},{}",
-            address_contract,
+            address_contract, 
             address_collection_owner,
             title,
             descrip,
@@ -369,6 +380,10 @@ impl Contract {
             self.num_collections.clone()
         );
         self.num_collections += 1;
+        }//end else
+        
+
+        
     }
 
     #[payable]
@@ -378,6 +393,12 @@ impl Contract {
         address_owner: AccountId,
         contract_name: String,
     ) {
+        //validate that only the owner contract add new contract address
+        assert_eq!(
+            self.contract_owner==env::signer_account_id(),
+            true,
+            "!the you are not the contract owner address¡"
+        );
         // validate that the info sended isnt empty
         assert_eq!(
             address_contract.to_string().is_empty(),
@@ -547,10 +568,12 @@ impl Contract {
         log!("reading state");
         let old_state: OldContract = env::state_read().expect("failed");
         Self {
+            contract_owner:old_state.contract_owner,
             num_whitelist: old_state.num_whitelist,
             num_collections: old_state.num_collections,
 
             whitelist_contracts: old_state.whitelist_contracts,
+            whitelist_collections:HashMap::new(),
             market_contract_address: old_state.market_contract_address,
             market_contract_address_dev: old_state.market_contract_address_dev,
         }
