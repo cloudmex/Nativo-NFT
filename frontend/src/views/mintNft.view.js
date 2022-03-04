@@ -518,7 +518,7 @@ function LightHeroE(props) {
                     else{
                       setcontData(collecData.find(element => element.id == e.target.value).contract)
                       setColID(collecData.find(element => element.id == e.target.value).collectionID)
-                      setcollTitle(e.target.value)
+                      setcollTitle(collecData.find(element => element.id == e.target.value).title)
                     }
                   }
                   }>
