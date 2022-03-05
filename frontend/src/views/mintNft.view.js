@@ -516,9 +516,9 @@ function LightHeroE(props) {
                       setcollTitle("")
                     }
                     else{
-                      setcontData(collecData.find(element => element.title == e.target.value).contract)
-                      setColID(collecData.find(element => element.title == e.target.value).collectionID)
-                      setcollTitle(e.target.value)
+                      setcontData(collecData.find(element => element.id == e.target.value).contract)
+                      setColID(collecData.find(element => element.id == e.target.value).collectionID)
+                      setcollTitle(collecData.find(element => element.id == e.target.value).title)
                     }
                   }
                   }>
@@ -526,7 +526,7 @@ function LightHeroE(props) {
                     {
                       collecData.length > 0 ?
                         collecData.map((element) =>
-                          <option key={element.id}>{element.title}</option>
+                          <option key={element.id} value={element.id}>{element.title}</option>
 
                         ) : null
                     }</select>
