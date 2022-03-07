@@ -19,7 +19,7 @@ function LightHeroE(props) {
           </p>
 
           <div className="flex  justify-between">
-            <Link to="/galeria">
+            <Link to="/collections">
               <button className="bg-gray-100 inline-flex py-3 px-5 rounded-lg items-center justify-end hover:bg-gray-200 focus:outline-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +36,7 @@ function LightHeroE(props) {
                   <path d="m21.5 2h-15c-1.378 0-2.5 1.122-2.5 2.5v11c0 1.378 1.122 2.5 2.5 2.5h15c1.378 0 2.5-1.122 2.5-2.5v-11c0-1.378-1.122-2.5-2.5-2.5zm-15 2h15c.276 0 .5.224.5.5v7.099l-3.159-3.686c-.335-.393-.82-.603-1.341-.615-.518.003-1.004.233-1.336.631l-3.714 4.458-1.21-1.207c-.684-.684-1.797-.684-2.48 0l-2.76 2.759v-9.439c0-.276.224-.5.5-.5z" />
                 </svg>
                 <span className="ml-4 flex items-start flex-col leading-none">
-                  <span className="title-font font-medium">Galeria</span>
+                  <span className="title-font font-medium">Colecciones</span>
                 </span>
               </button>
             </Link>
