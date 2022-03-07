@@ -39,6 +39,7 @@ function LightEcommerceA() {
   const [lastID, setLastID] = React.useState(-1);
   const [statePage, setStatePage] = React.useState(true)
   const [firstLoad, setFirstLoad] = React.useState(true)
+  const [loadMsg,setLoadMsg] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -196,6 +197,9 @@ function LightEcommerceA() {
               console.log("tokens data: ",data.data.tokens)
               tokData = data.data.tokens
               colData = data.data.collections[0]
+              if(data.data.collections.length <= 0){
+                setLoadMsg(false)
+              }
               setFirstID(parseInt(data.data.tokens[0].tokenId))
               setLastID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
               setpage(page+1)
@@ -547,7 +551,7 @@ function LightEcommerceA() {
               :
               <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
                 <div className="flex flex-col justify-center">
-                  <h1 className="text-center">Aún no hay NFTs en esta colección</h1>
+                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Aún no hay NFTs en esta colección"}</h1>
                 </div>
               </div>
           }
