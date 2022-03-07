@@ -39,6 +39,7 @@ function LightEcommerceA() {
   const [lastID, setLastID] = React.useState(-1);
   const [statePage, setStatePage] = React.useState(true)
   const [firstLoad, setFirstLoad] = React.useState(true)
+  const [loadMsg,setLoadMsg] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -166,9 +167,13 @@ function LightEcommerceA() {
               },
             })
             .then((data) => {
-              // console.log("collections data: ",data.data.collections)
+              console.log("collections data: ",data.data.collections)
               //console.log("tokens data: ", data.data.tokens)
               colData = data.data.collections
+              console.log(data.data.collections)
+              if(data.data.collections.length <= 0){
+                setLoadMsg(false)
+              }
               setFirstID(parseInt(data.data.collections[0].collectionID))
               setLastID(parseInt(data.data.collections[data.data.collections.length - 1].collectionID))
               setpage(page+1)
@@ -450,7 +455,7 @@ function LightEcommerceA() {
               :
               <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
                 <div className="flex flex-col justify-center">
-                  <h1 className="text-center">Actualmente no hay colecciones disponibles</h1>
+                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Actualmente no hay colecciones disponibles"}</h1>
                 </div>
               </div>
           }
