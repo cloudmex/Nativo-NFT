@@ -1,9 +1,19 @@
 use near_contract_standards::non_fungible_token::metadata::TokenMetadata;
 use near_contract_standards::non_fungible_token::TokenId;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{env, ext_contract, log, near_bindgen, AccountId, Promise, PromiseResult};
+use near_sdk::{env, ext_contract,Gas, log,serde_json::json, near_bindgen, AccountId, Promise, PromiseResult};
 use std::collections::HashMap;
+use near_sdk::serde::{Deserialize, Serialize};
+//use near_sdk::env::BLOCKCHAIN_INTERFACE;
+
 use std::str;
+ 
+
+pub const TGAS: u64 = 1_000_000_000_000;
+/// Gas for upgrading this contract on promise creation + deploying new contract.
+pub const GAS_FOR_UPGRADE_SELF_DEPLOY: Gas = 30_000_000_000_000;
+
+pub const GAS_FOR_UPGRADE_REMOTE_DEPLOY: Gas = 10_000_000_000_000;
 
 near_sdk::setup_alloc!();
 /// Balance is type for storing amounts of tokens.
@@ -18,6 +28,7 @@ pub struct OldContract {
     whitelist_collections: HashMap<String, DataCollection>,
     market_contract_address: AccountId,
     market_contract_address_dev: AccountId,
+    market_contract_treasury: AccountId,
 }
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -30,8 +41,31 @@ pub struct Contract {
     whitelist_collections: HashMap<String, DataCollection>,
     market_contract_address: AccountId,
     market_contract_address_dev: AccountId,
+    market_contract_treasury: AccountId,
+
 }
 
+#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Thegraphstructure {
+    contract_name:String,
+    collection:String,
+    collection_id:String,
+    token_id : String,
+    owner_id : String,
+    title : String,
+    description : String,
+    media : String,
+    creator : String,
+    price : String,
+    status: String, // sale status
+    adressbidder: String,
+    highestbid: String,
+    lowestbid: String,
+    expires_at: String,
+    starts_at: String,
+    extra:String,
+}
 //structure for whitelist information
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct ExternalContract {
@@ -69,8 +103,10 @@ trait NonFungibleToken {
     );
     fn buy_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String);
     fn bid_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String);
+    fn close_bid_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String,status:bool);
+
     
-    fn sell_token_ext(&mut self, token_id: TokenId, price: String,collection_id: String, collection: String);
+    fn sell_token_ext(&mut self, token_id: TokenId, price:u128,collection_id: String, collection: String);
     fn remove_token_ext(&mut self, token_id: TokenId,collection_id: String, collection: String);
     // view method
     fn nft_token(&self, token_id: String) -> Option<Token>;
@@ -80,22 +116,24 @@ trait NonFungibleToken {
 #[ext_contract(ext_self)]
 pub trait MyContract {
     fn get_promise_result(&self, method: String) -> String;
-    fn save_mint_ttg(&self, info: String);
-    fn save_buy_ttg(&self, info: String);
-    fn save_sell_ttg(&self, info: String);
-    fn save_remove_ttg(&self, info: String);
-    fn save_bid_ttg(&self, info: String);
+    fn save_mint_ttg(&self, info: Thegraphstructure);
+    fn save_buy_ttg(&self, info: Thegraphstructure);
+    fn save_sell_ttg(&self, info: Thegraphstructure);
+    fn save_remove_ttg(&self, info: Thegraphstructure);
+    fn save_bid_ttg(&self, info: Thegraphstructure);
+    fn save_offer_bit_ttg(&self, info: Thegraphstructure);
 
-    fn dontsave_ttg(&self, info: String);
+     
+    fn dontsave_ttg(&self, info: Thegraphstructure);
 }
 
 impl Default for Contract {
     fn default() -> Self {
         let def_contract = ExternalContract {
             owner_id: env::signer_account_id(),
-            contract_name: "Nativo minter".to_string(),
+            contract_name: "Nativo market".to_string(),
         };
-        let def_hash = HashMap::from([("ntv-mint.near".to_string(), def_contract)]);
+        let def_hash = HashMap::from([(env::current_account_id(), def_contract)]);
         Self {
             contract_owner:env::signer_account_id(),
             num_whitelist: 0,
@@ -105,6 +143,7 @@ impl Default for Contract {
             whitelist_collections:HashMap::new(),
             market_contract_address: env::current_account_id(),
             market_contract_address_dev: env::current_account_id(),
+            market_contract_treasury: env::current_account_id(),
         }
     }
 }
@@ -118,9 +157,9 @@ impl Contract {
     pub fn new_default_meta() -> Self {
         let def_contract = ExternalContract {
             owner_id: env::signer_account_id(),
-            contract_name: "Nativo minter".to_string(),
+            contract_name: "Nativo market".to_string(),
         };
-        let def_hash = HashMap::from([("ntv-mint.near".to_string(), def_contract)]);
+        let def_hash = HashMap::from([(env::current_account_id(), def_contract)]);
         Self {
             contract_owner:env::signer_account_id(),
             num_whitelist: 0,
@@ -130,6 +169,8 @@ impl Contract {
             whitelist_collections:HashMap::new(),
             market_contract_address: env::current_account_id(),
             market_contract_address_dev: env::current_account_id(),
+            market_contract_treasury: env::current_account_id(),
+
         }
     }
 
@@ -150,6 +191,8 @@ impl Contract {
             whitelist_collections:HashMap::new(),
             market_contract_address: env::current_account_id(),
             market_contract_address_dev: env::current_account_id(),
+            market_contract_treasury: env::current_account_id(),
+
         }
     }
     pub fn get_market_contract(&self) {
@@ -182,7 +225,7 @@ impl Contract {
             token_metadata,
             &address_contract.to_string(), //  account_id as a parameter
             env::attached_deposit(),       // yocto NEAR to attach
-            30_000_000_000_000,            // gas to attach
+            100_000_000_000_000,            // gas to attach
         )
         .then(ext_self::get_promise_result(
             "mint".to_string(),
@@ -214,7 +257,7 @@ impl Contract {
             collection,
             &address_contract.to_string(), //  account_id as a parameter
             env::attached_deposit(),       // yocto NEAR to attach
-            30_000_000_000_000,            // gas to attach
+            100_000_000_000_000,            // gas to attach
         )
         .then(ext_self::get_promise_result(
             "buy".to_string(),
@@ -247,10 +290,45 @@ impl Contract {
             collection,
             &address_contract.to_string(), //  account_id as a parameter
             env::attached_deposit(),       // yocto NEAR to attach
-            30_000_000_000_000,            // gas to attach
+            100_000_000_000_000,            // gas to attach
         )
         .then(ext_self::get_promise_result(
             "bid".to_string(),
+            &self.market_contract_address_dev.to_string(), // el mismo contrato local
+            0,                                             // yocto NEAR a ajuntar al callback
+            30_000_000_000_000,                            // gas a ajuntar al callback
+        ));
+        log!("market ends here");
+        p
+    }
+    #[payable]
+    pub fn market_offer_bid_generic(
+        &mut self,
+        address_contract: String,
+        token_id: TokenId,
+        collection_id: String,
+        collection: String,
+        status:bool
+    ) -> Promise {
+        let contract_exist = self.whitelist_contracts.get(&address_contract.clone());
+        if contract_exist.is_none() {
+            panic!(
+                "This address {} is not approved to buy tokens!",
+                address_contract.clone()
+            );
+        }
+
+        let p = ext_nft::close_bid_token_ext(
+            token_id,            
+            collection_id,
+            collection,
+            status,
+            &address_contract.to_string(), //  account_id as a parameter
+            env::attached_deposit(),       // yocto NEAR to attach
+            100_000_000_000_000,            // gas to attach
+        )
+        .then(ext_self::get_promise_result(
+            "offer_bid".to_string(),
             &self.market_contract_address_dev.to_string(), // el mismo contrato local
             0,                                             // yocto NEAR a ajuntar al callback
             30_000_000_000_000,                            // gas a ajuntar al callback
@@ -263,7 +341,7 @@ impl Contract {
         &mut self,
         address_contract: String,
         token_id: TokenId,
-        price: String,
+        price: u128,
         collection_id: String,
         collection: String,
     ) -> Promise {
@@ -281,7 +359,7 @@ impl Contract {
             collection,
             &address_contract.to_string(), //  account_id as a parameter
             env::attached_deposit(),       // yocto NEAR to attach
-            30_000_000_000_000,            // gas to attach
+            100_000_000_000_000,            // gas to attach
         )
         .then(ext_self::get_promise_result(
             "sell".to_string(),
@@ -313,7 +391,7 @@ impl Contract {
             collection,
             &address_contract.to_string(), //  account_id as a parameter
             env::attached_deposit(),       // yocto NEAR to attach
-            30_000_000_000_000,            // gas to attach
+            100_000_000_000_000,            // gas to attach
         )
         .then(ext_self::get_promise_result(
             "remove".to_string(),
@@ -369,15 +447,16 @@ impl Contract {
         .insert(unique_id_collecion, new_col);
         
         
-        log!(
-            "{},{},{},{},{},{},{}",
-            address_contract, 
-            address_collection_owner,
-            title,
-            descrip,
-            mediaicon,
-            mediabanner,
-            self.num_collections.clone()
+    
+        env::log(
+            json!({"contract_address":address_contract.clone(),
+            "owner_id": address_collection_owner.clone(),
+            "title": title.clone(),
+            "description":descrip.clone(),
+            "icon_media": mediaicon.clone(),
+            "banner_media":mediabanner.clone(),})
+            .to_string()
+            .as_bytes(),
         );
         self.num_collections += 1;
         }//end else
@@ -442,12 +521,15 @@ impl Contract {
             .insert(address_contract.clone(), new_ext_contract);
         let cont = self.whitelist_contracts.get(&address_contract.clone());
 
-        log!(
-            "{},{},{}",
-            address_contract,
-            cont.unwrap().owner_id,
-            cont.unwrap().contract_name
+        env::log(
+            json!({
+                "address_contract":address_contract,
+                "owner_id":cont.unwrap().owner_id,
+                "contract_name":cont.unwrap().contract_name})
+            .to_string()
+            .as_bytes(),
         );
+         
     }
     // Método de procesamiento para promesa
     pub fn get_promise_result(&self, method: String) {
@@ -466,16 +548,24 @@ impl Contract {
                 let value = str::from_utf8(&result).unwrap();
                 log!("regreso al market");
 
+                let mut newstring = str::replace(&value, "\\", "");
+                newstring.remove(0);
+                newstring.pop();
+               
+                let tg: Thegraphstructure = serde_json::from_str(&newstring).unwrap();  
+             
                 let a = "mint".to_string();
                 let b = "buy".to_string();
                 let c = "bid".to_string();
                 let d = "sell".to_string();
                 let e = "remove".to_string();
+                let f = "offer_bid".to_string();
 
+                
                 if method == a {
                     log!("se va a minar");
                     ext_self::save_mint_ttg(
-                        value.to_string(),
+                        tg,
                         &self.market_contract_address_dev.to_string(),
                         0,
                         10_000_000_000_000,
@@ -483,7 +573,7 @@ impl Contract {
                 } else if method == b {
                     log!("se va a comprar");
                     ext_self::save_buy_ttg(
-                        value.to_string(),
+                        tg,
                         &self.market_contract_address_dev.to_string(),
                         0,
                         10_000_000_000_000,
@@ -491,7 +581,7 @@ impl Contract {
                 }else if method == c {
                     log!("se va a ofertar");
                     ext_self::save_bid_ttg(
-                        value.to_string(),
+                       tg,
                         &self.market_contract_address_dev.to_string(),
                         0,
                         10_000_000_000_000,
@@ -499,7 +589,7 @@ impl Contract {
                 } else if method == d {
                     log!("se va a vender");
                     ext_self::save_sell_ttg(
-                        value.to_string(),
+                        tg,
                         &self.market_contract_address_dev.to_string(),
                         0,
                         10_000_000_000_000,
@@ -507,58 +597,105 @@ impl Contract {
                 } else if method == e {
                     log!("se va a remover");
                     ext_self::save_remove_ttg(
-                        value.to_string(),
+                        tg,
                         &self.market_contract_address_dev.to_string(),
                         0,
                         10_000_000_000_000,
                     );
-                }
+                }else if method == f {
+                    log!("se va a ofertar");
+                    ext_self::save_offer_bit_ttg(
+                        tg,
+                        &self.market_contract_address_dev.to_string(),
+                        0,
+                        10_000_000_000_000,
+                    );
+                } 
             }
         }
     }
     //Métodos que lanzan un log a the graph
-    pub fn save_mint_ttg(&self, info: String) {
+    pub fn save_mint_ttg(&self, info: Thegraphstructure) {
         
          // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
           
-        let res = str::replace(&info.to_string(), "\"", "");
-        log!("{}", res);
+        
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
     }
-    pub fn save_buy_ttg(&self, info: String) {
+    pub fn save_buy_ttg(&self, info: Thegraphstructure) {
         // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
 
-        let res = str::replace(&info.to_string(), "\"", "");
-        log!("{}", res);
+         
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
     }
-    pub fn save_bid_ttg(&self, info: String) {
+    pub fn save_bid_ttg(&self, info: Thegraphstructure) {
         // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
 
-        let res = str::replace(&info.to_string(), "\"", "");
-        log!("{}", res);
+        
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
     }
-    pub fn save_sell_ttg(&self, info: String) {
+    pub fn save_sell_ttg(&self, info: Thegraphstructure) {
         // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
 
-        let res = str::replace(&info.to_string(), "\"", "");
-        log!("{}", res);
+          
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
     }
-    pub fn save_remove_ttg(&self, info: String) {
+    pub fn save_remove_ttg(&self, info: Thegraphstructure) {
         // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
 
-        let res = str::replace(&info.to_string(), "\"", "");
-        log!("{}", res);
+       
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
     }
-    pub fn dontsave_ttg(&self, info: String) {
+    pub fn save_offer_bit_ttg(&self, info: Thegraphstructure) {
         // validate if the contract already exist,dont create a new one
         self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
 
-        log!("{}", info);
+         
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
     }
+     
+    pub fn dontsave_ttg(&self, info: Thegraphstructure) {
+        // validate if the contract already exist,dont create a new one
+        self.whitelist_contracts.get(&env::predecessor_account_id()).expect("the contract isnt approved");
+       
+       
+        env::log(
+            json!(info)
+            .to_string()
+            .as_bytes(),
+        );
+   
+    }
+   
 
     ///////////////////////////////////////////////////////
     /// //////////////////METODOS DE MIGRACIÖN
@@ -576,6 +713,8 @@ impl Contract {
             whitelist_collections:HashMap::new(),
             market_contract_address: old_state.market_contract_address,
             market_contract_address_dev: old_state.market_contract_address_dev,
+            market_contract_treasury: env::current_account_id(),
+
         }
     }
     /////////////////////METODOS DE MIGRACIÖN
