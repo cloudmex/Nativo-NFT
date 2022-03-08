@@ -8,6 +8,7 @@ import { blockchains } from "../utils/constraint";
 import nativoLogo from '../assets/img/nativologocrop.png'
 import lupa from '../assets/landingSlider/img/lupa1.png'
 import menu from '../assets/landingSlider/img/menu.png'
+import { useTranslation } from "react-i18next";
 function LightHeaderB(props) {
   const [state, setState] = useState({
     dropdown:
@@ -16,6 +17,7 @@ function LightHeaderB(props) {
   const [buscar, setbuscar] = useState("");
   const [menu, setmenu] = useState(true);
   const [Beta, setBeta] = useState(true);
+  const [t, i18n] = useTranslation("global")
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -101,19 +103,19 @@ function LightHeaderB(props) {
           </a> */}
 
           <a href="/collections" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
-            Colecciones
+            {t("Navbar.collections")}
           </a>
           {/* <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
             Galeria V1
           </a> */}
           <a href="/create" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
-            Crear
+            {t("Navbar.create")}
           </a>
           {/* <a href="/auctions" className="mr-5 hover:text-gray-900">
             Subastas
           </a> */}
           <a href="/mynfts" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
-            Mis NFTs
+            {t("Navbar.myNFTs")}
           </a>
         </nav>
         
@@ -244,7 +246,7 @@ function LightHeaderB(props) {
       
     </header>
     <div className={`beta ${Beta ? "h-auto": ""}`}>
-    <p>Esta es una versión beta pública - Úselo bajo su propio riesgo - Código no auditado</p>
+    <p>{t("Navbar.warning")}</p>
       <img src="x.png" title="Cerrar" onClick={e=>closeBeta()}/>
     </div>
     </>

@@ -1,0 +1,36 @@
+{
+    "Landing": {
+        "title" : "We grow together with the community of NFT artists.",
+        "subtitle" : "We update! You can now receive royalty payments from your NFT's.",
+        "btnCollections" : "Collections",
+        "useNear" : "Use your Near wallet",
+        "useNear-sub" : "With them you can buy your NFT's and enter your panel",
+        "artist" : "As an artist create new NFT",
+        "artist-sub-1" : "Receive",
+        "artist-sub-2" : "earnings",
+        "artist-sub-21" : "from 87%",
+        "artist-sub-3" : "and",
+        "artist-sub-4" : "royalties",
+        "artist-sub-41" : "from 10%",
+        "artist-sub-5" : "for them",
+        "resell" : "Resell",
+        "resell-sub" : "Don't want your NFT anymore? you can resell it in your panel at the price you decide.",
+        "aboutUs" : "About us",
+        "aboutUs-txt" : "Nativo NFT is a market for NFT's built on the NEAR protocol. It is currently in public beta",
+        "dao" : "Nativo DAO... Coming Soon",
+        "dao-txt-1" : "Our roadmap contemplates the launch of a DAO for governance which can use the $NTV governance tokens to manage the Nativo NFT protocol. At first, this DAO will be controlled by members of the founding team, and from where updates to the smart contract can be made..."
+    },
+    "Navbar" : {
+        "collections" : "Collections",
+        "create" : "Create",
+        "myNFTs" : "My NFTs",
+        "warning" : "This is a public beta version - Use at your own risk - Unaudited code"
+    },
+    "Footer" : {
+        "made" : "Made with:",
+        "resources" : "RESOURCES",
+        "roadmap" : "Roadmap",
+        "followUs" : "FOLLOW US",
+        "thanks" : "We appreciate your visit and preference"
+    }
+}
