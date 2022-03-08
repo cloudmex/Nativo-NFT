@@ -931,6 +931,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 24rem;
 }
 
+.h-\[70px\] {
+  height: 70px;
+}
+
 .h-32 {
   height: 8rem;
 }
@@ -965,6 +969,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .h-3 {
   height: 0.75rem;
+}
+
+.h-\[50px\] {
+  height: 50px;
 }
 
 .w-64 {
