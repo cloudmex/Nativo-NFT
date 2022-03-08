@@ -285,10 +285,6 @@ function LightEcommerceB(props) {
     }
   }
 
-  let history = useHistory();
-  const goToPreviousPath = () => {
-      history.goBack();
-  }
   return (
     <>
     <section className="text-gray-600 body-font overflow-hidden">
@@ -296,10 +292,12 @@ function LightEcommerceB(props) {
           <div
             className="regresar"
           >
-            <img onClick={() => goToPreviousPath()}
-            className="hover:cursor-pointer"
-              src={flechaiz}
-            />
+            <a href={'/collection/' + state?.jdata.collectionID} >
+              <img
+                className="hover:cursor-pointer h-[50px] "
+                src={flechaiz}
+              />
+            </a>
           </div>
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <img
