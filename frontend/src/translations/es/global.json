@@ -32,6 +32,53 @@
         "roadmap" : "Mapa de ruta",
         "followUs" : "SÍGUENOS",
         "thanks" : "Agradecemos tu visita y preferencia"
+    },
+    "Collections" : {
+        "creator" : "Creador:",
+        "contract" : "Contrato:",
+        "noTokens" : "No. de tokens:",
+        "noSale" : "No. de ventas:",
+        "volSale" : "Vol. de ventas:",
+        "descrip" : "Esta colección no tiene una descripción",
+        "load-1" : "Cargando, por favor espere",
+        "load-2" : "Actualmente no hay colecciones disponibles"
+    },
+    "tokCollection" : {
+        "creator" : "Creador:",
+        "contract" : "Contrato:",
+        "noTokens" : "No. de tokens:",
+        "noSale" : "No. de ventas:",
+        "volSale" : "Vol. de venta:",
+        "owner" : "Dueño:",
+        "load-1" : "Cargando, por favor espere",
+        "load-2" : "Aún no hay NFTs en esta colección"
+    },
+    "Detail" : {
+        "collection" : "Colección",
+        "sale" : "En venta",
+        "tags" : "Etiquetas",
+        "owner" : "Propietario",
+        "creator" : "Creador",
+        "contract" : "Contrato",
+        "available-1" : "Disponible",
+        "available-2" : "No disponible",
+        "buy" : "Comprar",
+        "login" : "Iniciar Sesión para Comprar"
+    },
+    "MyNFTs" : {
+        "title" : "Mis NFTs",
+        "subtitle" : "En esta sección aparecen los token NFTs que has creado o adquirido.",
+        "sale" : "En venta",
+        "available-1" : "Disponible",
+        "available-2" : "No disponible",
+        "creator" : "Creador:",
+        "detail" : "Ver detalle del NFT",
+        "remove" : "Quitar a la venta",
+        "titleModal" : "Revender NFT",
+        "txtModal" : "Ingresa el costo al cual quieres poner a la venta este NFT.",
+        "btnCancel" : "Cancelar",
+        "load-1" : "Cargando, por favor espere",
+        "load-2" : "Aún no tienes NFTs... Crea o adquiere uno para comenzar",
+        "putSale" : "Poner en venta"
     }
-
 }

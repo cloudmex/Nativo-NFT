@@ -32,5 +32,53 @@
         "roadmap" : "Roadmap",
         "followUs" : "FOLLOW US",
         "thanks" : "We appreciate your visit and preference"
+    },
+    "Collections" : {
+        "creator" : "Creator:",
+        "contract" : "Contract:",
+        "noTokens" : "No. of tokens:",
+        "noSale" : "No. of sales:",
+        "volSale" : "Sales volume:",
+        "descrip" : "This collection doesn't have a description",
+        "load-1" : "Loading Please wait",
+        "load-2" : "There are currently no collections available"
+    },
+    "tokCollection" : {
+        "creator" : "Creator:",
+        "contract" : "Contract:",
+        "noTokens" : "No. of tokens:",
+        "noSale" : "No. of sales:",
+        "volSale" : "Sales volume:",
+        "owner" : "Owner:",
+        "load-1" : "Loading Please wait",
+        "load-2" : "There are no NFTs in this collection yet"
+    },
+    "Detail" : {
+        "collection" : "Collection",
+        "sale" : "On sale",
+        "tags" : "Tags",
+        "owner" : "Owner",
+        "creator" : "Creator",
+        "contract" : "Contract",
+        "available-1" : "Available",
+        "available-2" : "Not available",
+        "buy" : "Buy",
+        "login" : "Login to Buy"
+    },
+    "MyNFTs" : {
+        "title" : "My NFTs",
+        "subtitle" : "In this section, the NFT tokens that you have created or acquired appear.",
+        "sale" : "On sale",
+        "available-1" : "Available",
+        "available-2" : "Not available",
+        "creator" : "Creator:",
+        "detail" : "See detail of the NFT",
+        "remove" : "Remove for sale",
+        "titleModal" : "Resell NFT",
+        "txtModal" : "Enter the cost at which you want to list this NFT for sale.",
+        "btnCancel" : "Cancel",
+        "load-1" : "Loading Please wait",
+        "load-2" : "You don't have NFTs yet... Create or acquire one to get started",
+        "putSale" : "Put on sale"
     }
 }
