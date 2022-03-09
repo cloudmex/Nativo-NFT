@@ -37,6 +37,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "build-dev-tailwind": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind.output.css --watch",
+    "build-prod-tailwind": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind.output.css --minify",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -59,6 +61,9 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0"
+    "autoprefixer": "^9.8.8",
+    "gh-pages": "^2.2.0",
+    "postcss": "^7.0.39",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   }
 }

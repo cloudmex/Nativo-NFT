@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name =(process.env.REACT_APP_CONTRACT === undefined ? "dev-1645632961180-79398462489290" : process.env.REACT_APP_CONTRACT);
+export const contract_name =(process.env.REACT_APP_CONTRACT === undefined ? "dev-1646324960363-24989034737776" : process.env.REACT_APP_CONTRACT);
 export const config = {
   testnet: {
     networkId: "testnet",
@@ -89,7 +89,6 @@ export async function nearSignIn(URL) {
   (process.env.REACT_APP_NEAR_ENV == "mainnet" ? window.near = await connect(config.mainnet) : window.near = await connect(config.testnet))
   //window.near = await connect(config.testnet);
   window.wallet = new WalletConnection(window.near, "latina");
-
   window.wallet.requestSignIn(
     contract_name, // contract requesting access
     "Latin-Art", // optional,

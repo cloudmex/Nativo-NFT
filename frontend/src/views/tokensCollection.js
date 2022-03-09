@@ -35,6 +35,11 @@ function LightEcommerceA() {
   const [chunksale, setchunksale] = React.useState(0);
   const [page, setpage] = React.useState(1);
   const [ini, setini] = React.useState(true);
+  const [firstID, setFirstID] = React.useState(-1);
+  const [lastID, setLastID] = React.useState(-1);
+  const [statePage, setStatePage] = React.useState(true)
+  const [firstLoad, setFirstLoad] = React.useState(true)
+  const [loadMsg,setLoadMsg] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
   const [filtro, setfiltro] = React.useState({
     culture: "null",
@@ -44,12 +49,26 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   const handleChangePage = (e, value) => {
-    // console.log(value)
+    //console.log(value)
     setpage(value)
     window.scroll(0, 0)
+    settrigger(!trigger)
+  }
+
+  const handleBackPage = () => {
+    // console.log("Back")
+    window.scroll(0, 0)
+    setStatePage(false)
+    settrigger(!trigger)
+  }
+
+  const handleForwardPage = () => {
+    // console.log("Forward")
+    window.scroll(0, 0)
+    setStatePage(true)
     settrigger(!trigger)
   }
 
@@ -59,12 +78,12 @@ function LightEcommerceA() {
 
   const { data } = useParams();
 
-  var tokData
-  var colData
+  
   const { tokenid: owner } = useParams();
   React.useEffect(() => {
     // console.log("esto ---> ",owner);
-
+    let tokData
+    let colData
     setload(c => true);
     (async () => {
       let toks, onSaleToks;
@@ -119,9 +138,10 @@ function LightEcommerceA() {
         // };
         // console.log("payload ",payload);
         // toks = await contract.obtener_pagina_by_creator(payload);
-        let info = data.split(":");
-        const queryData = `
-          query($contract: String, $collectionID: String){
+        let info = data.split(":")
+        if (statePage) {
+          const queryData = `
+          query($collectionID: String, $first: Int, $tokenID: Int){
             collections(where: {collectionID: $collectionID}) {
               id
               owner
@@ -135,7 +155,7 @@ function LightEcommerceA() {
               saleVolume
               collectionID
             }
-            tokens(where: {collectionID: $collectionID}) {
+            tokens(first: $first, orderBy: tokenId, orderDirection: asc, where: {collectionID: $collectionID , tokenId_gt: $tokenID}) {
               id
               collection
               collectionID
@@ -157,28 +177,122 @@ function LightEcommerceA() {
             }
           }
         `
-        //Declaramos el cliente
-        const client = new ApolloClient({
-          uri: APIURL,
-          cache: new InMemoryCache(),
-        })
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+          })
 
-        await client
-          .query({
-            query: gql(queryData),
-            variables: {
-              collectionID: data
-            },
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                collectionID: data,
+                first: Landing.tokensPerPageNear,
+                tokenID: lastID
+              },
+            })
+            .then((data) => {
+              console.log("collections data: ", data.data.collections)
+              console.log("tokens data: ",data.data.tokens)
+              tokData = data.data.tokens
+              colData = data.data.collections[0]
+              if(data.data.collections.length <= 0){
+                setLoadMsg(false)
+              }
+              setFirstID(parseInt(data.data.tokens[0].tokenId))
+              setLastID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
+              setpage(page+1)
+            })
+            .catch((err) => {
+              tokData=0
+              console.log('Error ferching data: ', err)
+            })
+        }
+        else {
+          const queryData = `
+          query($collectionID: String,$first: Int, $tokenID: Int){
+            collections(where: {collectionID: $collectionID}) {
+              id
+              owner
+              title
+              tokenCount
+              description
+              contract
+              mediaIcon
+              mediaBanner
+              saleCount
+              saleVolume
+              collectionID
+            }
+            tokens(first: $first, orderBy: tokenId, orderDirection: desc, where: {collectionID: $collectionID , tokenId_lt: $tokenID}) {
+              id
+              collection
+              collectionID
+              contract
+              tokenId
+              owner_id
+              title
+              description
+              media
+              creator
+              price
+              status
+              adressbidder
+              highestbidder
+              lowestbidder
+              expires_at
+              starts_at
+              extra
+            }
+          }
+        `
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
           })
-          .then((data) => {
-            console.log("collections data: ", data.data.collections)
-            // console.log("tokens data: ",data.data.tokens)
-            tokData = data.data.tokens
-            colData = data.data.collections[0]
-          })
-          .catch((err) => {
-            console.log('Error ferching data: ', err)
-          })
+
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                collectionID: data,
+                first: Landing.tokensPerPageNear,
+                tokenID: firstID
+              },
+            })
+            .then((data) => {
+              console.log("collections data: ", data.data.collections)
+              // console.log("tokens data: ",data.data.tokens)
+              tokData = data.data.tokens
+              colData = data.data.collections[0]
+              setFirstID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
+              setLastID(parseInt(data.data.tokens[0].tokenId))
+              setpage(page-1)
+            })
+            .catch((err) => {
+              tokData=0
+              //console.log('Error ferching data: ', err)
+            })
+        }
+        if(tokData==0){
+          return
+        }
+        if(firstLoad){
+          setpage(1)
+          setFirstLoad(false)
+        }
+        // if (firstLoad) {
+        //   setInitID(tokData[0].tokenId)
+        //   // console.log("Se añade init ID")
+        //   setFirstLoad(false)
+        // }
+        // setCountTok(countTok + tokData.length)
+        // if (countTok + tokData.length == colData.tokenCount) {
+        //   setFinalID(tokData[tokData.length - 1].tokenId)
+        // }
+
         // console.log(tokData)
 
         // var pag = await contract.get_pagination_creator_filters({
@@ -230,18 +344,20 @@ function LightEcommerceA() {
             owner: tok.owner_id
           };
         });
-        console.log(tok)
-
+        //console.log(tok)
+        if (!statePage) {
+          tok = tok.reverse()
+        }
         //console.log("toks",toks);
         //console.log("onsale",onSaleToks);
         //console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
-        let numpage = parseInt(tok.length / Landing.tokensPerPageNear)
-        if (tok.length % Landing.tokensPerPageNear > 0) {
+        let numpage = parseInt(colData.tokenCount / Landing.tokensPerPageNear)
+        if (colData.tokenCount % Landing.tokensPerPageNear > 0) {
           numpage++
         }
         await setLanding({
           ...Landing,
-          tokens: tok.slice(Landing.tokensPerPageNear * (page - 1), Landing.tokensPerPageNear * page),
+          tokens: tok,
           nPages: numpage,
           titleCol: colData.title,
           ownerCol: colData.owner,
@@ -276,10 +392,10 @@ function LightEcommerceA() {
             <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
             <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>{Landing.ownerCol}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br />{Landing.ownerCol}</p>
               </div>
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>{Landing.contract}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br />{Landing.contract}</p>
               </div>
             </div>
           </div>
@@ -301,7 +417,14 @@ function LightEcommerceA() {
 
       </div>
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
-        <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+          onClick={() => handleBackPage()}
+        >{"<"}</button>
+        <p>{page}</p>
+        <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+          onClick={() => handleForwardPage()}
+        >{">"}</button>
+        {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
       </div>
       {/* <div className={"container px-5 mx-auto flex flex-wrap items-center "+(
         esconder? "" : "py-2"
@@ -426,15 +549,22 @@ function LightEcommerceA() {
                 );
               })
               :
-              <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
-                <div class="flex flex-col justify-center">
-                  <h1 class="text-center">Aún no hay NFTs en esta colección</h1>
+              <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
+                <div className="flex flex-col justify-center">
+                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Aún no hay NFTs en esta colección"}</h1>
                 </div>
               </div>
           }
         </div>
         <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
-          <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
+          {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+          onClick={() => handleBackPage()}
+          >{"<"}</button>
+          <p>{page}</p>
+          <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+            onClick={() => handleForwardPage()}
+          >{">"}</button>
           {/* <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"

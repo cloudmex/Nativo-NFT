@@ -32,6 +32,11 @@ function MisTokens(props) {
   const [page, setpage] = React.useState(1);
   const [trigger, settrigger] = React.useState(true);
   const [ini, setini] = React.useState(true);
+  const [firstID, setFirstID] = React.useState(-1);
+  const [lastID, setLastID] = React.useState(-1);
+  const [statePage, setStatePage] = React.useState(true)
+  const [firstLoad, setFirstLoad] = React.useState(true)
+  const [loadMsg,setLoadMsg] = React.useState(true)
   const [nfts, setNfts] = useState({
     nfts: [],
     page: parseInt(window.localStorage.getItem("Mypage")),
@@ -53,7 +58,7 @@ function MisTokens(props) {
   // const [imgs, setImgs] = useState([]);
   let imgs = [];
 
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   const handleChangePage = (e, value) => {
     console.log(value)
@@ -63,6 +68,20 @@ function MisTokens(props) {
     // console.log(parseInt(pagCount.split(",")[value - 1].split("-")[1]))
     // console.log(parseInt(pagCount.split(",")[value - 1].split("-")[0]))
     window.scroll(0, 0)
+    settrigger(!trigger)
+  }
+
+  const handleBackPage = () => {
+    console.log("Back")
+    window.scroll(0, 0)
+    setStatePage(false)
+    settrigger(!trigger)
+  }
+
+  const handleForwardPage = () => {
+    console.log("Forward")
+    window.scroll(0, 0)
+    setStatePage(true)
     settrigger(!trigger)
   }
 
@@ -192,9 +211,10 @@ function MisTokens(props) {
           //limit: nfts.tokensPerPageNear,
         };
         let toks
-        const queryData = `
-          query($title: String, $contract: String){
-            tokens(where: {owner_id: $title}) {
+        if (statePage) {
+          const queryData = `
+          query($owner: String, $first: Int, $tokenID: Int){
+            tokens(first: $first, orderBy: tokenId, orderDirection: asc, where: {owner_id: $owner, tokenId_gt: $tokenID}) {
               id
               collection
               collectionID
@@ -216,32 +236,103 @@ function MisTokens(props) {
             }
           }
         `
-        //Declaramos el cliente
-        const client = new ApolloClient({
-          uri: APIURL,
-          cache: new InMemoryCache(),
-        })
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+          })
 
-        await client
-          .query({
-            query: gql(queryData),
-            variables:{
-              title: account,
-            },
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                owner: account,
+                first: nfts.tokensPerPageNear,
+                tokenID: lastID
+              },
+            })
+            .then((data) => {
+              // console.log("collections data: ",data.data.collections)
+              console.log("tokens data: ", data.data.tokens)
+              toks = data.data.tokens
+              if(data.data.tokens.length <= 0){
+                setLoadMsg(false)
+              }
+              setFirstID(parseInt(data.data.tokens[0].tokenId))
+              setLastID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
+              setpage(page+1)
+              // colData = data.data.collections[0]
+            })
+            .catch((err) => {
+              //console.log('Error ferching data: ', err)
+              toks = 0
+            })
+        }
+        else {
+          const queryData = `
+          query($owner: String, $first: Int, $tokenID: Int){
+            tokens(first: $first, orderBy: tokenId, orderDirection: desc, where: {owner_id: $owner, tokenId_lt: $tokenID}) {
+              id
+              collection
+              collectionID
+              contract
+              tokenId
+              owner_id
+              title
+              description
+              media
+              creator
+              price
+              status
+              adressbidder
+              highestbidder
+              lowestbidder
+              expires_at
+              starts_at
+              extra
+            }
+          }
+        `
+          //Declaramos el cliente
+          const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
           })
-          .then((data) => {
-            // console.log("collections data: ",data.data.collections)
-            console.log("tokens data: ",data.data.tokens)
-            toks = data.data.tokens
-            // colData = data.data.collections[0]
-          })
-          .catch((err) => {
-            console.log('Error ferching data: ',err)
-          })
+
+          await client
+            .query({
+              query: gql(queryData),
+              variables: {
+                owner: account,
+                first: nfts.tokensPerPageNear,
+                tokenID: firstID
+              },
+            })
+            .then((data) => {
+              // console.log("collections data: ",data.data.collections)
+              console.log("tokens data: ", data.data.tokens)
+              toks = data.data.tokens
+              setFirstID(parseInt(data.data.tokens[data.data.tokens.length - 1].tokenId))
+              setLastID(parseInt(data.data.tokens[0].tokenId))
+              setpage(page-1)
+              // colData = data.data.collections[0]
+            })
+            .catch((err) => {
+              //console.log('Error ferching data: ', err)
+              toks = 0
+            })
+        }
+        if (toks == 0) {
+          return
+        }
+        if(firstLoad){
+          setpage(1)
+          setFirstLoad(false)
+        }
+
+        
         // let nftsArr = await contract.obtener_pagina_by_owner(payload);
-        // let balance = await contract.nft_supply_for_owner({
-        //   account_id: account,
-        // });
+        
 
         // var pag = await contract.get_pagination_owner_filters({
         //   account: account,
@@ -308,18 +399,17 @@ function MisTokens(props) {
             }),
           };
         });
-        let numpage = parseInt(nftsArr.length/nfts.tokensPerPageNear)
-        if(nftsArr.length%nfts.tokensPerPageNear>0){
-          numpage++
+        if (!statePage) {
+          nftsArr = nftsArr.reverse()
         }
 
         // console.log(nftsArr);
         //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
-        let nftsToSend = nftsArr.slice(nfts.tokensPerPageNear*(page - 1),nfts.tokensPerPageNear*page)
+        let nftsToSend = nftsArr//.slice(nfts.tokensPerPageNear*(page - 1),nfts.tokensPerPageNear*page)
         setNfts({
           ...nfts,
           nfts: nftsToSend,
-          nPages: numpage,
+          nPages: 0,
           owner: account,
         });
       }
@@ -331,7 +421,7 @@ function MisTokens(props) {
    * @param tokenId representa el token id del nft a quitar del marketplace
    * @return void
    */
-  async function quitarDelMarketplace(tokenId,collectionTit,contractSend,collectionId) {
+  async function quitarDelMarketplace(tokenId, collectionTit, contractSend, collectionId) {
     setNfts({ ...nfts, disabled: true });
     let quitar;
     if (nfts.blockchain == "0") {
@@ -367,8 +457,8 @@ function MisTokens(props) {
         text: 'Se ha quitado un NFT de la venta con exito',
         icon: 'success',
         confirmButtonColor: '#E79211'
-      }).then(function() {
-        window.location.href = "/mis_nfts"
+      }).then(function () {
+        window.location.href = "/mynfts"
       })
     }
 
@@ -389,7 +479,14 @@ function MisTokens(props) {
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-5 mx-auto">
           <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
-            <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" />
+            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+              onClick={() => handleBackPage()}
+            >{"<"}</button>
+            <p>{page}</p>
+            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+              onClick={() => handleForwardPage()}
+            >{">"}</button>
+            {/* <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
           </div>
           <div className="flex flex-col text-center w-full mb-20">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 mt-8">
@@ -412,9 +509,9 @@ function MisTokens(props) {
             </div>
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
             {nfts.nfts.length > 0 ? null : (
-              <div class="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
-                <div class="flex flex-col justify-center">
-                  <h1 class="text-center">Aún no tienes NFTs... Crea o adquiere uno para comenzar</h1>
+              <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
+                <div className="flex flex-col justify-center">
+                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Aún no tienes NFTs... Crea o adquiere uno para comenzar"}</h1>
                 </div>
               </div>
             )}
@@ -441,7 +538,7 @@ function MisTokens(props) {
                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                           {nftData.title}
                         </h1>
-                        
+
                         {/* Etiqueta de token en venta */}
                         <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50 `}
@@ -449,12 +546,12 @@ function MisTokens(props) {
                           <span className="text-gray-500">En venta</span>
                           <span className="ml-auto text-gray-900">
                             <span
-                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.status=="S"
-                                  ? "text-green-100 bg-green-500"
-                                  : "text-red-100 bg-red-500"
+                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.status == "S"
+                                ? "text-green-100 bg-green-500"
+                                : "text-red-100 bg-red-500"
                                 } rounded-full`}
                             >
-                              {nft.status=="S" ? "Disponible" : "No disponible"}
+                              {nft.status == "S" ? "Disponible" : "No disponible"}
                             </span>
                           </span>
                         </div>
@@ -485,17 +582,17 @@ function MisTokens(props) {
                           className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-6`}
                         >{`Costo: ${nft.price} ${nfts.currency}`}</h2>
                         <div className="text-center">
-                          <a 
-                            href={"/detail/"+nft.tokenID+":"+nftData.titleCol+":"+nftData.collectionID}
-                            className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-4 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`} 
+                          <a
+                            href={"/detail/" + nft.tokenID + ":" + nftData.collectionID}
+                            className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-4 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                           >Ver detalle del NFT</a>
                         </div>
                         {/* Mostramos la opción de revender o quitar del marketplace */}
-                        {nft.status=="S" ? (<>      <button
+                        {nft.status == "S" ? (<>      <button
                           className={` mt-6 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                           disabled={nfts.disabled}
                           onClick={async () => {
-                            await quitarDelMarketplace(nft.tokenID,nft.collection,nft.contract,nft.collectionID);
+                            await quitarDelMarketplace(nft.tokenID, nft.collection, nft.contract, nft.collectionID);
                           }}
                         >
                           Quitar a la venta
@@ -504,7 +601,7 @@ function MisTokens(props) {
 
                         ) : (
                           <>
-                            {nft.status!="S" && <>  <button
+                            {nft.status != "S" && <>  <button
                               className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                               onClick={() => {
                                 setModal({
@@ -563,7 +660,14 @@ function MisTokens(props) {
           </div>
 
           <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-1">
-            <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light"/>
+            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+              onClick={() => handleBackPage()}
+            >{"<"}</button>
+            <p>{page}</p>
+            <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
+              onClick={() => handleForwardPage()}
+            >{">"}</button>
+            {/* <Pagination count={nfts.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
             {/* <nav
               className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
               aria-label="Pagination"

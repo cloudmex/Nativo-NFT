@@ -65,17 +65,17 @@ class App extends Component {
           <Navbar theme={this.state.theme} />
           <Switch>
             <Route exact path="/" component={Landing} />
-            <BlockchainProtectedRoute path="/minar" component={Mint} />
-            <BlockchainProtectedRoute path="/createCollection" component={creCol} />
+            <BlockchainProtectedRoute path="/create" component={Mint} />
+            <BlockchainProtectedRoute path="/createcollection" component={creCol} />
             <Route path="/galeria" component={Galeria} />
-            <Route path="/Collections" component={Collections} />
-            <Route path="/NFTCol/:data" component={TokensCollection} />
+            <Route path="/collections" component={Collections} />
+            <Route path="/collection/:data" component={TokensCollection} />
             <Route path="/perfil/:tokenid" component={Perfil} />
             <Route path="/auctions" component={AuctionGaleria} />
             <Route path="/auction/:tokenid" component={Auction} />
             <BlockchainProtectedRoute path="/sendauction/:tokenid" component={SendAuction} />
             <Route path="/detail/:data" component={Detail}/>
-            <BlockchainProtectedRoute path="/mis_nfts" component={MisNfts} />
+            <BlockchainProtectedRoute path="/mynfts" component={MisNfts} />
             <Route component={notFound} />
           </Switch>
           <Footer theme={this.state.theme} />

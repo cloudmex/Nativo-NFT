@@ -63,7 +63,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);
@@ -72,7 +72,7 @@ function LightHeroE(props) {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
     if(values.has('transactionHashes')){
-      window.location.href ="/minar"
+      window.location.href ="/create"
     }
   },[])
 
@@ -213,7 +213,7 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      address_contract: "dev-1645632654382-28045928413066",
+      address_contract: "dev-1646411564157-86083887856580",
       address_collection_owner: owner,
       title: title,
       descrip: desc,
@@ -258,7 +258,7 @@ function LightHeroE(props) {
       text: 'Tu colección ha sido creada',
       icon: 'success',
     }).then(function () {
-      window.location.href = "/minar"
+      window.location.href = "/create"
     })
   }
 
@@ -457,11 +457,11 @@ function LightHeroE(props) {
                       withIcon={false}
                       buttonText={txtBttnIcon}
                       onChange={imageChangeIcon}
-                      imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                      imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg', '.webp']}
                       maxFileSize={5242880}
                       singleImage={true}
                       withLabel={true}
-                      label="Maximo 5mb, formatos aceptados .jpg, .gif, .png"
+                      label="Maximo 5mb, formatos aceptados .jpg, .gif, .png, .webp"
                       fileSizeError="El tamaño no puede superar los 5mb"
                       fileTypeError="Tipo de archivo no soportado"
                     />
@@ -477,11 +477,11 @@ function LightHeroE(props) {
                       withIcon={false}
                       buttonText={txtBttnBanner}
                       onChange={imageChangeBanner}
-                      imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg']}
+                      imgExtension={['.jpg', '.gif', '.png', '.gif', '.jpeg', '.webp']}
                       maxFileSize={10485760}
                       singleImage={true}
                       withLabel={true}
-                      label="Maximo 10mb, formatos aceptados .jpg, .gif, .png"
+                      label="Maximo 10mb, formatos aceptados .jpg, .gif, .png, .webp"
                       fileSizeError="El tamaño no puede superar los 10mb"
                       fileTypeError="Tipo de archivo no soportado"
                     />

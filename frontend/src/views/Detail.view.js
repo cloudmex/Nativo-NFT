@@ -38,7 +38,7 @@ function LightEcommerceB(props) {
   const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
 
   React.useEffect(() => {
     (async () => {
@@ -301,10 +301,6 @@ function LightEcommerceB(props) {
     })
   }
 
-  let history = useHistory();
-  const goToPreviousPath = () => {
-      history.goBack();
-  }
 
   //setting state for the offer modal
   const [offerModal, setOfferModal] = useState({
@@ -317,10 +313,12 @@ function LightEcommerceB(props) {
           <div
             className="regresar"
           >
-            <img onClick={() => goToPreviousPath()}
-            className="hover:cursor-pointer"
-              src={flechaiz}
-            />
+            <a href={'/collection/' + state?.jdata.collectionID} >
+              <img
+                className="hover:cursor-pointer h-[50px] "
+                src={flechaiz}
+              />
+            </a>
           </div>
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <img
@@ -345,7 +343,7 @@ function LightEcommerceB(props) {
                 <span
                   className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
                 >
-                  <a href={'/NFTCol/'+state?.jdata.collectionID}>{state?.jdata.collection}</a>
+                  <a href={'/collection/'+state?.jdata.collectionID}>{state?.jdata.collection}</a>
                 </span>
               </span>
             </div>

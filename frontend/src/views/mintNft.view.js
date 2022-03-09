@@ -50,12 +50,12 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativotest'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
   useEffect(() => {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
     if(values.has('transactionHashes')){
-      window.location.href ="/mis_nfts"
+      window.location.href ="/mynfts"
     }
     fechaActual();
     let ownerAccount
@@ -211,7 +211,7 @@ function LightHeroE(props) {
         const owner = await getNearAccount()
         console.log(fromNearToYocto(values.price))
         let newPayload = {
-          address_contract: "dev-1645632654382-28045928413066",//(comboCol? values.contractCol : contData),
+          address_contract: "dev-1646411564157-86083887856580",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection_id: colID,
           collection: collTitle,
@@ -499,7 +499,7 @@ function LightHeroE(props) {
                 <div className="pb-4">
                 <a 
                 className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
-                href="/createCollection">
+                href="/createcollection">
                   Añadir Colección
                 </a>
                 
@@ -516,9 +516,9 @@ function LightHeroE(props) {
                       setcollTitle("")
                     }
                     else{
-                      setcontData(collecData.find(element => element.title == e.target.value).contract)
-                      setColID(collecData.find(element => element.title == e.target.value).collectionID)
-                      setcollTitle(e.target.value)
+                      setcontData(collecData.find(element => element.id == e.target.value).contract)
+                      setColID(collecData.find(element => element.id == e.target.value).collectionID)
+                      setcollTitle(collecData.find(element => element.id == e.target.value).title)
                     }
                   }
                   }>
@@ -526,7 +526,7 @@ function LightHeroE(props) {
                     {
                       collecData.length > 0 ?
                         collecData.map((element) =>
-                          <option key={element.id}>{element.title}</option>
+                          <option key={element.id} value={element.id}>{element.title}</option>
 
                         ) : null
                     }</select>
@@ -673,7 +673,7 @@ function LightHeroE(props) {
           <p className="text-5xl font-semibold pt-20 text-center">No tienes colecciones</p>
           <p className="pt-10 pb-5 text-center text-2xl">Para poder minar un token en necesario crear una colección antes</p>
           <div className="width-100 py-10 text-center">
-            <a className="bg-s hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-xl" href="./createCollection">Crear colección</a>
+            <a className="bg-s hover:bg-gray-700 text-white font-bold py-2 px-4 rounded text-xl" href="./createcollection">Crear colección</a>
           </div>
           
         </div>

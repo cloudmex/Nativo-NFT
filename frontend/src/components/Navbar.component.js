@@ -100,19 +100,19 @@ function LightHeaderB(props) {
             Galeria
           </a> */}
 
-          <a href="/Collections" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
+          <a href="/collections" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
             Colecciones
           </a>
           {/* <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
             Galeria V1
           </a> */}
-          <a href="/minar" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
+          <a href="/create" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
             Crear
           </a>
           {/* <a href="/auctions" className="mr-5 hover:text-gray-900">
             Subastas
           </a> */}
-          <a href="/mis_nfts" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
+          <a href="/mynfts" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
             Mis NFTs
           </a>
         </nav>
