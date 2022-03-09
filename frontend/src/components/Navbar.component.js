@@ -24,6 +24,17 @@ function LightHeaderB(props) {
   }
 
 
+  const handleLanguage = () =>{
+    if(window.localStorage.getItem("LanguageState")=="en"){
+      i18n.changeLanguage("es")
+      window.localStorage.setItem("LanguageState","es")
+    }
+    else{
+      i18n.changeLanguage("en")
+      window.localStorage.setItem("LanguageState","en")
+    }
+  }
+
   const closeBeta = () => {
     window.localStorage.setItem("beta","beta");
       setBeta(false);
@@ -139,7 +150,13 @@ function LightHeaderB(props) {
                   <button type="submit" className="p-2 lg:w-1/12 px-3 ml-2 bg-s">
                     <img src={lupa} />
                   </button>
-                </form> 
+                </form>
+
+        <button 
+          className="mb-2 lg:mr-4 bg-yellow-500 rounded-2xl px-4 text-white font-semibold text-sm"
+          onClick={handleLanguage}
+          >{t("Navbar.language")}
+        </button> 
 
         <Menu as="div" className="relative inline-block text-left w-full md:w-auto">
         

@@ -6,6 +6,17 @@ import { useTranslation } from "react-i18next";
 
 function LightFooterB(props) {
   const [t, i18n] = useTranslation("global")
+
+  const handleLanguage = () =>{
+    if(window.localStorage.getItem("LanguageState")=="en"){
+      i18n.changeLanguage("es")
+      window.localStorage.setItem("LanguageState","es")
+    }
+    else{
+      i18n.changeLanguage("en")
+      window.localStorage.setItem("LanguageState","en")
+    }
+  }
   return (
     <footer className="text-gray-600 body-font bg-gray-100 border-t border-grey-darkest">
       <div className="container px-5 pt-20 pb-12 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
@@ -39,7 +50,18 @@ function LightFooterB(props) {
               
             </nav>
           </div>
-
+          <div className="lg:w-1/4 md:w-1/2 w-full px-4 items-center">
+            <h2 className="title-font font-bold text-gray-900 tracking-widest text-sm mb-3">
+              {t("Footer.language")}
+            </h2>
+            <nav className="list-none mb-10">
+              <button 
+                className="lg:mr-4 bg-yellow-500 rounded-2xl px-4 text-white font-semibold text-sm text-center"
+                onClick={handleLanguage}
+                >{t("Navbar.language")}
+              </button>
+            </nav>
+          </div>
           {/* <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <h2 className="title-font font-bold text-gray-900 tracking-widest text-sm mb-3">
               COMPAÑIA
