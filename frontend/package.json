@@ -37,7 +37,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build-tailwind": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind.output.css --watch",
+    "build-dev-tailwind": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind.output.css --watch",
+    "build-prod-tailwind": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind.output.css --minify",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
