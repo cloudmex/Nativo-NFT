@@ -18,6 +18,7 @@ Para correr este proyecto de forma local se necesitan los siguientes requerimien
 2. Instalar el manejador de paquetes de yarn `npm install -g yarn`
 3. Instalar las dependencias del proyecto `npm install` o `yarn install` dentro del directorio que contiene el archivo `package.json`
 4. Instalar de forma global el framework de Truffle `npm install -g truffle`
+5. Compilar tailwind de manera local `npm run build-dev-tailwind`
 
 ## 📚 Arbol de archivos
 ```bash
