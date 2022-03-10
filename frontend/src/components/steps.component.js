@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "../styles/landing.css";
-
+import { useTranslation } from "react-i18next";
 function LightStepC(props) {
+  const [t, i18n] = useTranslation("global")
   return (
     <section className="text-gray-600 body-font bg-gray-100">
       <div className="container px-5 py-20 mx-auto flex flex-wrap">
@@ -10,12 +11,12 @@ function LightStepC(props) {
           {/* CONFIGURACIÓN */}
           <div className="text-center">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-              Utiliza tu Near wallet
+              {t("Landing.useNear")}
             </h1>
             <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
               <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
                 <p className="leading-relaxed">
-                  Con ellas podrás comprar tus NFTs e ingresa a tu panel
+                {t("Landing.useNear-sub")}
                 </p>
                 <div className="flex justify-center">
                   <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
@@ -31,12 +32,12 @@ function LightStepC(props) {
           {/* SELECCIONA */}
           <div className="text-center mt-8">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-            Como artista crea nuevos NFT
+            {t("Landing.artist")}
             </h1>
             <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
               <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
                 <p className="leading-relaxed">
-                  Recibe <span className="tooltip">ganancias<span className="tooltiptext">del 87%</span></span> y <span className="tooltip">regalias<span className="tooltiptext">del 10%</span></span> por ellos
+                  {t("Landing.artist-sub-1")} <span className="tooltip">{t("Landing.artist-sub-2")}<span className="tooltiptext">{t("Landing.artist-sub-21")}</span></span> {t("Landing.artist-sub-3")} <span className="tooltip">{t("Landing.artist-sub-4")}<span className="tooltiptext">{t("Landing.artist-sub-41")}</span></span> {t("Landing.artist-sub-5")}
                 </p>
                 <div className="flex justify-center">
                   <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
@@ -55,12 +56,12 @@ function LightStepC(props) {
           {/* COMPRA/VENTA */}
           <div className="text-center mt-10">
             <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-              Revende
+              {t("Landing.resell")}
             </h1>
             <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
               <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
                 <p className="leading-relaxed">
-                  ¿Ya no quieres tu NFT? lo puedes revender en tu panel al precio que tu decidas.
+                {t("Landing.resell-sub")}
                 </p>
                 <div className="flex justify-center">
                   <div className={`sp-4 flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
