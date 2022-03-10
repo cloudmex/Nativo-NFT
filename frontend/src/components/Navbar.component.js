@@ -153,12 +153,12 @@ function LightHeaderB(props) {
                 </form>
 
         <button 
-          className="mb-2 lg:mr-4 bg-yellow-500 rounded-2xl px-4 text-white font-semibold text-sm"
+          className="mb-2 md:mb-0 mx-0 lg:mx-6 bg-yellow-500 rounded-2xl px-4 text-white font-semibold text-sm"
           onClick={handleLanguage}
           >{t("Navbar.language")}
         </button> 
 
-        <Menu as="div" className="relative inline-block text-left w-full md:w-auto">
+        <Menu as="div" className="relative inline-block text-left w-full md:w-auto md:ml-4">
         
           {({ open }) => (
             <>
