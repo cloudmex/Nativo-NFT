@@ -22,11 +22,13 @@ import {
 import Modal from "../components/modal.component";
 import flechaiz from '../assets/landingSlider/img/flechaIz.png'
 import ReactHashtag from "react-hashtag";
+import { useTranslation } from "react-i18next";
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
   const [state, setstate] = useState();
   const [btn, setbtn] = useState(true);
+  const [t, i18n] = useTranslation("global")
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -317,7 +319,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Colección</span>
+              <span className="text-gray-500">{t("Detail.collection")}</span>
               <span className="ml-auto text-gray-900">
                 <span
                   className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
@@ -330,7 +332,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">TokenId</span>
+              <span className="text-gray-500">Token Id</span>
               <span className="ml-auto text-gray-900">
                 {state?.tokens.tokenID}
               </span>
@@ -339,7 +341,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">En venta</span>
+              <span className="text-gray-500">{t("Detail.sale")}</span>
               <span className="ml-auto text-gray-900">
                 <span
                   className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.tokens.onSale
@@ -347,7 +349,7 @@ function LightEcommerceB(props) {
                       : "text-red-100 bg-red-500"
                     } rounded-full`}
                 >
-                  {state?.tokens.onSale ? "Disponible" : "No disponible"}
+                  {state?.tokens.onSale ? t("Detail.available-1") : t("Detail.available-2")}
                 </span>
               </span>
             </div>
@@ -379,7 +381,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Propietario</span>
+              <span className="text-gray-500">{t("Detail.owner")}</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
                 {state?.owner}
               </span>
@@ -388,7 +390,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Creador</span>
+              <span className="text-gray-500">{t("Detail.creator")}</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
                 {state?.jdata.creator}
               </span>
@@ -397,7 +399,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Contrato</span>
+              <span className="text-gray-500">{t("Detail.contract")}</span>
               <span className="ml-auto text-gray-900 text-xs">
                 {state?.jdata.contract}
               </span>
@@ -433,7 +435,7 @@ function LightEcommerceB(props) {
                               comprar();
                             }}
                             >
-                              Comprar
+                              {t("Detail.buy")}
                             </button>
                           :            
                           <button
@@ -450,7 +452,7 @@ function LightEcommerceB(props) {
                             nearSignIn(window.location.href);
                           }}
                           >
-                            Iniciar Sesión para Comprar
+                            {t("Detail.login")}
                           </button>
               }
             </div>

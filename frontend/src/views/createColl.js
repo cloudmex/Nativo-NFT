@@ -28,6 +28,7 @@ import {
 import { Reader, uploadFile } from '../utils/fleek';
 import { Reader2, uploadFile2 } from '../utils/fleek2';
 import Swal from 'sweetalert2'
+import { useTranslation } from "react-i18next";
 
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
@@ -42,14 +43,14 @@ function LightHeroE(props) {
     imageChangeIcon(picture)
   }
 
-  
+  const [t, i18n] = useTranslation("global")
   const [combo, setcombo] = useState(true);
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
   const [mediaIcon, setMediaIcon] = useState("")
   const [mediaBanner, setMediaBanner] = useState("")
-  const [txtBttnIcon, setTxtBttnIcon] = useState("Seleccionar imagen")
-  const [txtBttnBanner, setTxtBttnBanner] = useState("Seleccionar imagen")
+  const [txtBttnIcon, setTxtBttnIcon] = useState(t("CreateCol.btnImg-1"))
+  const [txtBttnBanner, setTxtBttnBanner] = useState(t("CreateCol.btnImg-1"))
   
   
   //guarda el estado de el modal
@@ -224,24 +225,24 @@ function LightHeroE(props) {
     // console.log(desc);
     if (title == "" || desc == "" || mediaIcon == "" || mediaBanner == "") {
       Swal.fire({
-        title: 'Datos incompletos',
-        text: 'Para crear una colección es necesario que rellenes todos los campos, verifica que hayas rellenado todos los datos',
+        title: t("CreateCol.err1-title"),
+        text: t("CreateCol.err1-msg"),
         icon: 'error',
         confirmButtonColor: '#E79211'
       })
       return
     } else if (title.length < 10) {
       Swal.fire({
-        title: 'Titulo de la colección muy corto',
-        text: 'El titulo de la coleccion debe de tener minimo 10 caracteres',
+        title: t("CreateCol.err2-title"),
+        text: t("CreateCol.err2-msg"),
         icon: 'error',
         confirmButtonColor: '#E79211'
       })
       return
     } else if (desc.length < 30) {
       Swal.fire({
-        title: 'Descripción de la colección muy corta',
-        text: 'La descripción de la colección debe de tener minimo 30 caracteres',
+        title: t("CreateCol.err3-title"),
+        text: t("CreateCol.err3-msg"),
         icon: 'error',
         confirmButtonColor: '#E79211'
       })
@@ -254,8 +255,8 @@ function LightHeroE(props) {
       amount,
     )
     Swal.fire({
-      title: 'Colección creada',
-      text: 'Tu colección ha sido creada',
+      title: t("CreateCol.succ-title"),
+      text: t("CreateCol.succ-msg"),
       icon: 'success',
     }).then(function () {
       window.location.href = "/create"
@@ -276,7 +277,7 @@ function LightHeroE(props) {
    *
    */
   function imageChangeIcon(picture) {
-    setTxtBttnIcon("Cargando")
+    setTxtBttnIcon(t("CreateCol.btnImg-2"))
     let data = picture.pop()
     const { file, reader } = Reader2(data);
     console.log(data)
@@ -296,7 +297,7 @@ function LightHeroE(props) {
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
           setMediaIcon(hash)
-          setTxtBttnIcon("Cambiar imagen")
+          setTxtBttnIcon(t("CreateCol.btnImg-3"))
         })
 
       };
@@ -327,7 +328,7 @@ function LightHeroE(props) {
 
 
   function imageChangeBanner(picture) {
-    setTxtBttnBanner("Cargando")
+    setTxtBttnBanner(t("CreateCol.btnImg-2"))
     let data = picture.pop()
     const { file, reader } = Reader2(data);
     if (file) {
@@ -345,7 +346,7 @@ function LightHeroE(props) {
           //console.log(`https://ipfs.fleek.co/ipfs/${hash}`);
           formik.setFieldValue("image", hash);
           setMediaBanner(hash)
-          setTxtBttnBanner("Cambiar imagen")
+          setTxtBttnBanner(t("CreateCol.btnImg-3"))
         })
 
       };
@@ -392,7 +393,7 @@ function LightHeroE(props) {
       <div className=" mx-auto text-gray-600 body-font flex flex-col mt-10">
         <div className="">
           <h1 className=" w-full title-font sm:text-4xl text-3xl mb-6 font-medium text-gray-900 text-center">
-            Nueva Colección
+            {t("CreateCol.title")}
           </h1>
           <div className="items-center px-6 xl:px-96">
             <div className="flex flex-col items-center bg-slate-200 bg-opacity-70 rounded-2xl border-4 border-slate-400 mb-4">
@@ -402,7 +403,7 @@ function LightHeroE(props) {
                     htmlFor="titleCol"
                     className="leading-7 text-sm text-gray-600 font-semibold"
                   >
-                    Título de la colección
+                    {t("CreateCol.titleCol")}
                   </label>
                   {formik.touched.titleCol && formik.errors.titleCol ? (
                     <div className="leading-7 text-sm text-red-600">
@@ -417,7 +418,7 @@ function LightHeroE(props) {
                   name="titleCol"
                   {...formik.getFieldProps("titleCol")}
                   value={title}
-                  placeholder="Min. 10 Caracteres"
+                  placeholder={t("CreateCol.placeTitle")}
                   onChange={e => { setTitle(e.target.value) }}
                   className={`  w-full bg-white  rounded   focus:bg-opacity-60  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                 />
@@ -427,7 +428,7 @@ function LightHeroE(props) {
                     htmlFor="descriptionCol"
                     className="leading-7 text-sm text-gray-600 font-semibold"
                   >
-                    Descripción de la colección
+                    {t("CreateCol.descripCol")}
                   </label>
                   {formik.touched.descriptionCol && formik.errors.descriptionCol ? (
                     <div className="leading-7 text-sm text-red-600">
@@ -440,7 +441,7 @@ function LightHeroE(props) {
                   id="titleCol"
                   name="titleCol"
                   {...formik.getFieldProps("titleCol")}
-                  placeholder="Min. 30 Caracteres"
+                  placeholder={t("CreateCol.placeDesc")}
                   value={desc}
                   onChange={e => { setDesc(e.target.value) }}
                   className={`  w-full bg-white  rounded   focus:bg-opacity-60  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
@@ -450,7 +451,7 @@ function LightHeroE(props) {
               <div className="w-full px-6 mb-6">
                 <div className="flex flex-col lg:flex-row items-center text-center">
                   <div className="lg:w-1/5 w-full">
-                    <label className="font-semibold">Icono de la colección</label>
+                    <label className="font-semibold">{t("CreateCol.iconCol")}</label>
                   </div>
                   <div className="lg:w-4/5 w-full">
                     <ImageUploader
@@ -461,16 +462,16 @@ function LightHeroE(props) {
                       maxFileSize={5242880}
                       singleImage={true}
                       withLabel={true}
-                      label="Maximo 5mb, formatos aceptados .jpg, .gif, .png, .webp"
-                      fileSizeError="El tamaño no puede superar los 5mb"
-                      fileTypeError="Tipo de archivo no soportado"
+                      label={t("CreateCol.lblIcon-1")}
+                      fileSizeError={t("CreateCol.errSize-1")}
+                      fileTypeError={t("CreateCol.errFile")}
                     />
                   </div>
 
                 </div>
                 <div className="flex flex-col lg:flex-row items-center text-center">
                   <div className="lg:w-1/5 w-full">
-                    <label className="font-semibold">Portada de la colección</label>
+                    <label className="font-semibold">{t("CreateCol.bannerCol")}</label>
                   </div>
                   <div className="lg:w-4/5 w-full">
                     <ImageUploader
@@ -481,9 +482,9 @@ function LightHeroE(props) {
                       maxFileSize={10485760}
                       singleImage={true}
                       withLabel={true}
-                      label="Maximo 10mb, formatos aceptados .jpg, .gif, .png, .webp"
-                      fileSizeError="El tamaño no puede superar los 10mb"
-                      fileTypeError="Tipo de archivo no soportado"
+                      label={t("CreateCol.lblIcon-2")}
+                      fileSizeError={t("CreateCol.errSize-2")}
+                      fileTypeError={t("CreateCol.errFile")}
                     />
                   </div>
                 </div>
@@ -492,14 +493,14 @@ function LightHeroE(props) {
 
           </div>
           <div className="lg:w-full w-full px-6 mb-6 lg:mb-0 text-center">
-            <p className="font-semibold">Vista previa de la colección en la parte inferior</p>
+            <p className="font-semibold">{t("CreateCol.msg-1")}</p>
             <button
               onClick={() => saveCollection()}
               className={` mt-4 mb-4 text-white bg-${props.theme}-500 border-0 py-2 lg:px-6 px-2 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
             >
-              {combo ? "Crear colección" : "Subastar"}
+              {t("CreateCol.createBtn")}
             </button>
-            <p className="font-semibold">Tu imagen puede durar un poco de tiempo en mostrarse</p>
+            <p className="font-semibold">{t("CreateCol.msg-2")}</p>
           </div>
         </div>
         <div className="">
@@ -514,28 +515,28 @@ function LightHeroE(props) {
             />
             <div className="z-10 -mt-120 w-full text-white">
               <div className="bg-white lg:mx-20 mx-5 text-black mt-4 pt-2 rounded-t-2xl bg-opacity-80">
-                <h1 className="lg:text-5xl text-3xl font-bold pb-4 opacity-100 stroke-gray-700">{title == "" ? "Titulo de la coleccion" : title}</h1>
-                <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{desc == "" ? "Escribe la descripcion de tu coleccion" : desc}</p>
+                <h1 className="lg:text-5xl text-3xl font-bold pb-4 opacity-100 stroke-gray-700">{title == "" ? t("CreateCol.demoTitle") : title}</h1>
+                <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{desc == "" ? t("CreateCol.demoDescrip") : desc}</p>
                 <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
                   <div>
-                    <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br/>Tu cuenta</p>
+                    <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>{t("CreateCol.creator")}</b><br/>{t("CreateCol.userAcc")}</p>
                   </div>
                   <div>
-                    <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br/>Este es tu contrato</p>
+                    <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>{t("CreateCol.contract")}</b><br/>{t("CreateCol.userCont")}</p>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-b-2xl text-white lg:mx-20 mx-5 mx-auto text-center">
                 <div className="pl-5">
-                  <p className="lg:text-lg text-base pb-1"><b>No. de tokens:</b></p>
+                  <p className="lg:text-lg text-base pb-1"><b>{t("CreateCol.noTokens")}</b></p>
                   <p className="lg:text-base text-sm pb-1">0</p>
                 </div>
                 <div>
-                  <p className="lg:text-lg text-base pb-1"><b>No. de ventas:</b></p>
+                  <p className="lg:text-lg text-base pb-1"><b>{t("CreateCol.noSale")}</b></p>
                   <p className="lg:text-base text-sm pb-1">0</p>
                 </div>
                 <div className="pr-5">
-                  <p className="lg:text-lg text-base pb-1"><b>Vol. de venta:</b></p>
+                  <p className="lg:text-lg text-base pb-1"><b>{t("CreateCol.volSale")}</b></p>
                   <p className="lg:text-base text-sm pb-1">0 {currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
                 </div>
               </div>
