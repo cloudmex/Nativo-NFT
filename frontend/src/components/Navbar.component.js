@@ -8,6 +8,7 @@ import { blockchains } from "../utils/constraint";
 import nativoLogo from '../assets/img/nativologocrop.png'
 import lupa from '../assets/landingSlider/img/lupa1.png'
 import menu from '../assets/landingSlider/img/menu.png'
+import { useTranslation } from "react-i18next";
 function LightHeaderB(props) {
   const [state, setState] = useState({
     dropdown:
@@ -16,11 +17,23 @@ function LightHeaderB(props) {
   const [buscar, setbuscar] = useState("");
   const [menu, setmenu] = useState(true);
   const [Beta, setBeta] = useState(true);
+  const [t, i18n] = useTranslation("global")
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
 
+
+  const handleLanguage = () =>{
+    if(window.localStorage.getItem("LanguageState")=="en"){
+      i18n.changeLanguage("es")
+      window.localStorage.setItem("LanguageState","es")
+    }
+    else{
+      i18n.changeLanguage("en")
+      window.localStorage.setItem("LanguageState","en")
+    }
+  }
 
   const closeBeta = () => {
     window.localStorage.setItem("beta","beta");
@@ -101,19 +114,19 @@ function LightHeaderB(props) {
           </a> */}
 
           <a href="/collections" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
-            Colecciones
+            {t("Navbar.collections")}
           </a>
           {/* <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
             Galeria V1
           </a> */}
           <a href="/create" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
-            Crear
+            {t("Navbar.create")}
           </a>
           {/* <a href="/auctions" className="mr-5 hover:text-gray-900">
             Subastas
           </a> */}
           <a href="/mynfts" className="mr-5 hover:text-[#ec8b01] hover:text-lg hover:font-bold">
-            Mis NFTs
+            {t("Navbar.myNFTs")}
           </a>
         </nav>
         
@@ -137,9 +150,15 @@ function LightHeaderB(props) {
                   <button type="submit" className="p-2 lg:w-1/12 px-3 ml-2 bg-s">
                     <img src={lupa} />
                   </button>
-                </form> 
+                </form>
 
-        <Menu as="div" className="relative inline-block text-left w-full md:w-auto">
+        <button 
+          className="mb-2 md:mb-0 mx-0 lg:mx-6 bg-yellow-500 rounded-2xl px-4 text-white font-semibold text-sm"
+          onClick={handleLanguage}
+          >{t("Navbar.language")}
+        </button> 
+
+        <Menu as="div" className="relative inline-block text-left w-full md:w-auto md:ml-4">
         
           {({ open }) => (
             <>
@@ -244,7 +263,7 @@ function LightHeaderB(props) {
       
     </header>
     <div className={`beta ${Beta ? "h-auto": ""}`}>
-    <p>Esta es una versión beta pública - Úselo bajo su propio riesgo - Código no auditado</p>
+    <p>{t("Navbar.warning")}</p>
       <img src="x.png" title="Cerrar" onClick={e=>closeBeta()}/>
     </div>
     </>

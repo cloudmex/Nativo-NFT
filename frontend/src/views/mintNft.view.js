@@ -25,6 +25,7 @@ import {
 } from "../utils/near_interaction";
 import { Reader, uploadFile } from '../utils/fleek';
 import Swal from 'sweetalert2'
+import { useTranslation } from "react-i18next";
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
   const [mint, setmint] = React.useState({
@@ -38,6 +39,7 @@ function LightHeroE(props) {
   const [contData, setcontData] = useState("")
   const [collTitle,setcollTitle] = useState("")
   const [colID, setColID] = useState("")
+  const [t, i18n] = useTranslation("global")
   const [loading,setLoading] = useState(true);
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
@@ -136,29 +138,29 @@ function LightHeroE(props) {
     //validaciones
     validationSchema: Yup.object({
       title: Yup.string()
-        .max(30, "Menos de 30 caracteres")
-        .required("Requerido")
-        .min(5, "el titulo debe longitud mayor a 5"),
+        .max(30, t("MintNFT.maxTitle"))
+        .required(t("MintNFT.required"))
+        .min(5, t("MintNFT.minTitle")),
 
       description: Yup.string()
-        .max(1000, "Menos de 1000 caracteres")
-        .required("Requerido")
-        .min(5, "la descripción minimo es de 5 caracteres"),
+        .max(1000, t("MintNFT.maxDesc"))
+        .required(t("MintNFT.required"))
+        .min(5, t("MintNFT.minDesc")),
 
       price: Yup.number()
-        .required("Requerido")
-        .positive("el precio debe ser positivo")
-        .moreThan(0.09999999999999, "El precio minimo para el NFT es de 0.1")
-        .min(0.1, "El precio no debe de ser menor 0.1"),
+        .required(t("MintNFT.required"))
+        .positive(t("MintNFT.posPrice"))
+        .moreThan(0.09999999999999, t("MintNFT.morePrice"))
+        .min(0.1, t("MintNFT.minPrice")),
 
       culture: Yup.string()
-        .required("Requerido")
-        .max(60, "Menos de 60 caracteres"),
+        .required(t("MintNFT.required"))
+        .max(60, t("MintNFT.maxTags")),
         //.matches("(([A-Za-z0-9]+)\s?)((([A-Za-z0-9]+)\s){1,3})?(([A-Za-z0-9]+))?",'Minimo un tag maximo 5'),
       
 
 
-      image: Yup.string().required("Requerido"),
+      image: Yup.string().required(t("MintNFT.required")),
     }),
     onSubmit: async (values) => {
       //evitar que el usuario pueda volver a hacer click hasta que termine el minado
@@ -361,8 +363,8 @@ function LightHeroE(props) {
       {loading ?
       <>
         <div className="grid grid-cols-1 gap-4 place-content-center items-center">
-          <h1 className="text-5xl font-semibold pt-60 text-center ">Cargando</h1>
-          <h1 className="text-5xl font-semibold pt-10 text-center ">Espere un momento por favor</h1>
+          <h1 className="text-5xl font-semibold pt-60 text-center ">{t("MintNFT.load")}</h1>
+          <h1 className="text-5xl font-semibold pt-10 text-center ">{t("MintNFT.loadMsg")}</h1>
         </div>
         
       </>
@@ -390,7 +392,7 @@ function LightHeroE(props) {
                 }
               `}
             >
-              {mint?.file ? "Cambiar " : "Subir Imagen"}
+              {mint?.file ? t("MintNFT.changeImg") : t("MintNFT.upImg")}
             </div>
             <input
               onChange={imageChange}
@@ -500,7 +502,7 @@ function LightHeroE(props) {
                 <a 
                 className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                 href="/createcollection">
-                  Añadir Colección
+                  {t("MintNFT.addColBtn")}
                 </a>
                 
                 </div>
@@ -508,7 +510,7 @@ function LightHeroE(props) {
                     htmlFor="title"
                     className="leading-7 text-sm text-gray-600"
                   >
-                    Nombre de la coleccion
+                    {t("MintNFT.colName")}
                   </label>
                   <select onChange={e => {
                     // console.log(collecData.find(element => element.title == e.target.value).contract)
@@ -522,7 +524,7 @@ function LightHeroE(props) {
                     }
                   }
                   }>
-                    <option>Tus colecciones</option>
+                    <option>{t("MintNFT.userCol")}</option>
                     {
                       collecData.length > 0 ?
                         collecData.map((element) =>
@@ -541,7 +543,7 @@ function LightHeroE(props) {
                   htmlFor="title"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Título
+                  {t("MintNFT.titleTxt")}
                 </label>
                 {formik.touched.title && formik.errors.title ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -564,7 +566,7 @@ function LightHeroE(props) {
                   className="leading-7 text-sm text-gray-600"
                 >
 
-                  {combo ? "Precio en " : "Precio inicial en "}
+                  {t("MintNFT.priceTxt")}
                   {" " +
                     currencys[parseInt(localStorage.getItem("blockchain"))]}
                 </label>
@@ -591,7 +593,7 @@ function LightHeroE(props) {
                   htmlFor="culture"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Etiquetas
+                  {t("MintNFT.tagsTxt")}
                 </label>{" "}
                 {formik.touched.culture && formik.errors.culture ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -604,7 +606,7 @@ function LightHeroE(props) {
                 type="text"
                 id="culture"
                 name="culture"
-                placeholder="Etiqueta1 Etiqueta2 Etiqueta3..."
+                placeholder={t("MintNFT.placeTags")}
                 {...formik.getFieldProps("culture")}
                 
                 className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
@@ -615,7 +617,7 @@ function LightHeroE(props) {
                   htmlFor="description"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Descripción
+                  {t("MintNFT.descTxt")}
                 </label>
                 {formik.touched.description && formik.errors.description ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -660,7 +662,7 @@ function LightHeroE(props) {
                 className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                 disabled={mint?.onSubmitDisabled}
               >
-                {combo ? "Minar" : "Subastar"}
+                {t("MintNFT.createNFT")}
               </button>
             </div>
           </div>
