@@ -2,21 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import nearicon from "../icons/near.svg";
 import nativoLogo from '../assets/img/nativologocrop.png'
-import { useTranslation } from "react-i18next";
 
 function LightFooterB(props) {
-  const [t, i18n] = useTranslation("global")
-
-  const handleLanguage = () =>{
-    if(window.localStorage.getItem("LanguageState")=="en"){
-      i18n.changeLanguage("es")
-      window.localStorage.setItem("LanguageState","es")
-    }
-    else{
-      i18n.changeLanguage("en")
-      window.localStorage.setItem("LanguageState","en")
-    }
-  }
   return (
     <footer className="text-gray-600 body-font bg-gray-100 border-t border-grey-darkest">
       <div className="container px-5 pt-20 pb-12 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
@@ -29,7 +16,7 @@ function LightFooterB(props) {
              
           </a>
           <div className="flex  items-center justify-center mt-1 ">
-            <p className="text-gray-600 ">{t("Footer.made")}</p>
+            <p className="text-gray-600 ">Hecho con:</p>
             <a href="https://near.org" target="_blank" rel="noopener noreferrer" className="ml-3">
               <img src={nearicon} alt="near icon"/>
             </a>
@@ -38,30 +25,19 @@ function LightFooterB(props) {
         <div className="flex-grow flex flex-wrap md:pr-20 -mb-10 md:text-left text-center order-first">
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <h2 className="title-font font-bold text-gray-900 tracking-widest text-sm mb-3">
-              {t("Footer.resources")}
+              RECURSOS
             </h2>
             <nav className="list-none mb-10">
               <li className="pb-4 pt-4">
                 <a href="https://drive.google.com/file/d/1IHNp3aHcUDjn8Iws8cObC3qWWVEVcj-7/view" target="_blank" rel="noopener noreferrer" className="text-gray-600  hover:text-[#ec8b01] hover:font-bold">
-                  {t("Footer.roadmap")}
+                Mapa de ruta
                 </a>
               </li>
 
               
             </nav>
           </div>
-          <div className="lg:w-1/4 md:w-1/2 w-full px-4 items-center">
-            <h2 className="title-font font-bold text-gray-900 tracking-widest text-sm mb-3">
-              {t("Footer.language")}
-            </h2>
-            <nav className="list-none mb-10">
-              <button 
-                className="lg:mr-4 bg-yellow-500 rounded-2xl px-4 text-white font-semibold text-sm text-center"
-                onClick={handleLanguage}
-                >{t("Navbar.language")}
-              </button>
-            </nav>
-          </div>
+
           {/* <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <h2 className="title-font font-bold text-gray-900 tracking-widest text-sm mb-3">
               COMPAÑIA
@@ -104,7 +80,7 @@ function LightFooterB(props) {
 
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <h2 className="title-font font-bold text-gray-900 tracking-widest text-sm mb-3">
-              {t("Footer.followUs")}  
+              SÍGUENOS
             </h2>
             <nav className="list-none mb-10 pt-4">
               <li className="flex flex-row justify-center lg:justify-start">
@@ -133,7 +109,7 @@ function LightFooterB(props) {
             © 2021 NATIVO NFT-MARKETPLACE
           </p>
           <p className="text-sm text-gray-500 text-center">
-            {t("Footer.thanks")}
+            Agradecemos tu visita y preferencia
           </p>
 
         </div>

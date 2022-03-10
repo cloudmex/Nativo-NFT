@@ -11,6 +11,7 @@ applications:
           commands:
             - REACT_APP_CONTRACT=${REACT_APP_CONTRACT}
             - REACT_APP_NEAR_ENV=${REACT_APP_NEAR_ENV}
+            - npm run build-prod-tailwind
             - npm run build
       artifacts:
         baseDirectory: build
