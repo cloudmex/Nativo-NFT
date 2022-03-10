@@ -23,7 +23,6 @@ import {
 } from "../utils/near_interaction";
 import Swal from 'sweetalert2';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-import { useTranslation } from "react-i18next";
 
 function MisTokens(props) {
   //Hooks para el manejo de estados
@@ -38,7 +37,6 @@ function MisTokens(props) {
   const [statePage, setStatePage] = React.useState(true)
   const [firstLoad, setFirstLoad] = React.useState(true)
   const [loadMsg,setLoadMsg] = React.useState(true)
-  const [t, i18n] = useTranslation("global")
   const [nfts, setNfts] = useState({
     nfts: [],
     page: parseInt(window.localStorage.getItem("Mypage")),
@@ -492,10 +490,11 @@ function MisTokens(props) {
           </div>
           <div className="flex flex-col text-center w-full mb-20">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 mt-8">
-              {t("MyNFTs.title")}
+              Mis NFTs
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              {t("MyNFTs.subtitle")}
+              En esta sección aparecen los token NFTs que has creado o
+              adquirido.
             </p>
             <div className="">
               {/* <button
@@ -512,7 +511,7 @@ function MisTokens(props) {
             {nfts.nfts.length > 0 ? null : (
               <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
                 <div className="flex flex-col justify-center">
-                  <h1 className="text-center">{loadMsg ? t("MyNFTs.load-1") : t("MyNFTs.load-2")}</h1>
+                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Aún no tienes NFTs... Crea o adquiere uno para comenzar"}</h1>
                 </div>
               </div>
             )}
@@ -544,7 +543,7 @@ function MisTokens(props) {
                         <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50 `}
                         >
-                          <span className="text-gray-500">{t("MyNFTs.sale")}</span>
+                          <span className="text-gray-500">En venta</span>
                           <span className="ml-auto text-gray-900">
                             <span
                               className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.status == "S"
@@ -552,12 +551,12 @@ function MisTokens(props) {
                                 : "text-red-100 bg-red-500"
                                 } rounded-full`}
                             >
-                              {nft.status == "S" ? t("MyNFTs.available-1") : t("MyNFTs.available-2")}
+                              {nft.status == "S" ? "Disponible" : "No disponible"}
                             </span>
                           </span>
                         </div>
 
-                        <p className="leading-relaxed"><b>{t("MyNFTs.creator")}</b> {nftData.creator}</p>
+                        <p className="leading-relaxed"><b>Creador:</b> {nftData.creator}</p>
                         {/* Etiqueta de token en subasta */}
                         {/* <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -586,7 +585,7 @@ function MisTokens(props) {
                           <a
                             href={"/detail/" + nft.tokenID + ":" + nftData.collectionID}
                             className={`mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-4 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
-                          >{t("MyNFTs.detail")}</a>
+                          >Ver detalle del NFT</a>
                         </div>
                         {/* Mostramos la opción de revender o quitar del marketplace */}
                         {nft.status == "S" ? (<>      <button
@@ -596,7 +595,7 @@ function MisTokens(props) {
                             await quitarDelMarketplace(nft.tokenID, nft.collection, nft.contract, nft.collectionID);
                           }}
                         >
-                          {t("MyNFTs.remove")}
+                          Quitar a la venta
                         </button>
                         </>
 
@@ -612,17 +611,18 @@ function MisTokens(props) {
                                   contract: nft.contract,
                                   collection: nft.collection,
                                   collectionID: nft.collectionID,
-                                  title: t("MyNFTs.titleModal"),
+                                  title: "Revender nft",
                                   currency: nfts.currency,
                                   blockchain: nfts.blockchain,
-                                  message: t("MyNFTs.txtModal"),
-                                  buttonName: t("MyNFTs.btnCancel"),
+                                  message:
+                                    "Ingresa el costo al cual quieres poner a la venta este NFT.",
+                                  buttonName: "Cancelar",
                                   change: setModal,
                                 });
 
                               }}
                             >
-                              {t("MyNFTs.putSale")}
+                              Poner en venta
                             </button>
                               {/* <button
                             className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
