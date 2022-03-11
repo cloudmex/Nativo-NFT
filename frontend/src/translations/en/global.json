@@ -81,7 +81,8 @@
         "btnCancel" : "Cancel",
         "load-1" : "Loading Please wait",
         "load-2" : "You don't have NFTs yet... Create or acquire one to get started",
-        "putSale" : "Put on sale"
+        "putSale" : "Put on sale",
+        "cost" : "Cost"
     },
     "CreateCol" : {
         "title" : "New collection",

@@ -581,7 +581,7 @@ function MisTokens(props) {
                         >{`Token id: ${nft.tokenID}  `}</h2>
                         <h2
                           className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-6`}
-                        >{`Costo: ${nft.price} ${nfts.currency}`}</h2>
+                        >{`${t("MyNFTs.cost")}: ${nft.price} ${nfts.currency}`}</h2>
                         <div className="text-center">
                           <a
                             href={"/detail/" + nft.tokenID + ":" + nftData.collectionID}

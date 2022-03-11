@@ -1,7 +1,6 @@
 import React from "react";
 //import metamasklogo from "../icons/metamasklogo.png";
 import { nearSignIn } from "../utils/near_interaction";
-
 /**
  *
  * se muestra cuando el usuario no esta logueado con near
@@ -10,7 +9,7 @@ export default function goNear(props) {
   return (
     <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
       <div className="flex flex-col justify-center">
-        <h1 className="text-center">Haz click e inicia sesión con near</h1>
+        <h1 className="text-center">{window.localStorage.getItem("LanguageState") == "es" ? "Haz click e inicia sesión con near" : "Click and log in with near"}</h1>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="200"
