@@ -81,7 +81,8 @@
         "btnCancel" : "Cancelar",
         "load-1" : "Cargando, por favor espere",
         "load-2" : "Aún no tienes NFTs... Crea o adquiere uno para comenzar",
-        "putSale" : "Poner en venta"
+        "putSale" : "Poner en venta",
+        "cost" : "Costo"
     },
     "CreateCol" : {
         "title" : "Nueva Colección",
