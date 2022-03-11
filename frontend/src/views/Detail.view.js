@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useParams, useHistory  } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 // import { Helmet } from "react-helmet";
 import { isNearReady } from "../utils/near_interaction";
 import { nearSignIn } from "../utils/near_interaction";
@@ -38,8 +38,7 @@ function LightEcommerceB(props) {
   const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
-  const APIURL='https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
-
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativooffersv2'
   React.useEffect(() => {
     (async () => {
       setStateLogin(await isNearReady());
@@ -117,13 +116,53 @@ function LightEcommerceB(props) {
             }
           })
           .then((data) => {
-            console.log("tokens data: ",data.data.tokens[0])
+            console.log("tokens data: ", data.data.tokens[0])
             toksData = data.data.tokens[0]
           })
           .catch((err) => {
-            console.log('Error ferching data: ',err)
+            console.log('Error ferching data: ', err)
           })
-          console.log(toksData)
+        console.log(toksData)
+
+        /* Retrieve offers on this token*/
+        let toknOffersData;
+        const queryDataOffers = `
+          query($tokenId: Int, $collectionID: Int){
+            offers(where: {tokenId: $tokenId, collectionID: $collectionID}, orderDirection: desc) {
+              offerID
+              tokenId
+              contract
+              price
+              collectionID
+              owner_id
+            }
+          }
+        `
+        //Declaramos el cliente
+        const Offers = new ApolloClient({
+          uri: APIURL,
+          cache: new InMemoryCache(),
+        })
+
+        await Offers
+          .query({
+            query: gql(queryDataOffers),
+            variables: {
+              tokenId: parseInt(info[0]),
+              collectionID: parseInt(info[1])
+            }
+          })
+          .then((data) => {
+            console.log("offer tokens: ", data.data.offers)
+            toknOffersData = data.data.offers
+
+          })
+          .catch((err) => {
+            console.log('Error ferching data: ', err)
+          })
+        console.log('data offers', toknOffersData);
+
+
         //instanciar contracto
         let contract = await getNearContract();
         // totalSupply = await contract.nft_total_supply();
@@ -133,58 +172,63 @@ function LightEcommerceB(props) {
         // if (parseInt(tokenid) >= parseInt(totalSupply)) {
         //   window.location.href = "/galeria";
         // } else {
-          // let toks = await contract.get_token({ token_id: tokenid });
-          // //console.log("Token")
-          // //console.log(toks)
-          // if(toks.on_auction){
-          //   window.location.href = "/auction/"+tokenid;
-          // }
-          let saleState
-          if(toksData.status != 'S'){
-            saleState = false
-          }
-          else{
-            saleState = true
-          }
-          setbtn(!saleState);
-          // console.log({
-          //   tokenID: toks.token_id,
-          //   onSale: toks.metadata.on_sale,
-          //   price: toks.metadata.price,
-          //   culture:toks.metadata.culture,
-          //   country:toks.metadata.country,
-          //   creator:toks.metadata.creator,
-          // });
-          console.log(toksData)
-          let extra = toksData.extra.split(":")
-          setstate({
-            ...state,
-            tokens: {
-              tokenID: toksData.tokenId,
-              //chunk: parseInt(toks.token_id/2400),
-              onSale: saleState,
-              price: fromYoctoToNear(toksData.price),
-              contract: toksData.contract,
-              collection: toksData.collection,
-              collectionID: toksData.collectionID
-              // culture:toks.culture,
-              // country:toks.country,
-              // creator:toks.metadata.creator,
-            },
-            jdata: {
-              image: toksData.media,
-              title: toksData.title,
-              description: toksData.description,
-              tags: extra[0].split(' '),
-              creator: toksData.creator,
-              collection: toksData.collection,
-              contract: toksData.contract,
-              collectionID: toksData.collectionID
-            },
-            owner: toksData.owner_id,
-          });
-          //console.log("state", state)
-        
+        // let toks = await contract.get_token({ token_id: tokenid });
+        // //console.log("Token")
+        // //console.log(toks)
+        // if(toks.on_auction){
+        //   window.location.href = "/auction/"+tokenid;
+        // }
+        let saleState
+        if (toksData.status != 'S') {
+          saleState = false
+        }
+        else {
+          saleState = true
+        }
+        setbtn(!saleState);
+        // console.log({
+        //   tokenID: toks.token_id,
+        //   onSale: toks.metadata.on_sale,
+        //   price: toks.metadata.price,
+        //   culture:toks.metadata.culture,
+        //   country:toks.metadata.country,
+        //   creator:toks.metadata.creator,
+        // });
+        console.log(toksData)
+        let extra = toksData.extra.split(":")
+        setstate({
+          ...state,
+          tokens: {
+            tokenID: toksData.tokenId,
+            //chunk: parseInt(toks.token_id/2400),
+            onSale: saleState,
+            price: fromYoctoToNear(toksData.price),
+            contract: toksData.contract,
+            collection: toksData.collection,
+            collectionID: toksData.collectionID,
+            addressbidder: toksData.adressbidder, //default value accountbidder
+            highestbidder: toksData.highestbidder, //default value notienealtos
+            lowestbidder: toksData.lowestbidder, //default value notienebajos
+            // culture:toks.culture,
+            // country:toks.country,
+            // creator:toks.metadata.creator,
+          },
+          jdata: {
+            image: toksData.media,
+            title: toksData.title,
+            description: toksData.description,
+            tags: extra[0].split(' '),
+            creator: toksData.creator,
+            collection: toksData.collection,
+            contract: toksData.contract,
+            collectionID: toksData.collectionID
+          },
+          owner: toksData.owner_id,
+          ownerAccount: ownerAccount,
+          toknOffersData: toknOffersData
+        });
+        //console.log("state", state)
+
 
 
       }
@@ -290,14 +334,15 @@ function LightEcommerceB(props) {
 
   async function makeAnOffer() {
     setOfferModal({
+      ...state,
       show: true,
-        title: "Hacer una oferta",
-        message: "Haz una oferta atractiva para obtener este token",
-        loading: false,
-        disabled: false,
-        change: setOfferModal,
-        buttonName: 'X',
-        tokenId: 'hardcoded'
+      title: "Hacer una oferta",
+      message: "Haz una oferta atractiva para obtener este token",
+      loading: false,
+      disabled: false,
+      change: setOfferModal,
+      buttonName: 'X',
+      tokenId: 'hardcoded'
     })
   }
 
@@ -308,7 +353,7 @@ function LightEcommerceB(props) {
   });
   return (
     <>
-    <section className="text-gray-600 body-font overflow-hidden">
+      <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-8 mx-auto">
           <div
             className="regresar"
@@ -320,281 +365,203 @@ function LightEcommerceB(props) {
               />
             </a>
           </div>
-        <div className="lg:w-4/5 mx-auto flex flex-wrap">
-          <img
-            alt="ecommerce"
-            className="lg:w-1/2 w-full lg:h-auto h-64 object-fill  object-fill md:object-scale-down  rounded"
-            src={`https://ipfs.io/ipfs/${state?.jdata.image}`}
-          />
-          <div className="lg:w-1/2 w-full lg:pl-10 lg:mt-0">
-          
-            <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mb-6">
-              {state?.jdata.title}
-            </h1>
-            <p className="leading-relaxed mt-2 mb-6 font-mono ">
-              {state?.jdata.description}
-            </p>
-            
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">Colección</span>
-              <span className="ml-auto text-gray-900">
-                <span
-                  className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
-                >
-                  <a href={'/collection/'+state?.jdata.collectionID}>{state?.jdata.collection}</a>
+          <div className="lg:w-4/5 mx-auto flex flex-wrap">
+            <img
+              alt="ecommerce"
+              className="lg:w-1/2 w-full lg:h-auto h-64 object-fill  object-fill md:object-scale-down  rounded"
+              src={`https://ipfs.io/ipfs/${state?.jdata.image}`}
+            />
+            <div className="lg:w-1/2 w-full lg:pl-10 lg:mt-0">
+
+              <h1 className="text-gray-900 text-3xl title-font font-medium mb-1 mb-6">
+                {state?.jdata.title}
+              </h1>
+              <p className="leading-relaxed mt-2 mb-6 font-mono ">
+                {state?.jdata.description}
+              </p>
+
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">Colección</span>
+                <span className="ml-auto text-gray-900">
+                  <span
+                    className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
+                  >
+                    <a href={'/collection/' + state?.jdata.collectionID}>{state?.jdata.collection}</a>
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div>
 
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">TokenId</span>
-              <span className="ml-auto text-gray-900">
-                {state?.tokens.tokenID}
-              </span>
-            </div>
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">TokenId</span>
+                <span className="ml-auto text-gray-900">
+                  {state?.tokens.tokenID}
+                </span>
+              </div>
 
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">En venta</span>
-              <span className="ml-auto text-gray-900">
-                <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.tokens.onSale
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">En venta</span>
+                <span className="ml-auto text-gray-900">
+                  <span
+                    className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.tokens.onSale
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                    } rounded-full`}
-                >
-                  {state?.tokens.onSale ? "Disponible" : "No disponible"}
+                      } rounded-full`}
+                  >
+                    {state?.tokens.onSale ? "Disponible" : "No disponible"}
+                  </span>
                 </span>
-              </span>
-            </div>
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">Tags</span> 
-              <span className="ml-auto text-gray-900">
-                {
-                  state?.jdata.tags.length> 0 ? 
-                  state?.jdata.tags.map((element) =>
-                      <span
-                      key={element}
-                      className={`inline-flex items-center justify-center px-2 py-1 ml-2 text-xs font-bold leading-none ${state?.jdata.tags
-                          ? "text-green-100 bg-green-500"
-                          : "text-red-100 bg-red-500"
-                        } rounded-full`}
-                    >
-                      {element}
-                    </span>
-                  ) : null
-                }
-                
-              </span>
-            </div>
+              </div>
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">Tags</span>
+                <span className="ml-auto text-gray-900">
+                  {
+                    state?.jdata.tags.length > 0 ?
+                      state?.jdata.tags.map((element) =>
+                        <span
+                          key={element}
+                          className={`inline-flex items-center justify-center px-2 py-1 ml-2 text-xs font-bold leading-none ${state?.jdata.tags
+                            ? "text-green-100 bg-green-500"
+                            : "text-red-100 bg-red-500"
+                            } rounded-full`}
+                        >
+                          {element}
+                        </span>
+                      ) : null
+                  }
 
-            
-
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">Propietario</span>
-              <span className="ml-auto text-gray-900 text-xs self-center">
-                {state?.owner}
-              </span>
-            </div>
-
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">Creador</span>
-              <span className="ml-auto text-gray-900 text-xs self-center">
-                {state?.jdata.creator}
-              </span>
-            </div>
-
-            <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
-            >
-              <span className="text-gray-500">Contrato</span>
-              <span className="ml-auto text-gray-900 text-xs">
-                {state?.jdata.contract}
-              </span>
-            </div>
-
-            
+                </span>
+              </div>
 
 
-            <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
-            <meta property="og:type" content="article" />
-            <meta property="og:title" content={`${state?.jdata.title}`} />
-            <meta property="og:description" content={`${state?.jdata.description}`} />
-            <meta property="og:image" content={`https://ipfs.io/ipfs/${state?.jdata.image}`} />
 
-            <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
-            <div className="flex flex-col">
-              <span className="title-font font-medium text-2xl text-gray-900 text-center w-full">
-              {
-                  btn ?
-                  ""
-                  :
-                  "$ "+state?.tokens.price+" "+currencys[parseInt(localStorage.getItem("blockchain"))]
-                }
-              </span>
-              {stateLogin ? 
-                      btn ? 
-                        ""
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">Propietario</span>
+                <span className="ml-auto text-gray-900 text-xs self-center">
+                  {state?.owner}
+                </span>
+              </div>
+
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">Creador</span>
+                <span className="ml-auto text-gray-900 text-xs self-center">
+                  {state?.jdata.creator}
+                </span>
+              </div>
+
+              <div
+                className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+              >
+                <span className="text-gray-500">Contrato</span>
+                <span className="ml-auto text-gray-900 text-xs">
+                  {state?.jdata.contract}
+                </span>
+              </div>
+
+
+
+
+              <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
+              <meta property="og:type" content="article" />
+              <meta property="og:title" content={`${state?.jdata.title}`} />
+              <meta property="og:description" content={`${state?.jdata.description}`} />
+              <meta property="og:image" content={`https://ipfs.io/ipfs/${state?.jdata.image}`} />
+
+              <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
+              <div className="flex flex-col">
+                <span className="title-font font-medium text-2xl text-gray-900 text-center w-full">
+                  {
+                    btn ?
+                      ""
                       :
+                      "$ " + state?.tokens.price + " " + currencys[parseInt(localStorage.getItem("blockchain"))]
+                  }
+                </span>
+                {stateLogin ?
+                  btn ?
+                    ""
+                    :
                     <div className="flex flex-row flex-wrap justify-around mt-3 text-center">
                       <button
-                      className={`w-full m-2 lg:w-40 content-center justify-center text-center font-bold text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                      disabled={btn}
-                      onClick={async () => {
-                        comprar();
-                      }}
-                    >
-                      Comprar
-                    </button>
-                      <button
-                        className={`w-full m-2 lg:w-40 justify-center flex  text-center font-bold text-${props.theme}-500 bg-white-500 border-2 border-${props.theme}-500 py-2 px-6  hover:text-white hover:bg-${props.theme}-500 border-0 rounded`}
+                        className={`w-full m-2 lg:w-40 content-center justify-center text-center font-bold text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-yellow-600 rounded`}
                         disabled={btn}
                         onClick={async () => {
-                          makeAnOffer();
+                          comprar();
                         }}
                       >
-                        Ofertar
+                        Comprar
                       </button>
-                    </div>
-                            
-                          :            
-                          <button
-                          className={`flex ml-auto mt-2 text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                          style={
-                            btn
-                            ?
-                            {width:"100%", justifyContent:"center"}
-                            :
-                            {}
-                          }
-                          // disabled={state?.tokens.onSale}
+                      {state?.owner != state?.ownerAccount ?
+                        <button
+                          className={`w-full m-2 lg:w-40 justify-center flex  text-center font-bold text-${props.theme}-500 bg-white-500 border-2 border-${props.theme}-500 py-2 px-6  hover:text-white hover:bg-yellow-500 border-0 rounded`}
+                          disabled={btn}
                           onClick={async () => {
-                            nearSignIn(window.location.href);
+                            makeAnOffer();
                           }}
-                          >
-                            Iniciar Sesión para Comprar
-                          </button>
-              }
+                        >
+                          Ofertar
+                        </button>
+                        : "" }
+                    </div>
+                  :
+                  <button
+                    className={`flex ml-auto mt-2 text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                    style={
+                      btn
+                        ?
+                        { width: "100%", justifyContent: "center" }
+                        :
+                        {}
+                    }
+                    // disabled={state?.tokens.onSale}
+                    onClick={async () => {
+                      nearSignIn(window.location.href);
+                    }}
+                  >
+                    Iniciar Sesión para Comprar
+                  </button>
+                }
+              </div>
             </div>
+            {state?.toknOffersData != 0 ?
+              <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
+                <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Ofertas Realizadas</div>
+                <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
+                  <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Ofertante</div>
+                  <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
+                </div>
+                <div className="h-[250px] overflow-scroll">
+                  {state?.toknOffersData.map(offer => {
+                    return (
+                      <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                        <div className="w-4/12 text-center text-gray-500">{offer.owner_id}</div>
+                        <div className="w-4/12 text-center text-gray-500">{fromYoctoToNear(offer.price)} NEAR</div>
+                      </div>
+                    );
+                  })
+                  }
+                </div>
+              </div>
+              : ""
+            }
           </div>
-            <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
-              <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Ofertas Realizadas</div>
-              
 
-              <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
-                <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Ofertante</div>
-                <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
-                <div className="w-4/12 lg:w-2/12 text-center text-lg font-bold">
-                  <div className="w-8/12 text-gray-500">Fecha</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className="h-[250px] overflow-scroll">
-              {
-                <div className={`w-full flex flex-row flex-wrap justify-between py-2 border-b-4 border-gray-50 h-auto bg-gray-200`}>
-                  <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                  <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                  <div className="w-4/12 lg:w-2/12 text-center flex flex-row">
-                    <div className="w-8/12 text-gray-500">02/03/2022</div>
-                  </div>
-                  <div className="w-full lg:w-2/12 flex flex-row flex-wrap justify-around">
-                      <button className="w-4/12 lg:w-6/12 text-sm leading-none text-green-100 bg-green-500 rounded-full  p-[10px]  md:h-full flex flex-row justify-center"><span className="m-auto">Aceptar</span></button>
-                      <button className="w-4/12 lg:w-6/12 text-sm leading-none text-green-100 bg-red-500 rounded-full p-[10px]  md:h-full flex flex-row justify-center"><span className="m-auto">Rechazar</span></button>
-                  </div>
-                </div>
-              }   
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
-                <div className="w-4/12 text-center text-gray-500">doxo.textnet</div>
-                <div className="w-4/12 text-center text-gray-500">0.2  NEAR</div>
-                <div className="w-4/12 lg:w-2/12   text-center text-gray-500">
-                  <div className="w-8/12">02/03/2022</div>
-                </div>
-                <div className="lg:w-2/12 ">
-                </div>
-              </div>
-              </div>
-            </div>
+
         </div>
-
-      </div>
-      <Modal {...modal} />
-      <OfferModal {...offerModal} />
-    </section>
+        <Modal {...modal} />
+        <OfferModal {...offerModal} />
+      </section>
     </>
   );
 }
