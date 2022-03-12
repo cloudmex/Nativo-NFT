@@ -412,7 +412,7 @@ function LightHeroE(props) {
         </div>
         <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center pb-4">
           <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900">
-            Nuevo NFT
+            {t("MintNFT.title")}
           </h1>
           <div className="flex w-full md:justify-start justify-center items-end">
             <div className="relative mr-4 lg:w-full xl:w-1/2 w-3/4">
