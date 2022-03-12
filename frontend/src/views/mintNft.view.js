@@ -213,7 +213,7 @@ function LightHeroE(props) {
         const owner = await getNearAccount()
         console.log(fromNearToYocto(values.price))
         let newPayload = {
-          address_contract: "dev-1646411564157-86083887856580",//(comboCol? values.contractCol : contData),
+          address_contract: "nativo-minter.testnet",//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection_id: colID,
           collection: collTitle,
