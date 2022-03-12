@@ -55,7 +55,7 @@ export default function ModalRevender(props) {
           collection: props.collection,
           collection_id: props.collectionID,
         };
-        let amount = fromNearToYocto(0);
+        let amount = fromNearToYocto(0.1);
         //console.log(amount);
         console.log(payload);
         console.log(values.terms)
