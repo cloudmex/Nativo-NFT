@@ -242,8 +242,8 @@ function LightHeroE(props) {
         console.log(newPayload)
         if(collTitle == ""){
           Swal.fire({
-            title: 'Selecciona una colección',
-            text: 'Para minar es necesario seleccionar una colección, selecciona una he intentalo de nuevo',
+            title: t("MintNFT.sweetTitle"),
+            text: t("MintNFT.sweetTxt"),
             icon: 'error',
             confirmButtonColor: '#E79211'
           }).then(function() {

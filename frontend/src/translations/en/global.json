@@ -53,7 +53,8 @@
         "volSale" : "Sales volume:",
         "owner" : "Owner:",
         "load-1" : "Loading Please wait",
-        "load-2" : "There are no NFTs in this collection yet"
+        "load-2" : "There are no NFTs in this collection yet",
+        "descrip" : "This collection doesn't have a description"
     },
     "Detail" : {
         "collection" : "Collection",
@@ -147,6 +148,8 @@
         "errCol-1" : "You don't have collections",
         "errCol-2" : "To be able to mine a token, it is necessary to create a collection before",
         "errCol-3" : "Create collection",
-        "createNFT" : "Create NFT"
+        "createNFT" : "Create NFT",
+        "sweetTitle" : "Select a collection",
+        "sweetTxt" : "To create an NFT it is necessary to select a collection, select one and try again"
     }
 }

@@ -391,7 +391,7 @@ function LightEcommerceA() {
         <div className="z-10 -mt-120 w-full text-white">
           <div className="bg-white lg:mx-20 mx-5 text-black mt-4 pt-2 rounded-t-2xl bg-opacity-80">
             <h1 className="lg:text-5xl text-3xl font-bold pb-4 opacity-100 stroke-gray-700">{Landing.titleCol}</h1>
-            <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
+            <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? t("tokCollection.descrip") : Landing.descriptionCol}</p>
             <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
               <div>
                 <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>{t("tokCollection.creator")}</b><br />{Landing.ownerCol}</p>
