@@ -53,7 +53,8 @@
         "volSale" : "Vol. de venta:",
         "owner" : "Dueño:",
         "load-1" : "Cargando, por favor espere",
-        "load-2" : "Aún no hay NFTs en esta colección"
+        "load-2" : "Aún no hay NFTs en esta colección",
+        "descrip" : "Esta colección no tiene una descripción"
     },
     "Detail" : {
         "collection" : "Colección",
@@ -147,6 +148,8 @@
         "errCol-1" : "No tienes colecciones",
         "errCol-2" : "Para poder minar un token en necesario crear una colección antes",
         "errCol-3" : "Crear colección",
-        "createNFT" : "Crear NFT"
+        "createNFT" : "Crear NFT",
+        "sweetTitle" : "Selecciona una colección",
+        "sweetTxt" : "Para crear un NFT es necesario seleccionar una colección, selecciona una e intentalo de nuevo"
     }
 }
