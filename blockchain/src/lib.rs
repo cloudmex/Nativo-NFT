@@ -419,7 +419,7 @@ impl Contract {
         log!("market ends here");
         p
     }
-    #[payable]
+     
     pub fn market_sell_generic(
         &mut self,
         address_contract: String,
@@ -436,7 +436,7 @@ impl Contract {
             );
         }
 
-        self.is_payed_the_fee();
+         
         let p = ext_nft::sell_token_ext(
             token_id,
             price.parse::<u128>().unwrap(),
@@ -456,7 +456,7 @@ impl Contract {
         log!("market ends here");
         p
     }
-    #[payable]
+     
     pub fn market_remove_generic(
         &mut self,
         address_contract: String,
@@ -471,7 +471,7 @@ impl Contract {
                 address_contract.clone()
             );
         }
-        self.is_payed_the_fee();
+         
         let p = ext_nft::remove_token_ext(
             token_id,
             collection_id,
@@ -563,7 +563,7 @@ impl Contract {
         contract_name: String,
     ) {
          
-        self.is_the_ownere();
+        self.is_the_owner();
         // validate that the info sended isnt empty
         assert_eq!(
             address_contract.to_string().is_empty(),
@@ -577,7 +577,7 @@ impl Contract {
         );
         assert_eq!(contract_name.is_empty(), false, "the title cannot be empty");
         // validate that the attached sended is correct
-        let amount = env::attached_deposit();
+       /* let amount = env::attached_deposit();
         assert_eq!(
             "5000000000000000000000000"
                 .to_string()
@@ -585,7 +585,7 @@ impl Contract {
                 .unwrap(),
             amount,
             "Wrong amount deposited,please check for the correct amount!"
-        );
+        );*/
         // validate if the contract already exist,dont create a new one
         let contract_exist = self.whitelist_contracts.get(&address_contract.clone());
         if !contract_exist.is_none() {
@@ -909,7 +909,7 @@ impl Contract {
     }
     //modificar cuentas
     pub fn set_treasury_account(&mut self,new_account:AccountId) {
-        self.is_the_ownere();
+        self.is_the_owner();
             //if the caller is the owner
         self.market_contract_treasury=new_account;
         log!("the new treasury is : {} ",self.market_contract_treasury)
@@ -921,7 +921,7 @@ impl Contract {
     }
         //modificar cuentas
     pub fn set_owner_account(&mut self,new_account:AccountId) {
-        self.is_the_ownere();
+        self.is_the_owner();
             //if the caller is the owner
         self.contract_owner=new_account;
         log!("the new owner is : {} ",self.contract_owner);
@@ -935,7 +935,7 @@ impl Contract {
         
     }
     pub fn market_set_actual_mint_fee(&mut self,mint_fee:u128) {
-        self.is_the_ownere();
+        self.is_the_owner();
         self.fee_comision=mint_fee;
         
     }
@@ -950,9 +950,9 @@ impl Contract {
     }
     pub fn market_set_actual_roy_fee(& mut self,market_r:f64,owner_r:f64,creator_r:f64) {
        
-       self.is_the_ownere();
-       
-        
+       self.is_the_owner();
+       let total=market_r.clone()+owner_r.clone()+creator_r.clone();
+            assert_eq!(total!=1.0,true,"the total amount must be equal to 100%");
            self.market_roy=market_r;
            self.owner_roy=owner_r;
            self.creator_roy=creator_r;
@@ -971,10 +971,10 @@ impl Contract {
 
     }*/
 
-   fn is_the_ownere(&self)   {
+   fn is_the_owner(&self)   {
         //validate that only the owner contract add new contract address
         assert_eq!(
-            self.contract_owner==env::signer_account_id(),
+            self.contract_owner==env::predecessor_account_id(),
             true,
             "!the you are not the contract owner address¡"
         );
@@ -989,16 +989,17 @@ impl Contract {
     let amount = env::attached_deposit();
     Promise::new(self.market_contract_treasury.to_string()).transfer(amount );
    }
-   pub fn new_methods(){
+   //This method will be removed from the DAO
+ /* pub fn new_methods(){
     log!("heres the new");
-}
+}*/
     /////////////////////////////////////////
     //////////////REMOTE UPGRADE
     /// ////////////////////////////
     
     #[cfg(target_arch = "wasm32")]
     pub fn upgrade(self) {
-        self.is_the_ownere();
+        self.is_the_owner();
         // assert!(env::predecessor_account_id() == self.minter_account_id);
         //input is code:<Vec<u8> on REGISTER 0
         //log!("bytes.length {}", code.unwrap().len());
