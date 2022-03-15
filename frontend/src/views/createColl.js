@@ -64,7 +64,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL = process.env.REACT_APP_API_TG
 
   //guardara todos los valores del formulario
   const pru = (parseInt(Math.random() * 100000) + 1);
@@ -214,7 +214,7 @@ function LightHeroE(props) {
     let contract = await getNearContract();
     const owner = await getNearAccount()
     let payloadCol = {
-      address_contract: "nativo-minter.testnet",
+      address_contract: process.env.REACT_APP_MINTER_CONTRACT,
       address_collection_owner: owner,
       title: title,
       descrip: desc,
@@ -248,7 +248,7 @@ function LightHeroE(props) {
       })
       return
     }
-    let amount = fromNearToYocto(0.05);
+    let amount = fromNearToYocto(process.env.REACT_APP_FEE_CREATE_COL);
     let colResult = await contract.add_user_collection(
       payloadCol,
       300000000000000,
