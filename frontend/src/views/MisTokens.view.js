@@ -60,7 +60,7 @@ function MisTokens(props) {
   // const [imgs, setImgs] = useState([]);
   let imgs = [];
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL = process.env.REACT_APP_API_TG
 
   const handleChangePage = (e, value) => {
     console.log(value)
@@ -452,7 +452,7 @@ function MisTokens(props) {
       quitar = await contract.market_remove_generic(
         payload,
         300000000000000, // attached GAS (optional)
-        amount
+        0
       );
       Swal.fire({
         title: 'NFT quitado de la venta',

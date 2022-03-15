@@ -52,7 +52,7 @@ function LightHeroE(props) {
 
   const [actualDate, setactualDate] = useState("");
   let collectionData
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL = process.env.REACT_APP_API_TG
   useEffect(() => {
     const valores = window.location.search;
     const values = new URLSearchParams(valores)
@@ -213,7 +213,7 @@ function LightHeroE(props) {
         const owner = await getNearAccount()
         console.log(fromNearToYocto(values.price))
         let newPayload = {
-          address_contract: "nativo-minter.testnet",//(comboCol? values.contractCol : contData),
+          address_contract: process.env.REACT_APP_MINTER_CONTRACT,//(comboCol? values.contractCol : contData),
           token_owner_id: owner,
           collection_id: colID,
           collection: collTitle,
@@ -238,7 +238,7 @@ function LightHeroE(props) {
         //     //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
         //   },
         // };
-        let amount = fromNearToYocto(0.05);
+        let amount = fromNearToYocto(process.env.REACT_APP_FEE_CREATE_NFT);
         console.log(newPayload)
         if(collTitle == ""){
           Swal.fire({

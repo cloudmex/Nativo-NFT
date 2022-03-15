@@ -72,7 +72,7 @@ export default function ModalRevender(props) {
         revender = await contract.market_sell_generic(
           payload,
           300000000000000, // attached GAS (optional)
-          amount
+          0
         );
         /*  revender.status = revender.on_sale; */
       }

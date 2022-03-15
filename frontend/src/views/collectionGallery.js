@@ -51,7 +51,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL = process.env.REACT_APP_API_TG
 
   const handleChangePage = (e, value) => {
     // console.log(value)
