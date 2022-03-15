@@ -446,7 +446,7 @@ function MisTokens(props) {
         collection: collectionTit,
         collection_id: collectionId
       };
-      let amount = fromNearToYocto(0.1);
+      let amount = fromNearToYocto(0.05);
       //console.log(amount);
       //console.log(payload);
       quitar = await contract.market_remove_generic(

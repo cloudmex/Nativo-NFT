@@ -238,7 +238,7 @@ function LightHeroE(props) {
         //     //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
         //   },
         // };
-        let amount = fromNearToYocto(0.1);
+        let amount = fromNearToYocto(0.05);
         console.log(newPayload)
         if(collTitle == ""){
           Swal.fire({
