@@ -248,7 +248,7 @@ function LightHeroE(props) {
       })
       return
     }
-    let amount = fromNearToYocto(0.1);
+    let amount = fromNearToYocto(0.05);
     let colResult = await contract.add_user_collection(
       payloadCol,
       300000000000000,
