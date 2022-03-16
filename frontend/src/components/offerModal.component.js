@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* global BigInt */
+import React, {  useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Swal from 'sweetalert2'
@@ -16,12 +17,20 @@ import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
 
 export default function OfferModal(props) {
   //const history = useHistory();
-  const [state, setstate] = useState({ disabled: false });
-  //Configuramos el formulario para revender un token
+  const [state, setState] = useState({ disabled: false});
+  const [highestbidder, setHighestbidder] = useState(0);
+  
+  useEffect(() => {
+    if (props.tokens) {
+      setHighestbidder(props.tokens.highestbidder);
+    }
+  });
+  
+  //Configuramos el formulario para ofertar por un token
   const formik = useFormik({
     initialValues: {
       terms: false,
-      price: 0,
+      price: 0
     },
     validationSchema: Yup.object({
       price: Yup.number()
@@ -32,33 +41,19 @@ export default function OfferModal(props) {
       terms: Yup.bool()
         .required("Requerido")
     }),
-    //Metodo para el boton revender del formulario
+    //Metodo para el boton ofertar del formulario
     onSubmit: async (values) => {
-      //setstate({ disabled: true });
-      let revender;
-      if (props.blockchain == "0") {
-        //nos aseguramos que sigamos en la red de aurora
-        await syncNets();
-        let account = await getSelectedAccount();
-        revender = await getContract()
-          .methods.revender(props.tokenId, fromETHtoWei(values.price))
-          .send({ from: account })
-          .catch((err) => {
-            return err;
-          });
-      } else {
+      let ofertar;
         let contract = await getNearContract();
         let payload = {
-          address_contract: props.contract,
-          token_id: props.tokenId,
-          price: fromNearToYocto(values.price),
-          collection: props.collection,
-          collection_id: props.collectionID,
+          address_contract: props.tokens.contract,
+          token_id: props.tokens.tokenID,
+          collection: props.tokens.collection,
+          collection_id: props.tokens.collectionID,
         };
-        let amount = fromNearToYocto(0);
-        //console.log(amount);
-        console.log(payload);
-        console.log(values.terms)
+        let amountVal = values.price;
+        let amount = fromNearToYocto(amountVal);
+        let bigAmount = BigInt(amount);
         if(!values.terms){
           Swal.fire({
             title: 'Terminos y condiciones no aceptados',
@@ -68,21 +63,34 @@ export default function OfferModal(props) {
           })
           return
         }
+
+   
         
-        revender = await contract.market_sell_generic(
+      if (highestbidder != 'notienealtos') {
+        if (bigAmount <= BigInt(highestbidder)) {
+          Swal.fire({
+            title: 'El Precio es menor a la ultima oferta',
+            text: 'Para poder ofertar por este NFT es necesario que el precio mayor a la ultima oferta',
+            icon: 'error',
+            confirmButtonColor: '#E79211'
+          })
+          return
+        }
+      }
+        
+
+        
+        ofertar = await contract.market_bid_generic(
           payload,
           300000000000000, // attached GAS (optional)
-          amount
-        );
-        /*  revender.status = revender.on_sale; */
-      }
+          bigAmount.toString()//amount
+        ).
+        catch(e=>{
+          console.log('error',e);
+        });
+      
 
-      setstate({ disabled: false });
-      //recargar la pantalla si la transacción se ejecuto correctamente
-      if (revender.status) {
-        window.location.reload();
-      }
-      window.location.reload();
+      setState({ disabled: false });
     },
   });
 
@@ -118,7 +126,7 @@ export default function OfferModal(props) {
                   </p>
                 </div>
 
-                {/* Formulario para revender */}
+                {/* Formulario para ofertar */}
                 <form
                   onSubmit={formik.handleSubmit}
                   className="grid grid-cols-1 divide-y flex px-5 py-15 md:flex-row flex-col items-center"

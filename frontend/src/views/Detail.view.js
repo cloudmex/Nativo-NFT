@@ -1,3 +1,4 @@
+/* global BigInt */
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
@@ -38,12 +39,12 @@ function LightEcommerceB(props) {
   const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativooffersv2'
+  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
   React.useEffect(() => {
     (async () => {
       setStateLogin(await isNearReady());
       let ownerAccount = await getNearAccount();
-      console.log(ownerAccount);
+ 
 
       let totalSupply;
 
@@ -122,13 +123,12 @@ function LightEcommerceB(props) {
           .catch((err) => {
             console.log('Error ferching data: ', err)
           })
-        console.log(toksData)
 
         /* Retrieve offers on this token*/
         let toknOffersData;
         const queryDataOffers = `
           query($tokenId: Int, $collectionID: Int){
-            offers(where: {tokenId: $tokenId, collectionID: $collectionID}, orderDirection: desc) {
+            offers(orderBy: offerID, where: {tokenId: $tokenId, collectionID: $collectionID}, orderDirection: desc) {
               offerID
               tokenId
               contract
@@ -160,7 +160,7 @@ function LightEcommerceB(props) {
           .catch((err) => {
             console.log('Error ferching data: ', err)
           })
-        console.log('data offers', toknOffersData);
+ 
 
 
         //instanciar contracto
@@ -194,7 +194,7 @@ function LightEcommerceB(props) {
         //   country:toks.metadata.country,
         //   creator:toks.metadata.creator,
         // });
-        console.log(toksData)
+
         let extra = toksData.extra.split(":")
         setstate({
           ...state,
@@ -234,6 +234,31 @@ function LightEcommerceB(props) {
       }
     })();
   }, []);
+
+  async function manageOffer(option){
+
+    
+      //get contract
+      let contract = await getNearContract();
+      //construct payload
+      let payload = {
+        address_contract: state.tokens.contract,
+        token_id: state.tokens.tokenID,
+        collection_id: state.tokens.collectionID,
+        collection: state.tokens.collection,
+        status: Boolean(option) //true or false to  decline offer 
+      }
+
+      let amount = BigInt(state.tokens.highestbidder);
+      let bigAmount = BigInt(amount);
+
+      //accept the offer
+      let toks = await contract.market_close_bid_generic(
+        payload,
+        300000000000000,
+        fromNearToYocto(0.05)
+      );
+  }
 
   async function comprar() {
     //evitar doble compra
@@ -534,7 +559,58 @@ function LightEcommerceB(props) {
                 }
               </div>
             </div>
-            {state?.toknOffersData != 0 ?
+
+            {//CURRENT OFFER TO i 
+            state  && state.tokens && state.tokens.addressbidder != 'accountbidder' &&  state.tokens.highestbidder != "notienealtos" ?
+            <div className="w-full">
+              <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
+                <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Oferta Actual</div>
+                <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
+                  <div className="w-6/12 md:w-4/12 text-center  text-lg font-bold text-gray-500">Ofertante</div>
+                  <div className="w-6/12 md:w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
+                  <div className="w-0 md:w-4/12 text-center  text-lg font-bold text-gray-500"></div>
+                </div>
+                  <div className=" w-full h-[75px] md:h-[50px] overscroll-none">
+                    <div className={`w-full flex flex-row  flex-wrap justify-around md:justify-between py-2 border-b-4 border-gray-50`}>
+                      <div className="w-4/12 text-center text-gray-500">{state?.tokens.addressbidder}</div>
+                      <div className="w-4/12 text-center text-gray-500">{state?.tokens.highestbidder ? fromYoctoToNear(state?.tokens.highestbidder) : ""} NEAR</div>
+                      <div className="w-full md:w-4/12 text-center text-gray-500 flex justify-around">
+                        { state.owner == state.ownerAccount ? 
+                        <button
+                          disabled={btn}
+                          onClick={async () => {
+                            manageOffer(true);
+                          }}
+                        >
+                          <span
+                            className={`inline-flex items-center justify-center px-6 py-2  text-xs font-bold leading-none  text-green-100 bg-green-500 rounded-full`}
+                          >
+                            Aceptar
+                          </span>
+                        </button> : ""
+                        }
+                        { state.owner == state.ownerAccount || state.ownerAccount == state.tokens.addressbidder ? 
+                        <button
+                          disabled={btn}
+                          onClick={async () => {
+                            manageOffer(false);
+                          }}
+                        >
+                          <span
+                            className={`inline-flex items-center justify-center px-6 py-2  text-xs font-bold leading-none text-red-100 bg-red-500 rounded-full` } 
+                          >
+                            Declinar
+                          </span>
+                        </button> : ""
+                          }
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            : ""
+            }
+            {state && state.toknOffersData != 0 ?
               <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
                 <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Ofertas Realizadas</div>
                 <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
@@ -542,9 +618,9 @@ function LightEcommerceB(props) {
                   <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
                 </div>
                 <div className="h-[250px] overflow-scroll">
-                  {state?.toknOffersData.map(offer => {
+                  {state?.toknOffersData.map((offer, i) => {
                     return (
-                      <div className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
+                      <div key={i} className={`w-full flex flex-row justify-between py-2 border-b-4 border-gray-50`}>
                         <div className="w-4/12 text-center text-gray-500">{offer.owner_id}</div>
                         <div className="w-4/12 text-center text-gray-500">{fromYoctoToNear(offer.price)} NEAR</div>
                       </div>
@@ -560,7 +636,7 @@ function LightEcommerceB(props) {
 
         </div>
         <Modal {...modal} />
-        <OfferModal {...offerModal} />
+        <OfferModal {...offerModal}  />
       </section>
     </>
   );

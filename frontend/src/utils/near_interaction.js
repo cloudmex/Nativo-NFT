@@ -80,6 +80,8 @@ export const methodOptions = {
     "market_buy_generic",
     "market_remove_generic",
     "market_sell_generic",
+    "market_bid_generic",
+    "market_close_bid_generic"
   ],
 };
 /**
