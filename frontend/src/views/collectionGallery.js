@@ -317,7 +317,7 @@ function LightEcommerceA() {
   }, [trigger]);
 
   return (
-    <section className="text-gray-600 body-font">
+    <section className="text-gray-600 body-font bg-[#f3f4f6]">
 
       <div className="bg-white px-4 py-3 flex items-center justify-center border-b border-gray-200 sm:px-6 mt-1">
         <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
@@ -411,43 +411,66 @@ function LightEcommerceA() {
                 //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
                 //const tokenData = JSON.parse(token.data);
                 return (
-                  <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                  <div className="w-full md:w-1/3 xl:w-1/3 p-4" key={key}>
                     <a href={"/collection/" + element.collectionID}>
-                      <div className="token bg-[#f7f4f0]">
-                        <div className="block relative h-48 rounded overflow-hidden">
-
+                      <div className="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden">
                           <img
                             alt="Icono de la coleccion"
-                            className="imgaa object-cover object-center w-full h-full block"
+                            className="lg:h-60 xl:h-56 md:h-64 sm:h-72 xs:h-72 h-72 rounded w-full object-cover object-center mb-4"
                             src={`https://ipfs.io/ipfs/${element.media}`}
                           />
-
-
-
-                        </div>
-                        <div className="mt-4 ">
-                          <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                        <div className="p-4">
+                          <h3 className="tracking-widest text-[#fa9301] text-xs font-medium title-font whitespace-nowrap truncate ...">
                             {element.title}
-                          </h2>
-                          <p className="mt-1 mb-4 ml-2">
+                          </h3>
+                          <h2 className="text-lg text-gray-900 font-medium title-font mb-4 whitespace-nowrap truncate ...">
                             {element.description == "" ? t("Collections.descrip") : element.description}
-                            <br />
-                            <b>{t("Collections.creator")}</b> {element.owner + "\n"}
-                            <br />
-                            <b>{t("Collections.contract")}</b> {element.contract + "\n"}
-                            <br />
-                            <b>{t("Collections.noTokens")}</b> {element.tokenCount + "\n"}
-                            <br />
-                            <b>{t("Collections.noSale")}</b> {element.saleCount + "\n"}
-                            <br />
-                            <b>{t("Collections.volSale")}</b> {element.saleVolume + " " + Landing.currency + "\n"}
-                            <br />
+                          </h2>
+                          <p className="text-gray-600 font-light text-md whitespace-nowrap truncate ...">
+                          </p>
+                          <div>
                             {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
                               fromYoctoToNear(token.price) + " " + Landing.currency} */}
-                          </p>
+                            <div class="py-4 border-t border-b text-xs text-gray-700">
+                              <div class="grid grid-cols-6 gap-1">
+                                <div class="col-span-4">
+                                  {t("Collections.contract")}
+                                  <span
+                                    class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#fbbf24] rounded-full
+                                  "
+                                  >{element.contract}</span>
+                                </div>
+
+                                <div class="col-span-2">
+                                  {t("Collections.noTokens")}
+                                  <span
+                                    class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#fbbf24] rounded-full"
+                                  >{element.tokenCount}</span>
+                                </div>
+                                <div class="col-span-4">
+                                  {t("Collections.volSale")}
+                                  <span
+                                    class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#fbbf24] rounded-full"
+                                  >{element.saleVolume} NEAR</span>
+                                </div>
+                                <div class="col-span-2">
+                                  {t("Collections.noSale")}
+                                  <span
+                                    class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#fbbf24] rounded-full"
+                                  >{element.saleCount}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex flex-end items-center mt-2">
+                              <div class="pl-3">
+                                <div class="font-medium">{element.owner}</div>
+                                <div class="text-gray-600 text-sm">{t("Collections.creator")}</div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </a>
@@ -462,7 +485,8 @@ function LightEcommerceA() {
               </div>
           }
         </div>
-        <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
+      </div>
+      <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
           <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
             onClick={() => handleBackPage()}
           >{"<"}</button>
@@ -525,7 +549,6 @@ function LightEcommerceA() {
             })}
           </nav> */}
         </div>
-      </div>
     </section>
   );
 }

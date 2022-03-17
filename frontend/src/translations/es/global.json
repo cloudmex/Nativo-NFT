@@ -36,7 +36,7 @@
         "language" : "LENGUAJE"
     },
     "Collections" : {
-        "creator" : "Creador:",
+        "creator" : "Creador",
         "contract" : "Contrato:",
         "noTokens" : "No. de tokens:",
         "noSale" : "No. de ventas:",
@@ -46,7 +46,7 @@
         "load-2" : "Actualmente no hay colecciones disponibles"
     },
     "tokCollection" : {
-        "creator" : "Creador:",
+        "creator" : "Creador",
         "contract" : "Contrato:",
         "noTokens" : "No. de tokens:",
         "noSale" : "No. de ventas:",
