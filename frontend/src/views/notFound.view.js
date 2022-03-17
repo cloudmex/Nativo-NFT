@@ -1,15 +1,14 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
 /**
  * se llama cuando no se encuentra la ruta que el usuario solicito
  *
  */
-export default function notFound() {
+function notFound() {
   return (
     <>
       <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
         <div className="flex flex-col justify-center">
-          <h1 className="text-center">no encontramos esa ruta :(</h1>
+          <h1 className="text-center">{(window.localStorage.getItem("LanguageState")=="es" ? 'No encontramos esa ruta :(' : "We can't find that route :(" )}</h1>
           <a href="/" className="text-center mt-8">
             <svg className=" h-12 w-full" viewBox="0 0 11 20" version="1.1">
               <g
@@ -54,3 +53,5 @@ export default function notFound() {
     </>
   );
 }
+
+export default notFound;

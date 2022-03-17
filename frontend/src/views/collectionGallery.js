@@ -15,6 +15,7 @@ import loading from '../assets/landingSlider/img/loader.gif'
 import Pagination from '@mui/material/Pagination';
 import { Account } from "near-api-js";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { useTranslation } from "react-i18next";
 
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
@@ -27,6 +28,7 @@ function LightEcommerceA() {
     tokensPerPage: 10,
     tokensPerPageNear: 9,
   });
+  const [t, i18n] = useTranslation("global")
   const [esconder, setesconder] = React.useState(true);
   const [counter, setcounter] = React.useState();
   const [load, setload] = React.useState(false);
@@ -49,7 +51,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL = process.env.REACT_APP_API_TG
 
   const handleChangePage = (e, value) => {
     // console.log(value)
@@ -428,17 +430,17 @@ function LightEcommerceA() {
                             {element.title}
                           </h2>
                           <p className="mt-1 mb-4 ml-2">
-                            {element.description == "" ? "Esta coleccion no tiene una descripcion" : element.description}
+                            {element.description == "" ? t("Collections.descrip") : element.description}
                             <br />
-                            <b>Creador:</b> {element.owner + "\n"}
+                            <b>{t("Collections.creator")}</b> {element.owner + "\n"}
                             <br />
-                            <b>Contrato:</b> {element.contract + "\n"}
+                            <b>{t("Collections.contract")}</b> {element.contract + "\n"}
                             <br />
-                            <b>No. de tokens:</b> {element.tokenCount + "\n"}
+                            <b>{t("Collections.noTokens")}</b> {element.tokenCount + "\n"}
                             <br />
-                            <b>No. de ventas:</b> {element.saleCount + "\n"}
+                            <b>{t("Collections.noSale")}</b> {element.saleCount + "\n"}
                             <br />
-                            <b>Vol. de ventas:</b> {element.saleVolume + " " + Landing.currency + "\n"}
+                            <b>{t("Collections.volSale")}</b> {element.saleVolume + " " + Landing.currency + "\n"}
                             <br />
                             {/* {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
@@ -455,7 +457,7 @@ function LightEcommerceA() {
               :
               <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
                 <div className="flex flex-col justify-center">
-                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Actualmente no hay colecciones disponibles"}</h1>
+                  <h1 className="text-center">{loadMsg ? t("Collections.load-1") : t("Collections.load-2")}</h1>
                 </div>
               </div>
           }

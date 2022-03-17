@@ -24,11 +24,13 @@ import Modal from "../components/modal.component";
 import flechaiz from '../assets/landingSlider/img/flechaIz.png'
 import ReactHashtag from "react-hashtag";
 import OfferModal from "../components/offerModal.component";
+import { useTranslation } from "react-i18next";
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
   const [state, setstate] = useState();
   const [btn, setbtn] = useState(true);
+  const [t, i18n] = useTranslation("global")
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -39,7 +41,8 @@ function LightEcommerceB(props) {
   const { data } = useParams();
   //es el historial de busqueda
   //let history = useHistory();
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL= process.env.REACT_APP_API_TG
+
   React.useEffect(() => {
     (async () => {
       setStateLogin(await isNearReady());
@@ -408,7 +411,7 @@ function LightEcommerceB(props) {
               <div
                 className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
               >
-                <span className="text-gray-500">Colección</span>
+                <span className="text-gray-500">{t("Detail.collection")}</span>
                 <span className="ml-auto text-gray-900">
                   <span
                     className={`transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 inline-flex items-center justify-center px-2 py-1 text-sm font-bold leading-none text-white bg-yellow-500 rounded-full`}
@@ -430,7 +433,7 @@ function LightEcommerceB(props) {
               <div
                 className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
               >
-                <span className="text-gray-500">En venta</span>
+                <span className="text-gray-500">{t("Detail.sale")}</span>
                 <span className="ml-auto text-gray-900">
                   <span
                     className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.tokens.onSale
@@ -479,7 +482,7 @@ function LightEcommerceB(props) {
               <div
                 className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
               >
-                <span className="text-gray-500">Creador</span>
+                <span className="text-gray-500">{t("Detail.creator")}</span>
                 <span className="ml-auto text-gray-900 text-xs self-center">
                   {state?.jdata.creator}
                 </span>
@@ -525,7 +528,7 @@ function LightEcommerceB(props) {
                           comprar();
                         }}
                       >
-                        Comprar
+                        {t("Detail.buy")}
                       </button>
                       {state?.owner != state?.ownerAccount ?
                         <button
@@ -554,7 +557,7 @@ function LightEcommerceB(props) {
                       nearSignIn(window.location.href);
                     }}
                   >
-                    Iniciar Sesión para Comprar
+                    {t("Detail.login")}
                   </button>
                 }
               </div>

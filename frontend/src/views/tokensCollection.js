@@ -15,6 +15,7 @@ import loading from '../assets/landingSlider/img/loader.gif'
 import Pagination from '@mui/material/Pagination';
 import { Account } from "near-api-js";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { useTranslation } from "react-i18next";
 
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
@@ -41,6 +42,7 @@ function LightEcommerceA() {
   const [firstLoad, setFirstLoad] = React.useState(true)
   const [loadMsg,setLoadMsg] = React.useState(true)
   const [trigger, settrigger] = React.useState(true);
+  const [t, i18n] = useTranslation("global")
   const [filtro, setfiltro] = React.useState({
     culture: "null",
     country: "null",
@@ -49,7 +51,7 @@ function LightEcommerceA() {
     price: "null",
   });
 
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/luisdaniel2166/nativojson'
+  const APIURL = process.env.REACT_APP_API_TG
 
   const handleChangePage = (e, value) => {
     //console.log(value)
@@ -389,27 +391,27 @@ function LightEcommerceA() {
         <div className="z-10 -mt-120 w-full text-white">
           <div className="bg-white lg:mx-20 mx-5 text-black mt-4 pt-2 rounded-t-2xl bg-opacity-80">
             <h1 className="lg:text-5xl text-3xl font-bold pb-4 opacity-100 stroke-gray-700">{Landing.titleCol}</h1>
-            <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? "Esta coleccion no tiene una descripcion" : Landing.descriptionCol}</p>
+            <p className="lg:text-xl text-base px-2 pb-3 stroke-gray-700">{Landing.descriptionCol == "" ? t("tokCollection.descrip") : Landing.descriptionCol}</p>
             <div className="grid grid-cols-2 divide-x pb-3 mx-auto stroke-gray-700">
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>Creador:</b><br />{Landing.ownerCol}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-right text-center lg:mr-5 ml-1"><b>{t("tokCollection.creator")}</b><br />{Landing.ownerCol}</p>
               </div>
               <div>
-                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>Contrato:</b><br />{Landing.contract}</p>
+                <p className="lg:text-xl text-base pb-1 lg:text-left text-center lg:ml-5 mr-1"><b>{t("tokCollection.contract")}</b><br />{Landing.contract}</p>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-3 divide-x gap-1 bg-yellow-400 rounded-b-2xl text-white lg:mx-20 mx-5 mx-auto text-center">
             <div className="pl-5">
-              <p className="lg:text-lg text-base pb-1"><b>No. de tokens:</b></p>
+              <p className="lg:text-lg text-base pb-1"><b>{t("tokCollection.noTokens")}</b></p>
               <p className="lg:text-base text-sm pb-1">{Landing.tokenCount}</p>
             </div>
             <div>
-              <p className="lg:text-lg text-base pb-1"><b>No. de ventas:</b></p>
+              <p className="lg:text-lg text-base pb-1"><b>{t("tokCollection.noSale")}</b></p>
               <p className="lg:text-base text-sm pb-1">{Landing.saleCount}</p>
             </div>
             <div className="pr-5">
-              <p className="lg:text-lg text-base pb-1"><b>Vol. de venta:</b></p>
+              <p className="lg:text-lg text-base pb-1"><b>{t("tokCollection.volSale")}</b></p>
               <p className="lg:text-base text-sm pb-1">{Landing.saleVolume} {Landing.currency}</p>
             </div>
           </div>
@@ -529,9 +531,9 @@ function LightEcommerceA() {
                             {element.title}
                           </h2>
                           <p className="mt-1 mb-4 ml-2">
-                            <b>TokenID:</b> {element.tokenId + "\n"}
+                            <b>Token ID:</b> {element.tokenId + "\n"}
                             <br />
-                            <b>Dueño:</b> {element.owner + "\n"}
+                            <b>{t("tokCollection.owner")}</b> {element.owner + "\n"}
                             <br />
                             {Landing.blockchain != 0 &&
                               fromYoctoToNear(element.price) + " " + Landing.currency}
@@ -551,7 +553,7 @@ function LightEcommerceA() {
               :
               <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">
                 <div className="flex flex-col justify-center">
-                  <h1 className="text-center">{loadMsg ? "Cargando, por favor espere" : "Aún no hay NFTs en esta colección"}</h1>
+                  <h1 className="text-center">{loadMsg ? t("tokCollection.load-1") : t("tokCollection.load-2")}</h1>
                 </div>
               </div>
           }

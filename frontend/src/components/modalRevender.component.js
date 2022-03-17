@@ -55,7 +55,7 @@ export default function ModalRevender(props) {
           collection: props.collection,
           collection_id: props.collectionID,
         };
-        let amount = fromNearToYocto(0.1);
+        let amount = fromNearToYocto(0.05);
         //console.log(amount);
         console.log(payload);
         console.log(values.terms)
@@ -72,7 +72,7 @@ export default function ModalRevender(props) {
         revender = await contract.market_sell_generic(
           payload,
           300000000000000, // attached GAS (optional)
-          amount
+          0
         );
         /*  revender.status = revender.on_sale; */
       }
