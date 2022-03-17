@@ -66,7 +66,20 @@
         "available-1" : "Disponible",
         "available-2" : "No disponible",
         "buy" : "Comprar",
-        "login" : "Iniciar Sesión para Comprar"
+        "login" : "Iniciar Sesión para Comprar",
+        "swTitOffer-1" : "Se acepto la oferta",
+        "swTitOffer-2" : "Se declino la oferta",
+        "swTxtOffer-1" : "La oferta se acepto con exito",
+        "swTxtOffer-2" : "La oferta se declino con exito",
+        "bid" : "Ofertar",
+        "curBid" : "Oferta Actual",
+        "bidder" : "Ofertante",
+        "price" : "Precio",
+        "accept" : "Aceptar",
+        "decline" : "Declinar",
+        "bidsMade" : "Ofertas Realizadas",
+        "modalMakeBid" : "Hacer una oferta",
+        "modalMsg" : "Haz una oferta atractiva para obtener este token"
     },
     "MyNFTs" : {
         "title" : "Mis NFTs",
@@ -151,5 +164,8 @@
         "createNFT" : "Crear NFT",
         "sweetTitle" : "Selecciona una colección",
         "sweetTxt" : "Para crear un NFT es necesario seleccionar una colección, selecciona una e intentalo de nuevo"
+    },
+    "Modal" : {
+        "accept" : "Acepto los terminos y condiciones del servicio"
     }
 }

@@ -12,12 +12,14 @@ import {
 } from "../utils/blockchain_interaction";
 
 import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
+import { useTranslation } from "react-i18next";
 
 //import { useHistory } from "react-router";
 
 export default function OfferModal(props) {
   //const history = useHistory();
   const [state, setState] = useState({ disabled: false});
+  const [t, i18n] = useTranslation("global")
   const [highestbidder, setHighestbidder] = useState(0);
   
   useEffect(() => {
@@ -161,7 +163,7 @@ export default function OfferModal(props) {
                       </div>
                     </div>
                     <div className="mt-3">
-                      <input type="checkbox" className="" name="terms" id="terms" {...formik.getFieldProps("terms")}/> <label className="text-sm text-gray-600">Acepto los terminos y condiciones del servicio</label>
+                      <input type="checkbox" className="" name="terms" id="terms" {...formik.getFieldProps("terms")}/> <label className="text-sm text-gray-600">{t("Modal.accept")}</label>
                     </div>
                     {/* Ofertar */}
                     {props.tokenId && (
