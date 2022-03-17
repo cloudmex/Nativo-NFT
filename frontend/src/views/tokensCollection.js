@@ -493,11 +493,11 @@ function LightEcommerceA() {
           }
         </select>
       </div> */}
-      <div className="container px-5 py-3 mx-auto ">
+      <div className="pt-3 mx-auto bg-[#f3f4f6] ">
 
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
 
-        <div className={"flex flex-wrap" + (load ? " justify-center" : "")}>
+        <div className={"flex flex-wrap px-[40px]" + (load ? " justify-center" : "")}>
 
           {/* 
           {
@@ -510,40 +510,69 @@ function LightEcommerceA() {
                 //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
                 //const tokenData = JSON.parse(token.data);
                 return (
-                  <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                  <div className="w-full md:w-1/2 lg:w-1/3 p-4" key={key}>
                     <a
                       href={"/detail/" + element.tokenId + ":" + Landing.colID}
                     >
-                      <div className="token bg-[#f7f4f0]">
-                        <div className="block relative h-48 rounded overflow-hidden">
+                      <div className="c-card
+                                      block
+                                      bg-white
+                                      shadow-md
+                                      hover:shadow-xl
+                                      rounded-lg
+                                      overflow-hidden">
+                        <img
+                          alt="ecommerce"
+                          className="lg:h-60
+                            xl:h-56
+                            md:h-64
+                            sm:h-72
+                            xs:h-72
+                            h-72
+                            rounded
+                            w-full
+                            object-cover object-center
+                            mb-4"
+                          src={`https://ipfs.io/ipfs/${element.media}`}
+                        />
 
-                          <img
-                            alt="ecommerce"
-                            className="imgaa object-cover object-center w-full h-full block"
-                            src={`https://ipfs.io/ipfs/${element.media}`}
-                          />
 
 
-
-                        </div>
-                        <div className="mt-4">
-                          <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                        <div className="p-4">
+                          <h2 className="text-lg text-gray-900
+                                        font-medium
+                                        title-font
+                                        mb-4
+                                        whitespace-nowrap
+                                        truncate
+                                        ...">
                             {element.title}
                           </h2>
-                          <p className="mt-1 mb-4 ml-2">
-                            <b>Token ID:</b> {element.tokenId + "\n"}
-                            <br />
-                            <b>{t("tokCollection.owner")}</b> {element.owner + "\n"}
-                            <br />
-                            {Landing.blockchain != 0 &&
-                              fromYoctoToNear(element.price) + " " + Landing.currency}
-                            <br />
-                            {/* {Landing.blockchain==0 &&
-                            fromWEItoEth(token.price) + " " + Landing.currency}
+                          <div className="py-4 border-t border-b text-xs text-gray-700">
+                            <div className="grid grid-cols-6 gap-1">
 
-                        {Landing.blockchain!=0 &&
-                              fromYoctoToNear(token.price) + " " + Landing.currency} */}
-                          </p>
+
+                              <div className="col-span-2">
+                                Token ID:
+                                <span
+                                  className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#fbbf24] rounded-full"
+                                >{element.tokenId}</span>
+                              </div>
+
+                              <div className="col-span-4 flex mx-auto">
+                                <span
+                                  className="inline-flex items-center justify-center px-2 py-1 text-lg font-bold leading-none text-white bg-[#fbbf24] rounded-full"
+                                >                            {Landing.blockchain != 0 &&
+                                  fromYoctoToNear(element.price) + " " + Landing.currency}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center mt-2">
+                                <div className="pl-3">
+                                  <div className="font-medium">{element.owner}  </div>
+                                  <div className="text-gray-600 text-sm">{t("tokCollection.owner")}</div>
+                                </div>
+                              </div>
                         </div>
                       </div>
                     </a>
@@ -558,7 +587,7 @@ function LightEcommerceA() {
               </div>
           }
         </div>
-        <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
+        <div className="bg-white   flex items-center justify-center border-t border-gray-200  mt-16">
           {/* <Pagination count={Landing.nPages} page={page} onChange={handleChangePage} color="warning" theme="light" /> */}
           <button className="bg-transparent hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-extrabold text-center items-center rounded-full py-2 px-4 mx-4"
           onClick={() => handleBackPage()}

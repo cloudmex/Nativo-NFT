@@ -51,7 +51,7 @@
         "noTokens" : "No. of tokens:",
         "noSale" : "No. of sales:",
         "volSale" : "Sales volume:",
-        "owner" : "Owner:",
+        "owner" : "Owner",
         "load-1" : "Loading Please wait",
         "load-2" : "There are no NFTs in this collection yet",
         "descrip" : "This collection doesn't have a description"
