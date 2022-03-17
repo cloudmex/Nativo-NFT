@@ -259,7 +259,7 @@ function LightEcommerceB(props) {
       let toks = await contract.market_close_bid_generic(
         payload,
         300000000000000,
-        fromNearToYocto(0.05)
+        fromNearToYocto(process.env.REACT_APP_FEE_OFFERS)
       );
   }
 
