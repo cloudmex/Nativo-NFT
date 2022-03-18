@@ -66,7 +66,20 @@
         "available-1" : "Available",
         "available-2" : "Not available",
         "buy" : "Buy",
-        "login" : "Login to Buy"
+        "login" : "Login to Buy",
+        "swTitOffer-1" : "The bid is accepted",
+        "swTitOffer-2" : "The bid is declined",
+        "swTxtOffer-1" : "The bid was accepted successfully",
+        "swTxtOffer-2" : "The bid was declined successfully",
+        "bid" : "Bid",
+        "curBid" : "Current bid",
+        "bidder" : "Bidder",
+        "price" : "Price",
+        "accept" : "Accept",
+        "decline" : "Decline",
+        "bidsMade" : "Bids Made",
+        "modalMakeBid" : "Make a bid",
+        "modalMsg" : "Make an attractive bid to get this token"
     },
     "MyNFTs" : {
         "title" : "My NFTs",
@@ -151,5 +164,8 @@
         "createNFT" : "Create NFT",
         "sweetTitle" : "Select a collection",
         "sweetTxt" : "To create an NFT it is necessary to select a collection, select one and try again"
+    },
+    "Modal" : {
+        "accept" : "I accept the terms and conditions of service"
     }
 }

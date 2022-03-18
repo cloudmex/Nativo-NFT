@@ -25,6 +25,7 @@ import flechaiz from '../assets/landingSlider/img/flechaIz.png'
 import ReactHashtag from "react-hashtag";
 import OfferModal from "../components/offerModal.component";
 import { useTranslation } from "react-i18next";
+import Swal from 'sweetalert2'
 
 function LightEcommerceB(props) {
   //guarda el estado de  toda la vista
@@ -259,8 +260,15 @@ function LightEcommerceB(props) {
       let toks = await contract.market_close_bid_generic(
         payload,
         300000000000000,
-        fromNearToYocto(process.env.REACT_APP_FEE_OFFERS)
+        0
       );
+        Swal.fire({
+          title: (option ? t("Detail.swTitOffer-1") : t("Detail.swTitOffer-2")),
+          text: (option ? t("Detail.swTxtOffer-1") : t("Detail.swTxtOffer-2")),
+          icon: 'success',
+        }).then(function () {
+          window.location.reload();
+        })
   }
 
   async function comprar() {
@@ -364,8 +372,8 @@ function LightEcommerceB(props) {
     setOfferModal({
       ...state,
       show: true,
-      title: "Hacer una oferta",
-      message: "Haz una oferta atractiva para obtener este token",
+      title: t("Detail.modalMakeBid"),
+      message: t("Detail.modalMsg"),
       loading: false,
       disabled: false,
       change: setOfferModal,
@@ -538,7 +546,7 @@ function LightEcommerceB(props) {
                             makeAnOffer();
                           }}
                         >
-                          Ofertar
+                          {t("Detail.bid")}
                         </button>
                         : "" }
                     </div>
@@ -567,10 +575,10 @@ function LightEcommerceB(props) {
             state  && state.tokens && state.tokens.addressbidder != 'accountbidder' &&  state.tokens.highestbidder != "notienealtos" ?
             <div className="w-full">
               <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
-                <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Oferta Actual</div>
+                <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">{t("Detail.curBid")}</div>
                 <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
-                  <div className="w-6/12 md:w-4/12 text-center  text-lg font-bold text-gray-500">Ofertante</div>
-                  <div className="w-6/12 md:w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
+                  <div className="w-6/12 md:w-4/12 text-center  text-lg font-bold text-gray-500">{t("Detail.bidder")}</div>
+                  <div className="w-6/12 md:w-4/12 text-center  text-lg font-bold text-gray-500">{t("Detail.price")}</div>
                   <div className="w-0 md:w-4/12 text-center  text-lg font-bold text-gray-500"></div>
                 </div>
                   <div className=" w-full h-[75px] md:h-[50px] overscroll-none">
@@ -588,7 +596,7 @@ function LightEcommerceB(props) {
                           <span
                             className={`inline-flex items-center justify-center px-6 py-2  text-xs font-bold leading-none  text-green-100 bg-green-500 rounded-full`}
                           >
-                            Aceptar
+                            {t("Detail.accept")}
                           </span>
                         </button> : ""
                         }
@@ -602,7 +610,7 @@ function LightEcommerceB(props) {
                           <span
                             className={`inline-flex items-center justify-center px-6 py-2  text-xs font-bold leading-none text-red-100 bg-red-500 rounded-full` } 
                           >
-                            Declinar
+                            {t("Detail.decline")}
                           </span>
                         </button> : ""
                           }
@@ -615,10 +623,10 @@ function LightEcommerceB(props) {
             }
             {state && state.toknOffersData != 0 ?
               <div className="w-full border-4 rounded-lg border-[#eab308] border-white-500 mt-10">
-                <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">Ofertas Realizadas</div>
+                <div className="text-center p-2 bg-[#eab308] text-white font-bold text-xl">{t("Detail.bidsMade")}</div>
                 <div className="w-full flex flex-row py-1 justify-between text-gray-500 bg-gray-50">
-                  <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Ofertante</div>
-                  <div className="w-4/12 text-center  text-lg font-bold text-gray-500">Precio</div>
+                  <div className="w-4/12 text-center  text-lg font-bold text-gray-500">{t("Detail.bidder")}</div>
+                  <div className="w-4/12 text-center  text-lg font-bold text-gray-500">{t("Detail.price")}</div>
                 </div>
                 <div className="h-[250px] overflow-scroll">
                   {state?.toknOffersData.map((offer, i) => {

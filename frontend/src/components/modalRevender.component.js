@@ -9,7 +9,7 @@ import {
   getSelectedAccount,
   fromETHtoWei,
 } from "../utils/blockchain_interaction";
-
+import { useTranslation } from "react-i18next";
 import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
 
 //import { useHistory } from "react-router";
@@ -17,6 +17,7 @@ import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
 export default function ModalRevender(props) {
   //const history = useHistory();
   const [state, setstate] = useState({ disabled: false });
+  const [t, i18n] = useTranslation("global")
   //Configuramos el formulario para revender un token
   const formik = useFormik({
     initialValues: {
@@ -138,7 +139,7 @@ export default function ModalRevender(props) {
                       {...formik.getFieldProps("price")}
                     />
                     <div className="mt-3">
-                      <input type="checkbox" className="" name="terms" id="terms" {...formik.getFieldProps("terms")}/> <label className="text-sm text-gray-600">Acepto los terminos y condiciones del servicio</label>
+                      <input type="checkbox" className="" name="terms" id="terms" {...formik.getFieldProps("terms")}/> <label className="text-sm text-gray-600">{t("Modal.accept")}</label>
                     </div>
                     {/* Mostramos el boton de revender si se mando la propiedadd del token id del nft */}
                     {props.tokenId && (
