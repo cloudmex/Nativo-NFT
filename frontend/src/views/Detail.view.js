@@ -449,7 +449,7 @@ function LightEcommerceB(props) {
                       : "text-red-100 bg-red-500"
                       } rounded-full`}
                   >
-                    {state?.tokens.onSale ? "Disponible" : "No disponible"}
+                    {state?.tokens.onSale ? t("Detail.available-1") : t("Detail.available-2")}
                   </span>
                 </span>
               </div>
@@ -588,7 +588,6 @@ function LightEcommerceB(props) {
                       <div className="w-full md:w-4/12 text-center text-gray-500 flex justify-around">
                         { state.owner == state.ownerAccount ? 
                         <button
-                          disabled={btn}
                           onClick={async () => {
                             manageOffer(true);
                           }}
@@ -602,7 +601,6 @@ function LightEcommerceB(props) {
                         }
                         { state.owner == state.ownerAccount || state.ownerAccount == state.tokens.addressbidder ? 
                         <button
-                          disabled={btn}
                           onClick={async () => {
                             manageOffer(false);
                           }}
